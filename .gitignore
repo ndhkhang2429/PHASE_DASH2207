@@ -1,0 +1,49 @@
+# ========== UNITY ==========
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+UserSettings/
+
+# MemoryCaptures can get excessive in size
+MemoryCaptures/
+
+# Asset meta data should only be ignored when the asset itself is ignored
+!/[Aa]ssets/**/*.meta
+!/[Pp]ackages/**/*.meta
+!/[Pp]rojectSettings/**/*.meta
+
+# ========== IDE ==========
+.vs/
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+
+# Rider
+.idea/
+
+# VS Code
+.vscode/
+
+# ========== OS ==========
+.DS_Store
+Thumbs.db
+
+# ========== UNITY CACHE SERVER ==========
+.cache/
+
+# ========== IL2CPP ==========
+il2cppOutput/
+
+# ========== Addressables ==========
+ServerData/
