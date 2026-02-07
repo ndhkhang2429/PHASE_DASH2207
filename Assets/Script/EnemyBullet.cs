@@ -8,6 +8,7 @@ public class EnemyBullet : MonoBehaviour
 {
     [SerializeField] private float speed;
     [SerializeField] private Vector2 direction;
+    [SerializeField] private Player player;
 
     private Rigidbody2D rb;
 
@@ -27,8 +28,19 @@ public class EnemyBullet : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.CompareTag("Player") || collision.CompareTag("Ground"))
+        if(collision.CompareTag("Ground"))
         {
+            Destroy(gameObject);
+        }
+
+        if(collision.CompareTag("Player"))
+        {
+            player = collision.GetComponent<Player>();
+            if (player != null)
+            {
+                player.TakeDame(1);
+            }
+
             Destroy(gameObject);
         }
     }

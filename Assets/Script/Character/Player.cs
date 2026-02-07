@@ -22,6 +22,14 @@ public class Player : MonoBehaviour
 
     private Rigidbody2D rb;
 
+    [Header("Health")]
+    [SerializeField] private int maxHeatlth;
+    private int currentHealth;
+
+    [Header("Hit Effect")]
+    [SerializeField] private SpriteRenderer spriteRenderer;
+    [SerializeField] private Color hitColor;
+    [SerializeField] private float hitFlashTime;
     //Kiem tra o mat dat
     private bool isGrounded;
 
@@ -31,9 +39,14 @@ public class Player : MonoBehaviour
     private float dashCooldownTimer; //dem nguoc hoi chieu
     private float dashDirection; //luu lai thoi gian luc bat dau dash
 
+    private Color baseColor;
+    private bool isInvincible;
+
     private void Start()
     {
-        rb = GetComponent<Rigidbody2D>();   
+        rb = GetComponent<Rigidbody2D>();
+        currentHealth = maxHeatlth;
+        baseColor = spriteRenderer.color;
     }
 
     private void Update()
@@ -45,6 +58,36 @@ public class Player : MonoBehaviour
         {
             Move();
         }
+    }
+
+    public void TakeDame(int dame)
+    {
+        if(isInvincible)
+        {
+            return;
+        }
+
+        currentHealth -= dame;
+        StartCoroutine(HitEffect());
+        if(currentHealth <= 0)
+        {
+            Die();
+        }
+    }
+
+    private IEnumerator HitEffect()
+    {
+        isInvincible = true;
+        spriteRenderer.color = hitColor;
+        yield return new WaitForSeconds(hitFlashTime);
+
+        spriteRenderer.color = baseColor;
+        isInvincible = false;
+    }
+
+    private void Die()
+    {
+        gameObject.SetActive(false);
     }
 
     private void UpdateDash()
