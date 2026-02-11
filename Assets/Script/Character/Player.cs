@@ -23,7 +23,7 @@ public class Player : MonoBehaviour
     private Rigidbody2D rb;
 
     [Header("Health")]
-    [SerializeField] private int maxHeatlth;
+    [SerializeField] private int maxHealth;
     private int currentHealth;
 
     [Header("Hit Effect")]
@@ -32,6 +32,7 @@ public class Player : MonoBehaviour
     [SerializeField] private float hitFlashTime;
     //Kiem tra o mat dat
     private bool isGrounded;
+    [SerializeField] public Color baseColor;
 
     //kiem tra trang thai dash
     private bool isDashing;
@@ -39,13 +40,13 @@ public class Player : MonoBehaviour
     private float dashCooldownTimer; //dem nguoc hoi chieu
     private float dashDirection; //luu lai thoi gian luc bat dau dash
 
-    private Color baseColor;
+    
     private bool isInvincible;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        currentHealth = maxHeatlth;
+        currentHealth = maxHealth;
         baseColor = spriteRenderer.color;
     }
 
@@ -68,12 +69,17 @@ public class Player : MonoBehaviour
         }
 
         currentHealth -= dame;
-        StartCoroutine(HitEffect());
+
         if(currentHealth <= 0)
         {
             Die();
         }
+        else
+        {
+            StartCoroutine(HitEffect());
+        }
     }
+
 
     private IEnumerator HitEffect()
     {
@@ -87,7 +93,8 @@ public class Player : MonoBehaviour
 
     private void Die()
     {
-        gameObject.SetActive(false);
+        GameManager.Instance.GameOver();//player chet ->ket thuc game
+        Destroy(gameObject);
     }
 
     private void UpdateDash()

@@ -14,16 +14,26 @@ public class EnemyShooter : MonoBehaviour
 
     private void Update()
     {
-        fireTimer -= Time.deltaTime;
+        if (GameManager.Instance.IsGameOver || target == null) return; //neu game over, eney ngung hoat dong
 
         float distance = Vector2.Distance(transform.position, target.position);
 
-        if (distance <= detectRange && fireTimer <= 0)
+        if (distance > detectRange)
         {
-            Shoot();
-            fireTimer = fireRate;
+            return;
+        }
+
+        if (distance <= detectRange)
+        {
+            fireTimer -= Time.deltaTime;
+            if (fireTimer <= 0)
+            {
+                Shoot();
+                fireTimer = fireRate;
+            }
         }
     }
+
 
     private void Shoot()
     {

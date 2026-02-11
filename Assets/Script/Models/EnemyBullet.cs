@@ -7,8 +7,7 @@ using UnityEngine.UIElements;
 public class EnemyBullet : MonoBehaviour
 {
     [SerializeField] private float speed;
-    [SerializeField] private Vector2 direction;
-    [SerializeField] private Player player;
+    private Vector2 direction;
 
     private Rigidbody2D rb;
 
@@ -35,7 +34,7 @@ public class EnemyBullet : MonoBehaviour
 
         if(collision.CompareTag("Player"))
         {
-            player = collision.GetComponent<Player>();
+            Player player = collision.GetComponent<Player>();
             if (player != null)
             {
                 player.TakeDame(1);
