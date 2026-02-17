@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    [SerializeField] private Animator animator;
+
     [Header ("Move")]
     [SerializeField] private float speed;
     [SerializeField] private float jumpSpeed;
@@ -18,8 +20,9 @@ public class Player : MonoBehaviour
     [SerializeField] private float dashSpeed;
     [SerializeField] private float dashDuration; //dash trong bao nhieu lau
     [SerializeField] private float dashCoolDown; //thoi gian cho truoc khi dash lai
+    [SerializeField] private int dashEnergyCost;
 
-
+    private PlayerEnergy energy;
     private Rigidbody2D rb;
 
     [Header("Health")]
@@ -30,8 +33,14 @@ public class Player : MonoBehaviour
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private Color hitColor;
     [SerializeField] private float hitFlashTime;
+
+    [Header("Skill")]
+    [SerializeField] private GameObject projectilePerfab;
+    [SerializeField] private Transform firePoint;
+    [SerializeField] private int skillEnergyCost;
+
     //Kiem tra o mat dat
-    private bool isGrounded;
+    public bool IsGrounded { get; private set;}
     [SerializeField] public Color baseColor;
 
     //kiem tra trang thai dash
@@ -39,26 +48,39 @@ public class Player : MonoBehaviour
     private float dashTimer; //dem nguoc thoi gian dash
     private float dashCooldownTimer; //dem nguoc hoi chieu
     private float dashDirection; //luu lai thoi gian luc bat dau dash
-
+    public bool isAttacking { get; set; }
     
     private bool isInvincible;
 
     private void Start()
     {
+        animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
         currentHealth = maxHealth;
         baseColor = spriteRenderer.color;
+        energy = GetComponent<PlayerEnergy>();
     }
 
     private void Update()
     {
+        float move = Input.GetAxisRaw("Horizontal");
+        animator.SetFloat("Speed", Mathf.Abs(move));
+
         HandleDashInput();
         UpdateDash();
+
+        if(Input.GetKeyDown(KeyCode.K))
+        {
+            TryCastSkill();
+        }
 
         if (!isDashing)
         {
             Move();
         }
+
+        animator.SetBool("IsGround", IsGrounded);
+        animator.SetFloat("YVelocity", rb.velocity.y);
     }
 
     public void TakeDame(int dame)
@@ -97,6 +119,7 @@ public class Player : MonoBehaviour
         Destroy(gameObject);
     }
 
+    //kiem tra dash trong tung frame hinh 
     private void UpdateDash()
     {
         if (!isDashing) return;
@@ -123,8 +146,10 @@ public class Player : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.E) && dashCooldownTimer <= 0 && !isDashing)
         {
-            Dash();
-
+            if(energy != null && energy.UseEnergy(dashEnergyCost))
+            {
+                Dash();
+            }
         }
 
     }
@@ -139,30 +164,51 @@ public class Player : MonoBehaviour
 
     private void Move()
     {
+        //khoa di chuyen player khi tan cong
+        if(isAttacking)
+        {
+            rb.velocity = new Vector2(0, rb.velocity.y);
+            return;
+        }
         //di chuyen sang trai sang phai
         horizontal = Input.GetAxisRaw("Horizontal");
         transform.Translate(Vector2.right * horizontal * speed * Time.deltaTime);
 
         //kiem tra huong cua nhan vat quay sang trai hay sang phai, neu sang trai thi lat nguoc hinh lai
-        if (horizontal >= 0)
+        if (horizontal > 0)
         {
-            transform.localScale = new Vector3(1, 1, 1);
+            transform.localScale = new Vector3(6, 6, 1);
         }
-        else if(horizontal < 0)
+        else if (horizontal < 0)
         {
-            transform.localScale = new Vector3(-1, 1, 1);
+            transform.localScale = new Vector3(-6, 6, 1);
         }
 
         //kiem tra nhan vat co dang dung tren mat dat hay khong
-        isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayerMask);
+        IsGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayerMask);
 
         //Neu dung tren mat dat thi co the nhay
-        if(Input.GetKeyDown(KeyCode.Space) && isGrounded)
+        if(Input.GetKeyDown(KeyCode.Space) && IsGrounded)
         {
             rb.velocity = new Vector2 (rb.velocity.x, jumpSpeed);
         }
+    }
 
+    private void TryCastSkill()
+    {
+        if (energy == null) return;
 
+        if (!energy.UseEnergy(skillEnergyCost)) return;
+
+        GameObject projectile = Instantiate
+        (
+            projectilePerfab,
+            firePoint.position,
+            Quaternion.identity
+        );
+
+        float direction = transform.localScale.x;
+        projectile.GetComponent<EnergyProjectile>().SetDirection(direction);
     }
     void OnDrawGizmosSelected()
     {
