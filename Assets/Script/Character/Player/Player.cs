@@ -49,7 +49,8 @@ public class Player : MonoBehaviour
     private float dashCooldownTimer; //dem nguoc hoi chieu
     private float dashDirection; //luu lai thoi gian luc bat dau dash
     public bool isAttacking { get; set; }
-    
+    [HideInInspector] public bool canFlip = true;
+
     private bool isInvincible;
 
     private void Start()
@@ -101,7 +102,6 @@ public class Player : MonoBehaviour
             StartCoroutine(HitEffect());
         }
     }
-
 
     private IEnumerator HitEffect()
     {
@@ -175,11 +175,11 @@ public class Player : MonoBehaviour
         transform.Translate(Vector2.right * horizontal * speed * Time.deltaTime);
 
         //kiem tra huong cua nhan vat quay sang trai hay sang phai, neu sang trai thi lat nguoc hinh lai
-        if (horizontal > 0)
+        if (horizontal > 0 && canFlip)
         {
             transform.localScale = new Vector3(6, 6, 1);
         }
-        else if (horizontal < 0)
+        else if (horizontal < 0 && canFlip)
         {
             transform.localScale = new Vector3(-6, 6, 1);
         }

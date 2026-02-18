@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -26,6 +26,7 @@ public class EnemyHealth : MonoBehaviour
         if (isDead) return;
 
         currentHealth -= dame;
+        Debug.Log(gameObject.name + " bi trung " + dame + " damage. Mau con lai: " + currentHealth);
 
         //Knockback(day lui)
         Rigidbody2D rb = GetComponent<Rigidbody2D>();

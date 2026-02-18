@@ -753,7 +753,7 @@ Transform:
   m_GameObject: {fileID: 215329851}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.194, y: -0.028, z: 0}
+  m_LocalPosition: {x: 0.247, y: 0.032, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1687,7 +1687,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f62d94b1feee093418ac9cdaa9c06d16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 5
+  maxHealth: 20
   hitStunTime: 0.2
   energyReward: 10
 --- !u!114 &612343649
@@ -1702,8 +1702,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c97d4ade331cc04ea5abaf60917b9ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 22
-  moveSpeed: 2
+  moveSpeed: 0
   groundCheck: {fileID: 1898994800}
   wallCheck: {fileID: 1515350132}
   checkDistance: 0.22
@@ -3106,7 +3105,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c97d4ade331cc04ea5abaf60917b9ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 22
   moveSpeed: 2
   groundCheck: {fileID: 993808182}
   wallCheck: {fileID: 43649186}
@@ -4487,6 +4485,7 @@ MonoBehaviour:
   firePoint: {fileID: 609967938}
   skillEnergyCost: 20
   baseColor: {r: 0.9622642, g: 0.7965487, b: 0.063545614, a: 0}
+  canFlip: 1
 --- !u!114 &1773480613
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4500,14 +4499,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   attackPoint: {fileID: 215329852}
-  attackRadius: 1
+  attackSize: {x: 2, y: 3}
   enemyLayerMask:
     serializedVersion: 2
     m_Bits: 128
   damage: 1
   knockbackForce: 0.2
-  comboResetTime: 0.5
-  attackDuration: 0.2
+  comboResetTime: 0.75
+  attackDurations:
+  - 0.2
+  - 0.3
+  - 0.6
 --- !u!114 &1773480614
 MonoBehaviour:
   m_ObjectHideFlags: 0

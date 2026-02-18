@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEditor.Tilemaps;
 using UnityEngine;
 
-public class WalkerEnemy : EnemyBase
+public class WalkerEnemy : MonoBehaviour
 {
     [Header("Move")]
     [SerializeField] private float moveSpeed;
