@@ -21,19 +21,41 @@ AnimationClip:
   - serializedVersion: 2
     curve:
     - time: 0
-      value: {fileID: 1789897041, guid: e66fffc6cf90a82458a21fd8eac983bb, type: 3}
-    - time: 0.125
-      value: {fileID: -26042157, guid: e66fffc6cf90a82458a21fd8eac983bb, type: 3}
+      value: {fileID: 21300000, guid: 519d4547d1d1e3545aad4c510e0d2d3b, type: 3}
+    - time: 0.083333336
+      value: {fileID: 21300000, guid: 8ce8bb97010c83749b0d9f428b206e7d, type: 3}
+    - time: 0.16666667
+      value: {fileID: 21300000, guid: 111f50a15e664eb4fb16a52e243088a8, type: 3}
     - time: 0.25
-      value: {fileID: 1754798128, guid: e66fffc6cf90a82458a21fd8eac983bb, type: 3}
-    - time: 0.375
-      value: {fileID: -1112368999, guid: e66fffc6cf90a82458a21fd8eac983bb, type: 3}
+      value: {fileID: 21300000, guid: 5da387e29722d834a9b8816092a8cf29, type: 3}
+    - time: 0.33333334
+      value: {fileID: 21300000, guid: 717dcedad29f55840b7db33df25e4959, type: 3}
+    - time: 0.41666666
+      value: {fileID: 21300000, guid: 6c48c19fc47322c49a818cd32ae9e97f, type: 3}
+    - time: 0.5
+      value: {fileID: 21300000, guid: 0547e4d817941c64d9fd47642a094f67, type: 3}
+    - time: 0.5833333
+      value: {fileID: 21300000, guid: 0fd6c8932d08fc54cadb871fd706e8cc, type: 3}
+    - time: 0.6666667
+      value: {fileID: 21300000, guid: 3c5da830b24fba9478ec9c18dbbe45d1, type: 3}
+    - time: 0.75
+      value: {fileID: 21300000, guid: d448c868de858ba43930be5e3c736be4, type: 3}
+    - time: 0.8333333
+      value: {fileID: 21300000, guid: a9f3105447e0bd141b3798c923a2783d, type: 3}
+    - time: 0.9166667
+      value: {fileID: 21300000, guid: ae7b1118f5a47204fb1a3d89ba1dae3e, type: 3}
+    - time: 1
+      value: {fileID: 21300000, guid: cc24cad1740a546419992c5b43da9f93, type: 3}
+    - time: 1.0833334
+      value: {fileID: 21300000, guid: 4cb398a72bc25cc439531c2c1785438c, type: 3}
+    - time: 1.1666666
+      value: {fileID: 21300000, guid: e43b4cc4585ebb7418f9133792f37a56, type: 3}
     attribute: m_Sprite
     path: 
     classID: 212
     script: {fileID: 0}
     flags: 2
-  m_SampleRate: 8
+  m_SampleRate: 12
   m_WrapMode: 0
   m_Bounds:
     m_Center: {x: 0, y: 0, z: 0}
@@ -50,16 +72,27 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     pptrCurveMapping:
-    - {fileID: 1789897041, guid: e66fffc6cf90a82458a21fd8eac983bb, type: 3}
-    - {fileID: -26042157, guid: e66fffc6cf90a82458a21fd8eac983bb, type: 3}
-    - {fileID: 1754798128, guid: e66fffc6cf90a82458a21fd8eac983bb, type: 3}
-    - {fileID: -1112368999, guid: e66fffc6cf90a82458a21fd8eac983bb, type: 3}
+    - {fileID: 21300000, guid: 519d4547d1d1e3545aad4c510e0d2d3b, type: 3}
+    - {fileID: 21300000, guid: 8ce8bb97010c83749b0d9f428b206e7d, type: 3}
+    - {fileID: 21300000, guid: 111f50a15e664eb4fb16a52e243088a8, type: 3}
+    - {fileID: 21300000, guid: 5da387e29722d834a9b8816092a8cf29, type: 3}
+    - {fileID: 21300000, guid: 717dcedad29f55840b7db33df25e4959, type: 3}
+    - {fileID: 21300000, guid: 6c48c19fc47322c49a818cd32ae9e97f, type: 3}
+    - {fileID: 21300000, guid: 0547e4d817941c64d9fd47642a094f67, type: 3}
+    - {fileID: 21300000, guid: 0fd6c8932d08fc54cadb871fd706e8cc, type: 3}
+    - {fileID: 21300000, guid: 3c5da830b24fba9478ec9c18dbbe45d1, type: 3}
+    - {fileID: 21300000, guid: d448c868de858ba43930be5e3c736be4, type: 3}
+    - {fileID: 21300000, guid: a9f3105447e0bd141b3798c923a2783d, type: 3}
+    - {fileID: 21300000, guid: ae7b1118f5a47204fb1a3d89ba1dae3e, type: 3}
+    - {fileID: 21300000, guid: cc24cad1740a546419992c5b43da9f93, type: 3}
+    - {fileID: 21300000, guid: 4cb398a72bc25cc439531c2c1785438c, type: 3}
+    - {fileID: 21300000, guid: e43b4cc4585ebb7418f9133792f37a56, type: 3}
   m_AnimationClipSettings:
     serializedVersion: 2
     m_AdditiveReferencePoseClip: {fileID: 0}
     m_AdditiveReferencePoseTime: 0
     m_StartTime: 0
-    m_StopTime: 0.5
+    m_StopTime: 1.25
     m_OrientationOffsetY: 0
     m_Level: 0
     m_CycleOffset: 0
@@ -79,14 +112,28 @@ AnimationClip:
   m_HasGenericRootTransform: 0
   m_HasMotionFloatCurves: 0
   m_Events:
-  - time: 0.125
+  - time: 0.41666666
     functionName: DealDamage
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 0.375
+  - time: 0.41666666
+    functionName: EnableWhirlwind
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 0.9166667
+    functionName: DisableWhirlwind
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 1.1666666
     functionName: EndAttack
     data: 
     objectReferenceParameter: {fileID: 0}

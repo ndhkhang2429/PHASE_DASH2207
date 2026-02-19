@@ -22,8 +22,18 @@ public class Player : MonoBehaviour
     [SerializeField] private float dashCoolDown; //thoi gian cho truoc khi dash lai
     [SerializeField] private int dashEnergyCost;
 
+    [Header("Jump System")]
+    [SerializeField] private int maxJumpCount = 2;
+    [SerializeField] private float coyoteTime = 0.1f;
+    [SerializeField] private float jumpBufferTime = 0.1f;
+
+    private int jumpCount;
+    private float coyoteTimer;
+    private float jumpBufferTimer;
+
     private PlayerEnergy energy;
-    private Rigidbody2D rb;
+    public Rigidbody2D rb;
+    public int facingDirection { get; private set; } = 1;
 
     [Header("Health")]
     [SerializeField] private int maxHealth;
@@ -64,8 +74,11 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        float move = Input.GetAxisRaw("Horizontal");
-        animator.SetFloat("Speed", Mathf.Abs(move));
+        horizontal = Input.GetAxisRaw("Horizontal");
+
+        animator.SetFloat("Speed", Mathf.Abs(horizontal));
+        animator.SetBool("IsGround", IsGrounded);
+        animator.SetFloat("YVelocity", rb.velocity.y);
 
         HandleDashInput();
         UpdateDash();
@@ -75,13 +88,73 @@ public class Player : MonoBehaviour
             TryCastSkill();
         }
 
-        if (!isDashing)
+        if(Input.GetKeyDown(KeyCode.Space))
         {
-            Move();
+            jumpBufferTimer = jumpBufferTime;
         }
 
-        animator.SetBool("IsGround", IsGrounded);
-        animator.SetFloat("YVelocity", rb.velocity.y);
+       HandleFlip();
+    }
+
+    private void FixedUpdate()
+    {
+        CheckGround();
+
+        if(!isDashing)
+        {
+            if (!isAttacking || !IsGrounded)
+            {
+                Move();
+            }
+        }
+
+        HandleJump();
+    }
+
+    private void HandleJump()
+    {
+        jumpBufferTimer -= Time.fixedDeltaTime;
+
+        if (IsGrounded)
+        {
+            coyoteTimer = coyoteTime;
+            jumpCount = 0;
+        }
+        else
+        {
+            coyoteTimer -= Time.fixedDeltaTime;
+        }
+
+        if (jumpBufferTimer > 0)
+        {
+            if (coyoteTimer > 0 || jumpCount < maxJumpCount)
+            {
+                PerformJump();
+                jumpBufferTimer = 0;
+            }
+        }
+    }
+
+    private void PerformJump()
+    {
+        rb.velocity = new Vector2(rb.velocity.x, jumpSpeed);
+        jumpCount++;
+        coyoteTimer = 0;
+    }
+
+    private void CheckGround()
+    {
+        IsGrounded = Physics2D.OverlapCircle
+        (
+            groundCheck.position,
+            groundCheckRadius,
+            groundLayerMask
+        );
+    }
+
+    private void Move()
+    {
+        rb.velocity = new Vector2(horizontal * speed, rb.velocity.y);
     }
 
     public void TakeDame(int dame)
@@ -159,41 +232,8 @@ public class Player : MonoBehaviour
         isDashing = true;
         dashTimer = dashDuration;
         dashCooldownTimer = dashCoolDown;
-        dashDirection = transform.localScale.x;
+        dashDirection = facingDirection;
     }
-
-    private void Move()
-    {
-        //khoa di chuyen player khi tan cong
-        if(isAttacking)
-        {
-            rb.velocity = new Vector2(0, rb.velocity.y);
-            return;
-        }
-        //di chuyen sang trai sang phai
-        horizontal = Input.GetAxisRaw("Horizontal");
-        transform.Translate(Vector2.right * horizontal * speed * Time.deltaTime);
-
-        //kiem tra huong cua nhan vat quay sang trai hay sang phai, neu sang trai thi lat nguoc hinh lai
-        if (horizontal > 0 && canFlip)
-        {
-            transform.localScale = new Vector3(6, 6, 1);
-        }
-        else if (horizontal < 0 && canFlip)
-        {
-            transform.localScale = new Vector3(-6, 6, 1);
-        }
-
-        //kiem tra nhan vat co dang dung tren mat dat hay khong
-        IsGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayerMask);
-
-        //Neu dung tren mat dat thi co the nhay
-        if(Input.GetKeyDown(KeyCode.Space) && IsGrounded)
-        {
-            rb.velocity = new Vector2 (rb.velocity.x, jumpSpeed);
-        }
-    }
-
     private void TryCastSkill()
     {
         if (energy == null) return;
@@ -207,8 +247,22 @@ public class Player : MonoBehaviour
             Quaternion.identity
         );
 
-        float direction = transform.localScale.x;
+        float direction = facingDirection;
         projectile.GetComponent<EnergyProjectile>().SetDirection(direction);
+    }
+
+    private void HandleFlip()
+    {
+        if(!canFlip) return;
+        if (horizontal == 0) return;
+
+        facingDirection = horizontal > 0 ? 1 : -1;
+
+        transform.localScale = new Vector3(
+            6 * facingDirection,
+            6,
+            1
+            );
     }
     void OnDrawGizmosSelected()
     {
