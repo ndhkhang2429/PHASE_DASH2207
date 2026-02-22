@@ -49,6 +49,7 @@ public class Player : MonoBehaviour
     [SerializeField] private Transform firePoint;
     [SerializeField] private int skillEnergyCost;
 
+
     //Kiem tra o mat dat
     public bool IsGrounded { get; private set;}
     [SerializeField] public Color baseColor;

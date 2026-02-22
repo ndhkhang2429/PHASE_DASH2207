@@ -18,13 +18,12 @@ public class PlayerAttack : MonoBehaviour
     [Header("Combo Data")]
     [SerializeField] private Vector2 attack1Size;
     [SerializeField] private Vector2 attack2Size;
-    [SerializeField] private Vector2 attack3Size;
 
     [SerializeField] private int attack1Damage;
     [SerializeField] private int attack2Damage;
-    [SerializeField] private int attack3Damage;
+    [SerializeField] private GameObject windPrefab;
+    [SerializeField] private Transform attack3firePoint;
 
-    [SerializeField] private GameObject windHitBox;
     [SerializeField] private float knockbackForce;
     [SerializeField] private float comboResetTime;
 
@@ -129,16 +128,6 @@ public class PlayerAttack : MonoBehaviour
 
         animator.SetTrigger("AirAttack");
     }
-    //Bat tat bang animation event
-    public void EnableWhirlwind()
-    {
-        windHitBox.SetActive(true);
-    }
-
-    public void DisableWhirlwind()
-    {
-        windHitBox.SetActive(false);
-    }
 
     private void DealAirDamage()
     {
@@ -182,8 +171,6 @@ public class PlayerAttack : MonoBehaviour
                 break;
 
             case 3:
-                size = attack3Size;
-                damage = attack3Damage;
                 break;
         }
 
@@ -205,6 +192,18 @@ public class PlayerAttack : MonoBehaviour
             }
         }
     }
+    public void SpawnWind()
+    {
+        Debug.Log("SPAWN WIND");
+        GameObject wind = Instantiate(windPrefab, attack3firePoint.position, Quaternion.identity);
+
+        WindProjectile projectile = wind.GetComponent<WindProjectile>();
+
+        if (projectile != null)
+        {
+            projectile.SetDirection(player.facingDirection);
+        }
+    }
     private void OnDrawGizmosSelected()
     {
         if (attackPoint == null) return;
@@ -214,7 +213,6 @@ public class PlayerAttack : MonoBehaviour
         Vector2 size = attack1Size;
 
         if (comboStep == 2) size = attack2Size;
-        if (comboStep == 3) size = attack3Size;
 
         Gizmos.DrawWireCube(attackPoint.position, size);
         Gizmos.DrawWireCube(airAttackPoint.position, airSize);
