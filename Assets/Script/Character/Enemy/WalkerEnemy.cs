@@ -1,64 +1,152 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Tilemaps;
 using UnityEngine;
 
-public class WalkerEnemy : MonoBehaviour
+public class WalkerEnemy : EnemyBase
 {
-    [Header("Move")]
-    [SerializeField] private float moveSpeed;
-    [SerializeField] private Transform groundCheck;//kiem tra co dat phia duoi ko
-    [SerializeField] private Transform wallCheck;//kiem tra co tuong phia truoc ko
-    [SerializeField] private float checkDistance;//do dai tia raycast
-    public LayerMask groundLayer;//layer nao duoc xem la mat dat
+    [Header("Patrol Points")]
+    [SerializeField] private Transform leftPoint;
+    [SerializeField] private Transform rightPoint;
 
-    private bool movingRight = true;
+    [Header("Walker Settings")]
+    [SerializeField] private float detectRange;
+    [SerializeField] private float attackRange;
+    [SerializeField] private float attackCooldown;
+
+    [Header ("Attack")]
+    [SerializeField] private Transform attackPoint;
+    [SerializeField] private float attackRadius;
+    [SerializeField] private int attackDamage;
+    [SerializeField] private LayerMask playerLayer;
+
+    private Transform player; //Luu transform cua player de khoi phai tim moi frame
+    private float lastAttackTime;
+    private int moveDirection = 1;
+    private float leftLimit;
+    private float rightLimit;
+
+
+    protected override void Awake()
+    {
+        base.Awake();
+
+        leftLimit = leftPoint.position.x;
+        rightLimit = rightPoint.position.x;
+
+        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+        if (playerObj != null)
+            player = playerObj.transform;
+    }
 
     //update chay moi frame voi moi frame goi ham move
-    private void Update()
+    protected override void LogicUpdate()
     {
-        Move();
+        if (player == null) return;
+
+        float distance = Mathf.Abs(player.position.x - transform.position.x);// tinh khoang cach tu enemy den player
+
+        //Neu player vao vung detect => duoi player
+        if (distance <= detectRange && IsInsidePatrolZone())
+        {
+            if(distance > attackRange)
+            {
+                Chase();
+            }
+            else
+            {
+                TryAttack();
+            }
+        }
+        else
+        {
+            Patrol();
+        }
     }
 
-    private void Move()
+    private void Patrol()
     {
-        Vector2 direction = movingRight ? Vector2.right : Vector2.left;
-        transform.Translate(direction * moveSpeed * Time.deltaTime);
-        RaycastHit2D groundInfo = Physics2D.Raycast(//kiem tra dat phia duoi
+        rb.velocity = new Vector2(moveDirection * moveSpeed, rb.velocity.y);
 
-            groundCheck.position,//ban tia tu groundcheck
-            Vector2.down,//huong xuong duoi
-            checkDistance,//dai chechDistance
-            groundLayer//chi va cham voi groundLayer
-        );
+        if (moveDirection == 1 && transform.position.x >= rightLimit)
+            SetDirection(-1);
+        else if (moveDirection == -1 && transform.position.x <= leftLimit)
+            SetDirection(1);
 
-        RaycastHit2D wallInfo = Physics2D.Raycast(//kiem tra tuong phia truoc
-            wallCheck.position,
-            movingRight ? Vector2.right : Vector2.left,
-            checkDistance,
-            groundLayer
-        );
-
-        if(!groundInfo.collider || wallInfo.collider)
+        animator.SetBool("isRunning", true);
+    }
+    private void SetDirection(int direction)
+    {
+        moveDirection = direction;
+        if ((moveDirection == 1 && !isFacingRight) ||
+        (moveDirection == -1 && isFacingRight))
         {
-            Flip();//quay dau
+            Flip();
+        }
+    }
+
+    private void Chase()
+    {
+        int directionToPlayer = player.position.x > transform.position.x ? 1 : -1;
+
+        // Không cho vượt khỏi patrol zone
+        if ((directionToPlayer == 1 && transform.position.x >= rightPoint.position.x) ||
+            (directionToPlayer == -1 && transform.position.x <= leftPoint.position.x))
+        {
+            Patrol();
+            return;
         }
 
+        SetDirection(directionToPlayer);
+
+        rb.velocity = new Vector2(moveDirection * moveSpeed, rb.velocity.y);
+
+        animator.SetBool("isRunning", true);
     }
 
-    private void Flip()
+    private void TryAttack()
     {
-        movingRight = !movingRight;
-        Vector3 localScale = transform.localScale;
-        localScale.x *= -1;
-        transform.localScale = localScale;
-    }
+        rb.velocity = Vector2.zero;
+        animator.SetBool("isRunning", false);
 
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if(collision.gameObject.CompareTag("Player"))
+        if (Time.time >= lastAttackTime + attackCooldown)
         {
-            GameManager.Instance.GameOver();
+            lastAttackTime = Time.time;
+            animator.SetTrigger("Attack");
+
+            // Sau này có thể thêm damage bằng Animation Event
         }
+    }
+
+    private void DealDamage()
+    {
+        Collider2D[] hits = Physics2D.OverlapCircleAll(
+            attackPoint.position,
+            attackRadius,
+            playerLayer);
+
+        foreach (Collider2D hit in hits)
+        {
+            Player playerHealth = hit.GetComponent<Player>();
+            if (playerHealth != null)
+            {
+                playerHealth.TakeDame(attackDamage);
+            }
+        }
+    }
+
+    private bool IsInsidePatrolZone()
+    {
+        return transform.position.x >= leftLimit &&
+               transform.position.x <= rightLimit;
+    }
+
+    // Hiển thị vùng attack trong Scene view
+    private void OnDrawGizmosSelected()
+    {
+        if (attackPoint == null) return;
+
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(attackPoint.position, attackRadius);
     }
 }

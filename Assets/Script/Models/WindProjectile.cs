@@ -40,7 +40,7 @@ public class WindProjectile : MonoBehaviour
             EnemyHealth enemy = collision.GetComponent<EnemyHealth>();
             if (enemy != null)
             {
-                Vector2 dir = new Vector2(direction * 0.3f, 5f).normalized;
+                Vector2 dir = new Vector2(direction * 0.3f, 1f).normalized;
                 enemy.TakeDamage(damage, dir, knockBack);
             }
 

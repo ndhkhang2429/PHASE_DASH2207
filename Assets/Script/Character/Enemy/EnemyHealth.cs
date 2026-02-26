@@ -15,6 +15,7 @@ public class EnemyHealth : MonoBehaviour
     [SerializeField] private int energyReward;
 
     private bool isDead = false;
+    public bool IsStunned { get; private set; }
 
     private void Start()
     {
@@ -47,35 +48,28 @@ public class EnemyHealth : MonoBehaviour
 
     private IEnumerator HitStun()
     {
-        MonoBehaviour[] scripts = GetComponentsInChildren<MonoBehaviour>();
-
-        foreach (MonoBehaviour script in scripts)
-        {
-            if (script != this)
-            {
-                script.enabled = false;
-            }
-        }
-
+        IsStunned = true;
         yield return new WaitForSeconds(hitStunTime);
-
-        foreach (MonoBehaviour script in scripts)
-        {
-            if (script != this)
-            {
-                script.enabled = true;
-            }
-        }
+        IsStunned = false;
     }
 
     private void Die()
     {
+        isDead = true;
         PlayerEnergy energy = FindAnyObjectByType<PlayerEnergy>();
         if (energy != null)
         {
             energy.GainEnergy(energyReward);
         }
-        isDead = true;
-        Destroy(gameObject);
+
+        EnemyBase enemy = GetComponent<EnemyBase>();
+        if (enemy != null)
+        {
+            enemy.OnDeath();
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 }

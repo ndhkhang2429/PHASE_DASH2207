@@ -2,49 +2,142 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyShooter : MonoBehaviour
+public class EnemyShooter : EnemyBase
 {
+    [Header("Patrol")]
+    [SerializeField] private Transform leftPoint;
+    [SerializeField] private Transform rightPoint;
+    public bool canMove = true;
+
+    [Header("Shoot")]
+    [SerializeField] private GameObject bulletPrefab;
     [SerializeField] private Transform firePoint;
-    [SerializeField] private GameObject bulletNormal;
     [SerializeField] private Transform target;
-    [SerializeField] private float fireRate;
+    [SerializeField] private float shootRange;
+    [SerializeField] private float shootCooldown;
+    [SerializeField] private float bulletSpeed;
 
-    [SerializeField] private float detectRange;
-    private float fireTimer;
+    private Transform player;
+    private float lastShootTime;
+    private bool movingRight = true;
+    private bool isAttacking = false;
 
-    private void Update()
+    protected override void Awake()
     {
-        if (GameManager.Instance.IsGameOver || target == null) return; //neu game over, eney ngung hoat dong
+        base.Awake();
+        player = GameObject.FindGameObjectWithTag("Player").transform;
 
-        float distance = Vector2.Distance(transform.position, target.position);
+        leftPoint.parent = null;
+        rightPoint.parent = null;
+    }
+    protected override void LogicUpdate()
+    {
+        if (isDead) return;
 
-        if (distance > detectRange)
+        if (PlayerInRange())
         {
+            isAttacking = true;
+            AttackState();
+        }
+        else
+        {
+            isAttacking = false;
+            Patrol();
+        }
+    }
+
+    private void Patrol()
+    {
+        if (!canMove)
+        {
+            rb.velocity = new Vector2(0, rb.velocity.y);
+            animator.SetBool("isWalking", false);
             return;
         }
 
-        if (distance <= detectRange)
+        animator.SetBool("isWalking", true);
+
+        if (movingRight)
         {
-            fireTimer -= Time.deltaTime;
-            if (fireTimer <= 0)
+            rb.velocity = new Vector2(moveSpeed, rb.velocity.y);
+
+            if (transform.position.x >= rightPoint.position.x)
             {
-                Shoot();
-                fireTimer = fireRate;
+                movingRight = false;
+                Flip();
+            }
+        }
+        else
+        {
+            rb.velocity = new Vector2(-moveSpeed, rb.velocity.y);
+
+            if (transform.position.x <= leftPoint.position.x)
+            {
+                movingRight = true;
+                Flip();
             }
         }
     }
+    private bool PlayerInRange()
+    {
+        if (player == null) return false;
 
+        return Vector2.Distance(transform.position, player.position) <= shootRange;
+    }
+
+    private void AttackState()
+    {
+        rb.velocity = new Vector2(0, rb.velocity.y);
+        animator.SetBool("isWalking", false);
+
+        FacePlayer();
+
+        if (Time.time >= lastShootTime + shootCooldown)
+        {
+            lastShootTime = Time.time;
+            Shoot();
+        }
+    }
 
     private void Shoot()
     {
-        GameObject bullet = Instantiate(bulletNormal, firePoint.position, Quaternion.identity);
+        if (player == null) return;
 
-        // Tính hướng từ Enemy → Player
-        Vector2 direction = (target.position - firePoint.position).normalized;
+        animator.SetTrigger("Shoot");
 
-        // Truyền hướng cho đạn
-        bullet.GetComponent<EnemyBullet>().SetDirection(direction);
+        GameObject bullet = Instantiate(bulletPrefab, firePoint.position, Quaternion.identity);
+
+        Vector2 direction = (player.position - firePoint.position).normalized;
+
+        Rigidbody2D bulletRb = bullet.GetComponent<Rigidbody2D>();
+        bulletRb.velocity = direction * bulletSpeed;
+
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        bullet.transform.rotation = Quaternion.Euler(0, 0, angle);
     }
 
+    private void ShootLogic()
+    {
+        rb.velocity = new Vector2(0, rb.velocity.y);
 
+        if (Time.time >= lastShootTime + shootCooldown)
+        {
+            lastShootTime = Time.time;
+            Shoot();
+        }
+    }
+
+    private void FacePlayer()
+    {
+        if (player.position.x > transform.position.x && !movingRight)
+        {
+            movingRight = true;
+            Flip();
+        }
+        else if (player.position.x < transform.position.x && movingRight)
+        {
+            movingRight = false;
+            Flip();
+        }
+    }
 }

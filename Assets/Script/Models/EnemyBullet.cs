@@ -1,45 +1,27 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UIElements;
-
 
 public class EnemyBullet : MonoBehaviour
 {
-    [SerializeField] private float speed;
-    private Vector2 direction;
-
-    private Rigidbody2D rb;
+    [SerializeField] private int damage;
+    [SerializeField] private float lifeTime;
 
     private void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
-    }
-    public void SetDirection(Vector2 dir)
-    {
-        direction = dir.normalized;
-    }
-
-    private void Update()
-    {
-        transform.Translate(direction * speed * Time.deltaTime);
+        Destroy(gameObject, lifeTime);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.CompareTag("Ground"))
+        if (collision.CompareTag("Player"))
         {
+            collision.GetComponent<Player>().TakeDame(damage);
             Destroy(gameObject);
         }
 
-        if(collision.CompareTag("Player"))
+        if (collision.CompareTag("Ground"))
         {
-            Player player = collision.GetComponent<Player>();
-            if (player != null)
-            {
-                player.TakeDame(1);
-            }
-
             Destroy(gameObject);
         }
     }

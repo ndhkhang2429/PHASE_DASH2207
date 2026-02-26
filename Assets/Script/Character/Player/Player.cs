@@ -55,6 +55,7 @@ public class Player : MonoBehaviour
     [SerializeField] public Color baseColor;
 
     //kiem tra trang thai dash
+    private float originalGravity;//vung bien private
     private bool isDashing;
     private float dashTimer; //dem nguoc thoi gian dash
     private float dashCooldownTimer; //dem nguoc hoi chieu
@@ -71,6 +72,7 @@ public class Player : MonoBehaviour
         currentHealth = maxHealth;
         baseColor = spriteRenderer.color;
         energy = GetComponent<PlayerEnergy>();
+        originalGravity = rb.gravityScale;
     }
 
     private void Update()
@@ -193,6 +195,21 @@ public class Player : MonoBehaviour
         Destroy(gameObject);
     }
 
+
+    private void Dash()
+    {
+        isDashing = true;
+        isInvincible = true;
+        canFlip = false;
+
+        dashTimer = dashDuration;
+        dashCooldownTimer = dashCoolDown;
+        dashDirection = facingDirection;
+
+        rb.gravityScale = 0; // tat gravity
+        animator.SetTrigger("Dash");
+    }
+
     //kiem tra dash trong tung frame hinh 
     private void UpdateDash()
     {
@@ -206,7 +223,10 @@ public class Player : MonoBehaviour
         if (dashTimer <= 0)
         {
             isDashing = false;
-            rb.velocity = Vector2.zero;
+            isInvincible = false;
+            canFlip = true;
+
+            rb.gravityScale = originalGravity;
         }
     }
 
@@ -228,13 +248,6 @@ public class Player : MonoBehaviour
 
     }
 
-    private void Dash()
-    {
-        isDashing = true;
-        dashTimer = dashDuration;
-        dashCooldownTimer = dashCoolDown;
-        dashDirection = facingDirection;
-    }
     private void TryCastSkill()
     {
         if (energy == null) return;
