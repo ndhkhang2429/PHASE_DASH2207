@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 6986668901871718469}
   - component: {fileID: 3530499591766821192}
   m_Layer: 0
-  m_Name: EnergyProjectile
+  m_Name: EnergyProjectile(Player)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -1,13 +1,12 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FlyingEnemy : MonoBehaviour
+public class FlyingEnemy : EnemyBase
 {
     [Header("Patrol")] //khu vuc bay tu A->B cua enemy
-    [SerializeField] private Transform PointA;
-    [SerializeField] private Transform PointB;
-    [SerializeField] private float speed;
+    [SerializeField] private Transform leftPoint;
+    [SerializeField] private Transform rightPoint;
 
     [Header("Attack")]
     [SerializeField] private GameObject bulletPrefab;
@@ -15,15 +14,28 @@ public class FlyingEnemy : MonoBehaviour
     [SerializeField] private float detectRange;
     [SerializeField] private float fireCooldown;
 
-    private Transform targetPoint;
-    private float fireTimer;
+    private Vector3 pointAPosition;
+    private Vector3 pointBPosition;
+    private Vector3 targetPoint;
 
-    private void Start()
+    private float fireTimer;
+    private Transform player;
+
+    protected override void Awake()
     {
-        targetPoint = PointB;
+        base.Awake();
+        isFacingRight = false;
+
+        player = GameObject.FindGameObjectWithTag("Player")?.transform;
+
+        // LƯU WORLD POSITION
+        pointAPosition = leftPoint.position;
+        pointBPosition = rightPoint.position;
+
+        targetPoint = pointAPosition;
     }
 
-    private void Update()
+    protected override void LogicUpdate()
     {
         Patrol();
         DetectAndShoot();
@@ -35,24 +47,24 @@ public class FlyingEnemy : MonoBehaviour
         transform.position = Vector2.MoveTowards
             (
                 transform.position,
-                targetPoint.position,
-                speed * Time.deltaTime
+                targetPoint,
+                moveSpeed * Time.deltaTime
             );
 
-        //neu distance < 0.1, enemy da toi noi, sau do flip
-        if(Vector2.Distance( transform.position, targetPoint.position ) < 0.3f )
+        if (Vector2.Distance(transform.position, targetPoint) < 0.3f)
         {
-            targetPoint = targetPoint == PointA ? PointB : PointA;
+            targetPoint = targetPoint == pointAPosition ? pointBPosition : pointAPosition;
             Flip();
         }
+        animator.SetBool("isFlying", true);
     }
 
     private void DetectAndShoot()
     {
-        fireTimer += Time.deltaTime;
-        GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player == null) return;
 
+        fireTimer += Time.deltaTime;
+     
         float distance = Vector2.Distance(transform.position, player.transform.position);
         if (distance < detectRange && fireTimer >= fireCooldown)
         {
@@ -63,16 +75,15 @@ public class FlyingEnemy : MonoBehaviour
 
     private void Shoot(Transform player)
     {
+        if (player.position.x > transform.position.x && !isFacingRight)
+            Flip();
+        else if (player.position.x < transform.position.x && isFacingRight)
+            Flip();
+
         Vector2 direction = (player.position - firePoint.position).normalized;
 
         GameObject bullet = Instantiate(bulletPrefab, firePoint.position, Quaternion.identity);
         bullet.GetComponent<FlyingEnemyBullet>().SetDirection(direction);//tao vien dan tai firePoint
-    }
-
-    private void Flip()
-    {
-        Vector3 scale = transform.localScale;
-        scale.x *= -1;
-        transform.localScale = scale;
+        animator.SetTrigger("Shoot");
     }
 }

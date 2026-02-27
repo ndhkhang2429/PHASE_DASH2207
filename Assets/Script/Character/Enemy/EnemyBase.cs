@@ -11,12 +11,14 @@ public class EnemyBase : MonoBehaviour
 
     protected bool isFacingRight = true;
     protected bool isDead = false;
+    protected SpriteRenderer spriteRenderer;
 
     protected virtual void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         health = GetComponent<EnemyHealth>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     protected virtual void Update()
@@ -63,9 +65,6 @@ public class EnemyBase : MonoBehaviour
     protected void Flip()
     {
         isFacingRight = !isFacingRight;
-
-        Vector3 scale = transform.localScale;
-        scale.x *= -1;
-        transform.localScale = scale;
+        spriteRenderer.flipX = !spriteRenderer.flipX;
     }
 }
