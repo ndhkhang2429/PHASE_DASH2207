@@ -160,16 +160,28 @@ public class Player : MonoBehaviour
         rb.velocity = new Vector2(horizontal * speed, rb.velocity.y);
     }
 
-    public void TakeDame(int dame)
+    public void TakeDame(int damage)
+    {
+        Vector2 dir = Vector2.zero;
+        TakeDamage(damage, dir, 2f);
+    }
+
+    public void TakeDamage(int dame, Vector2 knockbackDir, float knockbackForce)
     {
         if(isInvincible)
         {
             return;
         }
 
+        if (currentHealth <= 0) return;
+
         currentHealth -= dame;
 
-        if(currentHealth <= 0)
+        // Knockback
+        rb.velocity = Vector2.zero;
+        rb.AddForce(knockbackDir * knockbackForce, ForceMode2D.Impulse);
+
+        if (currentHealth <= 0)
         {
             Die();
         }
@@ -182,16 +194,32 @@ public class Player : MonoBehaviour
     private IEnumerator HitEffect()
     {
         isInvincible = true;
+        canFlip = false;
+        animator.SetTrigger("Hurt");
         spriteRenderer.color = hitColor;
+
         yield return new WaitForSeconds(hitFlashTime);
 
         spriteRenderer.color = baseColor;
+
+        canFlip = true;
         isInvincible = false;
     }
 
     private void Die()
     {
-        GameManager.Instance.GameOver();//player chet ->ket thuc game
+        isInvincible = true;
+        rb.velocity = Vector2.zero;
+        rb.gravityScale = 0;
+
+        animator.SetTrigger("Die");
+
+        this.enabled = false; // tắt script điều khiển
+    }
+
+    private void OnDeathAnimationEnd()
+    {
+        GameManager.Instance.GameOver();
         Destroy(gameObject);
     }
 

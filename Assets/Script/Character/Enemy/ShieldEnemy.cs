@@ -1,97 +1,86 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
-public class ShieldEnemy : MonoBehaviour
+public class ShieldEnemy : EnemyBase
 {
     private enum State
     {
         Patrol,
-        Chase,
+        Shield,
         Attack,
-        Turn,
     }
 
     [Header("Patrol")]
     [SerializeField] private Transform PointA;
     [SerializeField] private Transform PointB;
-    [SerializeField] private float patrolSpeed;
 
     [Header("Combat")]
     [SerializeField] private float detectRange;
     [SerializeField] private float attackRange;
-    [SerializeField] private float chaseSpeed;
+    [SerializeField] private float attackCooldown;
 
-    [Header("Turn")]
-    [SerializeField] private float turnDelay;
+    [Header("Attack")]
+    [SerializeField] private Transform attackPoint;
+    [SerializeField] private Vector2 attackSize;
+    [SerializeField] private int attackDamage;
+    [SerializeField] private LayerMask playerLayer;
+    [SerializeField] private float attackKnockbackForce;
 
     private State currentState;
     private Transform player;
     private Transform targetPoint;
 
-    private bool isFacingRight = true;
-    private bool isTurning = false;
+    private float leftLimit;
+    private float rightLimit;
+    private int moveDirection = 1;
 
-    private void Start()
+    private bool isShielding = true;
+    private float attackTimer;
+    private bool isAttacking;
+
+    protected override void Awake()
     {
+        base.Awake();
+
+        leftLimit = PointA.position.x;
+        rightLimit = PointB.position.x;
+
         currentState = State.Patrol;
-        player = GameObject.FindGameObjectWithTag("Player")?.transform;
         targetPoint = PointB;
 
+        player = GameObject.FindGameObjectWithTag("Player")?.transform;
+        health = GetComponent<EnemyHealth>();
     }
 
-    private void Update()
+    protected override void LogicUpdate()
     {
+        if (player == null) return;
+
         float distance = Mathf.Infinity;
         if (player != null)
             distance = Vector2.Distance(transform.position, player.position);
+
+        attackTimer += Time.deltaTime;
 
         switch (currentState)
         {
             case State.Patrol:
                 Patrol();
 
-                if(player != null && distance < detectRange)
+                if(distance < detectRange)
                 {
-                    currentState = State.Chase;
+                    currentState = State.Shield;
                 }
                 break;
 
-            case State.Chase:
-                if (player == null || distance > detectRange)
-                {
-                    currentState = State.Patrol;
-                    break;
-                }
-
-                Chase();
-
-                if(distance < attackRange)
-                {
-                    currentState = State.Attack;
-                }
-
-                if(IsPlayerBehind() && !isTurning)
-                {
-                    StartCoroutine(TurnRoutine());
-                }
+            case State.Shield:
+                ShieldState(distance);
                 break;
 
             case State.Attack:
-                if (player == null || distance > detectRange)
-                {
-                    currentState = State.Patrol;
-                    break;
-                }
-
-                if (distance > attackRange)
-                    currentState = State.Chase;
-
-                Attack();
-
-                if (IsPlayerBehind() && !isTurning)
-                    StartCoroutine(TurnRoutine());
-
+                AttackState();
                 break;
         }
     }
@@ -99,64 +88,134 @@ public class ShieldEnemy : MonoBehaviour
     //Patrol
     private void Patrol()
     {
-        transform.position = Vector2.MoveTowards
-            (
-                transform.position,
-                targetPoint.position,
-                patrolSpeed * Time.deltaTime
-            );
+        isShielding = false;
+        animator.SetBool("isRunning", true);
+        animator.SetBool("isShield", false);
 
-        if(Vector2.Distance(transform.position, targetPoint.position) < 0.1f)
+        rb.velocity = new Vector2(moveDirection * moveSpeed, rb.velocity.y);
+
+        if (moveDirection == 1 && transform.position.x >= rightLimit)
+            SetDirection(-1);
+        else if (moveDirection == -1 && transform.position.x <= leftLimit)
+            SetDirection(1);
+
+        
+    }
+
+    //Shield
+    private void ShieldState(float distance)
+    {
+        rb.velocity = Vector2.zero;
+
+        animator.SetBool("isRunning", false);
+        animator.SetBool("isShield", true);
+
+        isShielding = true;
+
+        FacePlayer();
+
+        if (distance < attackRange && attackTimer >= attackCooldown)
+        { 
+            isShielding = false;
+            animator.SetBool("isShield", false);
+            animator.SetTrigger("Attack");
+            isAttacking = true;
+            currentState = State.Attack;
+        }
+
+        if (distance > detectRange)
         {
-            targetPoint = targetPoint == PointA ? PointB : PointA;
-            FlipImmediate();
+            currentState = State.Patrol;
+        }
+    }
+    private void SetDirection(int direction)
+    {
+        moveDirection = direction;
+        if ((moveDirection == 1 && !isFacingRight) ||
+        (moveDirection == -1 && isFacingRight))
+        {
+            Flip();
         }
     }
 
-    //Chase
-    private void Chase()
-    {
-        float direction = isFacingRight ? 1 : -1;
-        transform.Translate(Vector2.right * direction * chaseSpeed * Time.deltaTime);
-    }
-
     //Attack
-    private void Attack()
+    private void AttackState()
     {
-        Debug.Log("ShieldEnemy Attack");
+        if (isAttacking) return;
+
+        isAttacking = true;
+        isShielding = false;
+
+        animator.SetBool("isShield", false);
+        animator.SetTrigger("Attack");
+
+        rb.velocity = Vector2.zero;
     }
 
-    //Turn with delay
-    private IEnumerator TurnRoutine()
+    private void DealDamage()
     {
-        isTurning = true;
-        currentState = State.Turn;
+        Collider2D[] players = Physics2D.OverlapBoxAll(
+        attackPoint.position,
+        attackSize,
+        0f,
+        playerLayer
+        );
 
-        yield return new WaitForSeconds(turnDelay);
-
-        FlipImmediate();
-
-        currentState = State.Chase;
-        isTurning = false;
+        foreach (Collider2D p in players)
+        {
+            Player health = p.GetComponent<Player>();
+            if (health != null)
+            {
+                Vector2 knockDir = (p.transform.position - transform.position).normalized;
+                health.TakeDamage(attackDamage, knockDir, attackKnockbackForce);
+            }
+        }
     }
 
-    private bool IsPlayerBehind()
+    public void OnAttackAnimationEnd()
     {
-        if (isFacingRight && player.position.x < transform.position.x)
-            return true;
-
-        if (!isFacingRight && player.position.x > transform.position.x)
-            return true;
-
-        return false;
+        isAttacking = false;
+        attackTimer = 0;
+        currentState = State.Shield;
     }
 
-    private void FlipImmediate()
+    //Face player
+    private void FacePlayer()
     {
-        isFacingRight = !isFacingRight;
+        if (player.position.x > transform.position.x && !isFacingRight)
+            Flip();
+        else if (player.position.x < transform.position.x && isFacingRight)
+            Flip();
+    }
 
-        Vector3 scale = transform.localScale;
-        scale.x *= -1;
-        transform.localScale = scale;
+    public bool TryTakeDamage(int damage, Transform attacker, float knockbackForce)
+    {
+        if (health == null) return false;
+
+        Vector2 direction = attacker.position - transform.position ;
+
+        bool attackerInFront =
+            (isFacingRight && direction.x > 0) ||
+            (!isFacingRight && direction.x < 0);
+
+        if (isShielding && attackerInFront)
+        {
+            Debug.Log("Blocked by Shield");
+            return false;
+        }
+
+        Vector2 knockbackDir = (transform.position - attacker.position).normalized;
+
+        health.TakeDamage(damage, knockbackDir, knockbackForce);
+
+        return true;
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        if (attackPoint == null) return;
+
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireCube(attackPoint.position, attackSize);
     }
 }

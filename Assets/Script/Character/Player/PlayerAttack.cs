@@ -143,12 +143,28 @@ public class PlayerAttack : MonoBehaviour
 
         foreach (Collider2D c in enemies)
         {
-            EnemyHealth health = c.GetComponent<EnemyHealth>();
-            if(health != null)
+            ShieldEnemy shield = c.GetComponent<ShieldEnemy>();
+
+            Vector2 direction = (c.transform.position - transform.position).normalized;
+
+            bool didDamage = false;
+            if (shield != null)
             {
-                Vector2 direction = (c.transform.position - transform.position).normalized;
-                health.TakeDamage(airDamage, direction, airKnockBack);
-                energy.GainEnergy(2);
+                didDamage = shield.TryTakeDamage(airDamage, transform, knockbackForce * 0.8f);
+            }
+            else
+            {
+                EnemyHealth health = c.GetComponent<EnemyHealth>();
+                if (health != null)
+                {
+                    health.TakeDamage(airDamage, direction, knockbackForce * 0.8f);
+                    didDamage = true;
+                }
+            }
+
+            if( didDamage )
+            {
+                energy.GainEnergy(1);
             }
         }
     }
@@ -183,11 +199,26 @@ public class PlayerAttack : MonoBehaviour
 
         foreach (Collider2D enemy in enemies )
         {
-            EnemyHealth health = enemy.GetComponent<EnemyHealth>();
-            if( health != null )
-            { 
-                Vector2 direction = (enemy.transform.position - transform.position).normalized;
-                health.TakeDamage(damage, direction, knockbackForce);
+            ShieldEnemy shield = enemy.GetComponent<ShieldEnemy>();
+
+            Vector2 direction = (enemy.transform.position - transform.position).normalized;
+            bool didDamage = false;
+            if (shield != null)
+            {
+                didDamage = shield.TryTakeDamage(damage, transform, knockbackForce);
+            }
+            else
+            {
+                EnemyHealth health = enemy.GetComponent<EnemyHealth>();
+                if (health != null)
+                {
+                    health.TakeDamage(damage, direction, knockbackForce);
+                    didDamage = true;
+                }
+            }
+
+            if (didDamage)
+            {
                 energy.GainEnergy(3);
             }
         }
