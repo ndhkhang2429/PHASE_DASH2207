@@ -97,9 +97,7 @@ public class ShieldEnemy : EnemyBase
         if (moveDirection == 1 && transform.position.x >= rightLimit)
             SetDirection(-1);
         else if (moveDirection == -1 && transform.position.x <= leftLimit)
-            SetDirection(1);
-
-        
+            SetDirection(1);  
     }
 
     //Shield

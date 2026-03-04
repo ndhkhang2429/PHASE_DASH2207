@@ -26,19 +26,31 @@ public class EnemyHealth : MonoBehaviour
     {
         if (isDead) return;
 
+        ChargerEnemy charger = GetComponent<ChargerEnemy>();
+
+        if(charger != null && charger.IsCharging())
+        {
+            dame = Mathf.CeilToInt(dame * 0.5f); // giảm 50% damage khi đang charge
+            Debug.Log("Charger dang Charge -> giam 50% damage");
+        }
+
         currentHealth -= dame;
         Debug.Log(gameObject.name + " bi trung " + dame + " damage. Mau con lai: " + currentHealth);
 
-        //Knockback(day lui)
-        Rigidbody2D rb = GetComponent<Rigidbody2D>();
-        if (rb != null)
+        if (!(charger != null && charger.IsCharging()))
         {
-            rb.velocity = Vector2.zero;
-            rb.AddForce(knockbackDirection * knockbackForce, ForceMode2D.Impulse);//day manh tuc thi
-        }
+            //Knockback(day lui)
+            Rigidbody2D rb = GetComponent<Rigidbody2D>();
+            if (rb != null)
+            {
+                rb.velocity = Vector2.zero;
+                rb.AddForce(knockbackDirection * knockbackForce, ForceMode2D.Impulse);//day manh tuc thi
+            }
 
-        //Hit stun
-        StartCoroutine(HitStun());
+            //Hit stun
+            StartCoroutine(HitStun());
+        }
+            
 
         if(currentHealth <= 0)
         {

@@ -2,47 +2,58 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ChargerEnemy : MonoBehaviour
+public class ChargerEnemy : EnemyBase
 {
     private enum State
     {
         Patrol,
         Windup,
-        Dash,
-        CoolDown
+        Charge,
+        Stunned
     };
 
     [Header("Patrol")]
     [SerializeField] private Transform PointA;
     [SerializeField] private Transform PointB;
-    [SerializeField] private float patrolSpeed;
 
     [Header("Detection")]
     [SerializeField] private float detectRange;
 
-    [Header("Dash")]
+    [Header("Charge")]
     [SerializeField] private float windupTime;
-    [SerializeField] private float dashSpeed;
-    [SerializeField] private float dashDuration;
-    [SerializeField] private float dashCoolDown;
+    [SerializeField] private float chargeSpeed;
+    [SerializeField] private float chargeDuration;
+    [SerializeField] private float stunTimeWall;
+    [SerializeField] private float stunTimePlayer;
+
+    [Header("Attack")]
+    [SerializeField] private int damage;
+    [SerializeField] private float knockbackForce;
+
 
     private State currentState;
-    private Rigidbody2D rb;//tránh lún xuống đất
     private Transform player;
-    private Transform targetPoint;
+    private Vector2 chargeDirection;
 
-    private Vector2 dashDirection;
+    private bool isCharging = false;
+    private int moveDirection = 1;
 
-    private void Start()
+    private float leftLimit;
+    private float rightLimit;
+
+    protected override void Awake()
     {
-        rb = GetComponent<Rigidbody2D>();
-        player = GameObject.FindGameObjectWithTag("Player")?.transform;
+        base.Awake();
 
-        targetPoint = PointB;
+        player = GameObject.FindGameObjectWithTag("Player")?.transform;
+        
         currentState = State.Patrol;
+        leftLimit = PointA.position.x;
+        rightLimit = PointB.position.x;
+        isFacingRight = false;
     }
 
-    private void Update()
+    protected override void LogicUpdate()
     {
         if (player == null) return;
 
@@ -59,17 +70,36 @@ public class ChargerEnemy : MonoBehaviour
                     StartCoroutine(WindupRoutine());
                 }
                 break;
+
+            case State.Charge:
+                rb.velocity = new Vector2(chargeDirection.x * chargeSpeed, rb.velocity.y);
+                break;
+
+            case State.Stunned:
+                rb.velocity = Vector2.zero;
+                break;
         }
     }
 
     private void Patrol()
     {
-        float direction = Mathf.Sign(targetPoint.position.x - transform.position.x);
-        rb.velocity = new Vector2(direction * patrolSpeed, rb.velocity.y);
+        animator.SetBool("isRunning", true);
 
-        if (Mathf.Abs(transform.position.x - targetPoint.position.x) < 0.1f)
+        rb.velocity = new Vector2(moveDirection * moveSpeed, rb.velocity.y);
+
+        if (moveDirection == 1 && transform.position.x >= rightLimit)
+            SetDirection(-1);
+        else if (moveDirection == -1 && transform.position.x <= leftLimit)
+            SetDirection(1);
+    }
+
+    private void SetDirection(int dir)
+    {
+        moveDirection = dir;
+
+        if ((moveDirection == 1 && !isFacingRight) ||
+            (moveDirection == -1 && isFacingRight))
         {
-            targetPoint = targetPoint == PointA ? PointB : PointA;
             Flip();
         }
     }
@@ -78,59 +108,91 @@ public class ChargerEnemy : MonoBehaviour
     private IEnumerator WindupRoutine()
     {
         currentState = State.Windup;
+        animator.SetBool("isRunning", false);
         rb.velocity = Vector2.zero;
 
-        dashDirection = (player.position - transform.position).normalized;
+        float timer = 0f;
+        Vector3 originalScale = transform.localScale;
 
-        transform.localScale *= 1.2f;
+        while(timer < windupTime)
+        {
+            timer += Time.deltaTime;
 
-        yield return new WaitForSeconds(windupTime);
+            // rung nhẹ để cảnh báo
+            float scaleOffset = Mathf.Sin(Time.time * 25f) * 0.05f;
+            transform.localScale = originalScale * (1f + scaleOffset);
 
-        StartCoroutine(DashRoutine());
+            yield return null;
+        }
+
+        transform.localScale = originalScale;
+
+        float dirX = Mathf.Sign(player.position.x - transform.position.x);
+        chargeDirection = new Vector2(dirX, 0f);
+
+        StartCoroutine(ChargeRoutine());
     }
 
-    private IEnumerator DashRoutine()
+    private IEnumerator ChargeRoutine()
     {
-        currentState = State.Dash;
+        currentState = State.Charge;
+        animator.SetBool("isRunning", true);
+        isCharging = true;
 
         float timer = 0f;
 
-        while (timer < dashDuration)
+        while (timer < chargeDuration)
         {
-            rb.velocity = dashDirection * dashSpeed;
             timer += Time.deltaTime;
             yield return null;
         }
 
-        StartCoroutine(CooldownRoutine());
+        StartCoroutine(StunRoutine(stunTimeWall));
     }
 
-    private IEnumerator CooldownRoutine()
+    private IEnumerator StunRoutine(float duration)
     {
-        currentState = State.CoolDown;
+        currentState = State.Stunned;
+        isCharging = false;
+
         rb.velocity = Vector2.zero;
 
-        // Trả scale về bình thường
-        transform.localScale = new Vector3(
-            Mathf.Sign(transform.localScale.x),
-            1,
-            1
-        );
+        yield return new WaitForSeconds(duration);
 
-        yield return new WaitForSeconds(dashCoolDown);
         currentState = State.Patrol;
     }
-    
-    private void Flip()
-    {
-        Vector3 scale = transform.localScale;
-        scale.x *= -1;
-        transform.localScale = scale;
-    }
 
-    private void OnDrawGizmosSelected()
+    private void OnCollisionEnter2D(Collision2D collision)
     {
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, detectRange);
+        if (!isCharging) return;
+
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            // Gây damage
+            collision.gameObject
+                .GetComponent<Player>()
+                ?.TakeDame(damage);
+
+            // Knockback player
+            Rigidbody2D playerRb = collision.gameObject.GetComponent<Rigidbody2D>();
+            if (playerRb != null)
+            {
+                Vector2 knockDir =
+                    (collision.transform.position - transform.position).normalized;
+
+                playerRb.AddForce(knockDir * knockbackForce,
+                    ForceMode2D.Impulse);
+            }
+
+            StartCoroutine(StunRoutine(stunTimePlayer));
+        }
+        else if (collision.gameObject.CompareTag("Wall"))
+        {
+            StartCoroutine(StunRoutine(stunTimeWall));
+        }
+    }
+    public bool IsCharging()
+    {
+        return currentState == State.Charge;
     }
 }
