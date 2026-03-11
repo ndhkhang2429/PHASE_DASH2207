@@ -140,6 +140,7 @@ public class Player : MonoBehaviour
 
     private void PerformJump()
     {
+        Debug.Log($"jb={jumpBufferTimer}, cb={coyoteTimer}, jc={jumpCount}");
         rb.velocity = new Vector2(rb.velocity.x, jumpSpeed);
         jumpCount++;
         coyoteTimer = 0;
@@ -301,8 +302,8 @@ public class Player : MonoBehaviour
         facingDirection = horizontal > 0 ? 1 : -1;
 
         transform.localScale = new Vector3(
-            6 * facingDirection,
-            6,
+            1 * facingDirection,
+            1,
             1
             );
     }
