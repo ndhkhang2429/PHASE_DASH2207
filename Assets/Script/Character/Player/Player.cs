@@ -4,11 +4,12 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    [Header("Component")]
+    public Rigidbody2D rb;
     [SerializeField] private Animator animator;
 
     [Header ("Move")]
     [SerializeField] private float speed;
-    [SerializeField] private float jumpSpeed;
     private float horizontal;
 
     [Header ("Ground check")]
@@ -16,14 +17,24 @@ public class Player : MonoBehaviour
     [SerializeField] private float groundCheckRadius;
     [SerializeField] private LayerMask groundLayerMask;
 
+    public bool IsGrounded { get; private set; }
+
     [Header("Dash")]
     [SerializeField] private float dashSpeed;
     [SerializeField] private float dashDuration; //dash trong bao nhieu lau
     [SerializeField] private float dashCoolDown; //thoi gian cho truoc khi dash lai
     [SerializeField] private int dashEnergyCost;
 
+    //kiem tra trang thai dash
+    private float originalGravity;//vung bien private
+    private bool isDashing;
+    private float dashTimer; //dem nguoc thoi gian dash
+    private float dashCooldownTimer; //dem nguoc hoi chieu
+    private float dashDirection; //luu lai thoi gian luc bat dau dash
+
     [Header("Jump System")]
     [SerializeField] private int maxJumpCount = 2;
+    [SerializeField] private float jumpSpeed;
     [SerializeField] private float coyoteTime = 0.1f;
     [SerializeField] private float jumpBufferTime = 0.1f;
 
@@ -32,47 +43,43 @@ public class Player : MonoBehaviour
     private float jumpBufferTimer;
 
     private PlayerEnergy energy;
-    public Rigidbody2D rb;
+
     public int facingDirection { get; private set; } = 1;
+    public bool canFlip = true;
 
     [Header("Health")]
     [SerializeField] private int maxHealth;
     private int currentHealth;
+    [SerializeField] private HealthBar healthBar;
 
     [Header("Hit Effect")]
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private Color hitColor;
     [SerializeField] private float hitFlashTime;
+    private Color baseColor;
+    private bool isInvincible;
 
     [Header("Skill")]
     [SerializeField] private GameObject projectilePerfab;
     [SerializeField] private Transform firePoint;
     [SerializeField] private int skillEnergyCost;
 
-
-    //Kiem tra o mat dat
-    public bool IsGrounded { get; private set;}
-    [SerializeField] public Color baseColor;
-
-    //kiem tra trang thai dash
-    private float originalGravity;//vung bien private
-    private bool isDashing;
-    private float dashTimer; //dem nguoc thoi gian dash
-    private float dashCooldownTimer; //dem nguoc hoi chieu
-    private float dashDirection; //luu lai thoi gian luc bat dau dash
     public bool isAttacking { get; set; }
-    [HideInInspector] public bool canFlip = true;
 
-    private bool isInvincible;
+    void Awake()
+    {
+        rb = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
+    }
 
     private void Start()
     {
-        animator = GetComponent<Animator>();
-        rb = GetComponent<Rigidbody2D>();
         currentHealth = maxHealth;
         baseColor = spriteRenderer.color;
         energy = GetComponent<PlayerEnergy>();
         originalGravity = rb.gravityScale;
+
+        healthBar.UpdateBar(currentHealth, maxHealth);
     }
 
     private void Update()
@@ -103,12 +110,9 @@ public class Player : MonoBehaviour
     {
         CheckGround();
 
-        if(!isDashing)
+        if(!isDashing && !isAttacking)
         {
-            if (!isAttacking || !IsGrounded)
-            {
-                Move();
-            }
+            Move();
         }
 
         HandleJump();
@@ -190,12 +194,14 @@ public class Player : MonoBehaviour
         {
             StartCoroutine(HitEffect());
         }
+        healthBar.UpdateBar(currentHealth, maxHealth);
     }
 
     private IEnumerator HitEffect()
     {
         isInvincible = true;
         canFlip = false;
+        isAttacking = false;
         animator.SetTrigger("Hurt");
         spriteRenderer.color = hitColor;
 
