@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -56,10 +56,20 @@ public class PlayerAttack : MonoBehaviour
             }
         }
 
-        if(Time.time - lastAttackTime > comboResetTime)
+        if(isAttacking)
+{
+    AnimatorStateInfo state = animator.GetCurrentAnimatorStateInfo(0);
+
+    if(state.IsName("Locomotion"))
+    {
+        isAttacking = false;
+    }
+}
+
+        // reset combo nếu quá lâu không attack
+        if (Time.time - lastAttackTime > comboResetTime)
         {
-            comboStep = 0;
-            animator.SetInteger("ComboStep", 0);
+            ResetCombo();
         }
     }
 
@@ -68,6 +78,7 @@ public class PlayerAttack : MonoBehaviour
         if(!isAttacking)
         {
             StartAttack();
+            return;
         }
         else
         {
@@ -88,10 +99,13 @@ public class PlayerAttack : MonoBehaviour
         isAttacking = true;
 
         player.isAttacking = true;
+
+        animator.SetBool("isAttacking", true);
         player.canFlip = false;
 
         animator.SetInteger("ComboStep", comboStep);
         animator.SetTrigger("Attack");
+
     }
 
     //Goi bang animation event o giua attack
@@ -112,7 +126,31 @@ public class PlayerAttack : MonoBehaviour
         isAttacking = false;
         player.isAttacking = false;
         player.canFlip = true;
+
+        comboInputBuffered = false;
         canNextCombo = false;
+        animator.SetBool("isAttacking", false);
+    }
+
+    public void CancelAttack()
+    {
+        isAttacking = false;
+        comboInputBuffered = false;
+        canNextCombo = false;
+
+        if (animator.GetCurrentAnimatorStateInfo(0).IsName("Idle"))
+        {
+            isAttacking = false;
+        }
+        player.canFlip = true;
+
+        ResetCombo();
+    }
+
+    private void ResetCombo()
+    {
+        comboStep = 0;
+        animator.SetInteger("ComboStep", 0);
     }
 
     //Air
@@ -165,6 +203,7 @@ public class PlayerAttack : MonoBehaviour
             if( didDamage )
             {
                 energy.GainEnergy(1);
+                HitStopManager.Instance.Stop(0.04f);
             }
         }
     }
@@ -187,7 +226,7 @@ public class PlayerAttack : MonoBehaviour
                 break;
 
             case 3:
-                break;
+                return;
         }
 
         Collider2D[] enemies = Physics2D.OverlapBoxAll(
@@ -220,12 +259,13 @@ public class PlayerAttack : MonoBehaviour
             if (didDamage)
             {
                 energy.GainEnergy(3);
+                HitStopManager.Instance.Stop(0.05f);
             }
         }
     }
+
     public void SpawnWind()
     {
-        Debug.Log("SPAWN WIND");
         GameObject wind = Instantiate(windPrefab, attack3firePoint.position, Quaternion.identity);
 
         WindProjectile projectile = wind.GetComponent<WindProjectile>();

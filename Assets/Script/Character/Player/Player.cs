@@ -24,6 +24,8 @@ public class Player : MonoBehaviour
     [SerializeField] private float dashDuration; //dash trong bao nhieu lau
     [SerializeField] private float dashCoolDown; //thoi gian cho truoc khi dash lai
     [SerializeField] private int dashEnergyCost;
+    [SerializeField] private float dashAttackWindow = 0.2f;
+    private float dashAttackTimer;
 
     //kiem tra trang thai dash
     private float originalGravity;//vung bien private
@@ -31,6 +33,8 @@ public class Player : MonoBehaviour
     private float dashTimer; //dem nguoc thoi gian dash
     private float dashCooldownTimer; //dem nguoc hoi chieu
     private float dashDirection; //luu lai thoi gian luc bat dau dash
+    private int playerLayer;
+    private int enemyLayer;
 
     [Header("Jump System")]
     [SerializeField] private int maxJumpCount = 2;
@@ -80,6 +84,10 @@ public class Player : MonoBehaviour
         originalGravity = rb.gravityScale;
 
         healthBar.UpdateBar(currentHealth, maxHealth);
+
+        //xet layer khi dash
+        playerLayer = LayerMask.NameToLayer("Player");
+        enemyLayer = LayerMask.NameToLayer("Enemy");
     }
 
     private void Update()
@@ -118,6 +126,13 @@ public class Player : MonoBehaviour
         HandleJump();
     }
 
+    private void Move()
+    {
+        Vector2 velocity = rb.velocity;
+        velocity.x = horizontal * speed;
+        rb.velocity = velocity;
+    }
+
     private void HandleJump()
     {
         jumpBufferTimer -= Time.fixedDeltaTime;
@@ -144,8 +159,9 @@ public class Player : MonoBehaviour
 
     private void PerformJump()
     {
-        Debug.Log($"jb={jumpBufferTimer}, cb={coyoteTimer}, jc={jumpCount}");
-        rb.velocity = new Vector2(rb.velocity.x, jumpSpeed);
+        Vector2 velocity = rb.velocity;
+        velocity.y = jumpSpeed;
+        rb.velocity = velocity;
         jumpCount++;
         coyoteTimer = 0;
     }
@@ -158,11 +174,6 @@ public class Player : MonoBehaviour
             groundCheckRadius,
             groundLayerMask
         );
-    }
-
-    private void Move()
-    {
-        rb.velocity = new Vector2(horizontal * speed, rb.velocity.y);
     }
 
     public void TakeDame(int damage)
@@ -183,8 +194,11 @@ public class Player : MonoBehaviour
         currentHealth -= dame;
 
         // Knockback
-        rb.velocity = Vector2.zero;
-        rb.AddForce(knockbackDir * knockbackForce, ForceMode2D.Impulse);
+        if (!isAttacking)
+        {
+            rb.velocity = Vector2.zero;
+            rb.AddForce(knockbackDir * knockbackForce, ForceMode2D.Impulse);
+        }
 
         if (currentHealth <= 0)
         {
@@ -197,12 +211,18 @@ public class Player : MonoBehaviour
         healthBar.UpdateBar(currentHealth, maxHealth);
     }
 
+
     private IEnumerator HitEffect()
     {
         isInvincible = true;
         canFlip = false;
+
         isAttacking = false;
-        animator.SetTrigger("Hurt");
+        if (!isAttacking)
+        {
+            animator.SetTrigger("Hurt");
+        }
+
         spriteRenderer.color = hitColor;
 
         yield return new WaitForSeconds(hitFlashTime);
@@ -211,11 +231,18 @@ public class Player : MonoBehaviour
 
         canFlip = true;
         isInvincible = false;
+
+        PlayerAttack atk = GetComponent<PlayerAttack>();
+        if (atk != null)
+        {
+            atk.CancelAttack();
+        }
     }
 
     private void Die()
     {
         isInvincible = true;
+
         rb.velocity = Vector2.zero;
         rb.gravityScale = 0;
 
@@ -239,9 +266,12 @@ public class Player : MonoBehaviour
 
         dashTimer = dashDuration;
         dashCooldownTimer = dashCoolDown;
+
         dashDirection = facingDirection;
+        dashAttackTimer = dashAttackWindow;
 
         rb.gravityScale = 0; // tat gravity
+        Physics2D.IgnoreLayerCollision(playerLayer, enemyLayer, true);
         animator.SetTrigger("Dash");
     }
 
@@ -252,17 +282,27 @@ public class Player : MonoBehaviour
 
         dashTimer -= Time.deltaTime;
 
+        dashAttackTimer -= Time.deltaTime;
+
         // Ép vận tốc khi dash
         rb.velocity = new Vector2(dashDirection * dashSpeed, 0);
 
         if (dashTimer <= 0)
         {
-            isDashing = false;
-            isInvincible = false;
-            canFlip = true;
-
-            rb.gravityScale = originalGravity;
+            EndDash();
         }
+    }
+
+    private void EndDash()
+    {
+        isDashing = false;
+        isInvincible = false;
+
+        canFlip = true;
+
+        rb.gravityScale = originalGravity;
+
+        Physics2D.IgnoreLayerCollision(playerLayer, enemyLayer, false);
     }
 
     //Quan ly bam nut dash
@@ -296,8 +336,7 @@ public class Player : MonoBehaviour
             Quaternion.identity
         );
 
-        float direction = facingDirection;
-        projectile.GetComponent<EnergyProjectile>().SetDirection(direction);
+        projectile.GetComponent<EnergyProjectile>().SetDirection(facingDirection);
     }
 
     private void HandleFlip()
@@ -308,10 +347,10 @@ public class Player : MonoBehaviour
         facingDirection = horizontal > 0 ? 1 : -1;
 
         transform.localScale = new Vector3(
-            1 * facingDirection,
+            facingDirection,
             1,
             1
-            );
+        );
     }
     void OnDrawGizmosSelected()
     {
