@@ -34,10 +34,5 @@ public class FlyingEnemyBullet : MonoBehaviour
             collision.GetComponent<Player>().TakeDame(damage);
             Destroy(gameObject);
         }
-
-        if(collision.CompareTag("Ground"))
-        {
-            Destroy(gameObject);
-        }
     }
 }

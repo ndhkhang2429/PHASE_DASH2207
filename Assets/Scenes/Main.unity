@@ -15411,10 +15411,10 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 1
+  m_Mass: 2
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 3
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -15523,8 +15523,8 @@ MonoBehaviour:
   dashCoolDown: 5
   dashEnergyCost: 0
   dashAttackWindow: 0.2
-  maxJumpCount: 1
-  jumpSpeed: 7
+  maxJumpCount: 2
+  jumpSpeed: 18
   coyoteTime: 0.1
   jumpBufferTime: 0.1
   canFlip: 1

@@ -200,10 +200,10 @@ MonoBehaviour:
   leftPoint: {fileID: 1071549715718926841}
   rightPoint: {fileID: 6002699892212497174}
   detectRange: 6
-  attackRange: 3
+  attackRange: 1.5
   attackCooldown: 1
   attackPoint: {fileID: 6573119341160982541}
-  attackRadius: 2.5
+  attackRadius: 1.5
   attackDamage: 10
   playerLayer:
     serializedVersion: 2

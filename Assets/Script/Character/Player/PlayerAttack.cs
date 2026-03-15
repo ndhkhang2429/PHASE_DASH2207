@@ -56,16 +56,6 @@ public class PlayerAttack : MonoBehaviour
             }
         }
 
-        if(isAttacking)
-{
-    AnimatorStateInfo state = animator.GetCurrentAnimatorStateInfo(0);
-
-    if(state.IsName("Locomotion"))
-    {
-        isAttacking = false;
-    }
-}
-
         // reset combo nếu quá lâu không attack
         if (Time.time - lastAttackTime > comboResetTime)
         {
@@ -162,7 +152,7 @@ public class PlayerAttack : MonoBehaviour
         player.isAttacking = true;
         player.canFlip = false;
 
-        player.rb.velocity = new Vector2(0, player.rb.velocity.y);
+        //player.rb.velocity = new Vector2(0, player.rb.velocity.y);
 
         animator.SetTrigger("AirAttack");
     }

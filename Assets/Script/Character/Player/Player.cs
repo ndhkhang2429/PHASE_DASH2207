@@ -8,6 +8,7 @@ public class Player : MonoBehaviour
     public Rigidbody2D rb;
     [SerializeField] private Animator animator;
 
+
     [Header ("Move")]
     [SerializeField] private float speed;
     private float horizontal;
@@ -45,6 +46,8 @@ public class Player : MonoBehaviour
     private int jumpCount;
     private float coyoteTimer;
     private float jumpBufferTimer;
+
+    private float jumpCooldownTimer;
 
     private PlayerEnergy energy;
 
@@ -94,9 +97,27 @@ public class Player : MonoBehaviour
     {
         horizontal = Input.GetAxisRaw("Horizontal");
 
+        // 1. Cập nhật các bộ đếm thời gian (Timers)
+        if (coyoteTimer > 0) coyoteTimer -= Time.deltaTime;
+        if (jumpBufferTimer > 0) jumpBufferTimer -= Time.deltaTime;
+        if (jumpCooldownTimer > 0) jumpCooldownTimer -= Time.deltaTime;
+
+        // 2. Chuyển Ground Check lên Update để đồng bộ chuẩn xác với Animator
+        CheckGround();
+
+        // 3. Nhận Input
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            jumpBufferTimer = jumpBufferTime;
+        }
+        // 4. Xử lý nhảy ngay trong Update để input không bị delay
+        HandleJump();
+
+        // 5. Cập nhật Animator
         animator.SetFloat("Speed", Mathf.Abs(horizontal));
         animator.SetBool("IsGround", IsGrounded);
         animator.SetFloat("YVelocity", rb.velocity.y);
+
 
         HandleDashInput();
         UpdateDash();
@@ -105,75 +126,67 @@ public class Player : MonoBehaviour
         {
             TryCastSkill();
         }
+        Debug.Log(rb.velocity);
 
-        if(Input.GetKeyDown(KeyCode.Space))
-        {
-            jumpBufferTimer = jumpBufferTime;
-        }
-
-       HandleFlip();
+        HandleFlip();
     }
 
     private void FixedUpdate()
     {
-        CheckGround();
-
-        if(!isDashing && !isAttacking)
+        if (!isDashing && !isAttacking)
         {
             Move();
         }
-
-        HandleJump();
     }
 
     private void Move()
     {
-        Vector2 velocity = rb.velocity;
-        velocity.x = horizontal * speed;
-        rb.velocity = velocity;
+        rb.velocity = new Vector2(horizontal * speed, rb.velocity.y);
     }
 
-    private void HandleJump()
+    private void CheckGround()
     {
-        jumpBufferTimer -= Time.fixedDeltaTime;
+        if (jumpCooldownTimer > 0f)
+        {
+            IsGrounded = false;
+            return;
+        }
 
+        IsGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayerMask);
+
+        // Reset lại số lần nhảy và Coyote Time khi chạm đất an toàn
         if (IsGrounded)
         {
             coyoteTimer = coyoteTime;
             jumpCount = 0;
         }
-        else
-        {
-            coyoteTimer -= Time.fixedDeltaTime;
-        }
+    }
 
-        if (jumpBufferTimer > 0)
+    private void HandleJump()
+    {
+        if (jumpBufferTimer > 0f)
         {
-            if (coyoteTimer > 0 || jumpCount < maxJumpCount)
+            // Cho phép nhảy nếu đang trên đất/rơi nhẹ (coyote) HOẶC số lần nhảy < max
+            if (coyoteTimer > 0f || jumpCount < maxJumpCount)
             {
                 PerformJump();
-                jumpBufferTimer = 0;
             }
         }
     }
 
     private void PerformJump()
     {
-        Vector2 velocity = rb.velocity;
-        velocity.y = jumpSpeed;
-        rb.velocity = velocity;
-        jumpCount++;
-        coyoteTimer = 0;
-    }
+        // FIX DOUBLE JUMP: Triệt tiêu trọng lực rơi trước khi áp dụng lực nhảy mới
+        rb.velocity = new Vector2(rb.velocity.x, 0f);
+        rb.velocity = new Vector2(rb.velocity.x, jumpSpeed);
 
-    private void CheckGround()
-    {
-        IsGrounded = Physics2D.OverlapCircle
-        (
-            groundCheck.position,
-            groundCheckRadius,
-            groundLayerMask
-        );
+        jumpCount++;
+        jumpBufferTimer = 0f; // Dọn bộ nhớ đệm
+        coyoteTimer = 0f;     // Hủy coyote
+
+        // Kích hoạt khiên chống nhiễu mặt đất
+        jumpCooldownTimer = 0.1f;
+        IsGrounded = false;
     }
 
     public void TakeDame(int damage)
@@ -341,19 +354,20 @@ public class Player : MonoBehaviour
 
     private void HandleFlip()
     {
-        if(!canFlip) return;
+        if (!canFlip) return;
         if (horizontal == 0) return;
 
         facingDirection = horizontal > 0 ? 1 : -1;
 
-        transform.localScale = new Vector3(
-            facingDirection,
-            1,
-            1
-        );
+        // BÍ KÍP DIỆT BUG KHỰNG: Chỉ lật hình ảnh.
+        // Tuyệt đối KHÔNG lật Scale X (-1, 1, 1) hay xoay Rotation (0, 180, 0)
+        spriteRenderer.flipX = (facingDirection == -1);
     }
-    void OnDrawGizmosSelected()
+
+    private void OnDrawGizmosSelected()
     {
+        if (groundCheck == null) return;
+
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
     }
