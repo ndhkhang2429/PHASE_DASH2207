@@ -280,6 +280,7 @@ MonoBehaviour:
   jumpSpeed: 18
   coyoteTime: 0.1
   jumpBufferTime: 0.1
+  doubleJumpEffectPrefab: {fileID: 155540448128913588, guid: 38749090ebecad54d96778c2fb91dac1, type: 3}
   canFlip: 1
   maxHealth: 100
   healthBar: {fileID: 0}
@@ -315,6 +316,7 @@ MonoBehaviour:
   attack3firePoint: {fileID: 7485310030904787497}
   knockbackForce: 0.2
   comboResetTime: 3
+  recoilForce: 4
 --- !u!114 &7752670193292454971
 MonoBehaviour:
   m_ObjectHideFlags: 0

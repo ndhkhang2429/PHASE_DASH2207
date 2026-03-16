@@ -47,6 +47,9 @@ public class Player : MonoBehaviour
     private float jumpBufferTimer;
     private float jumpCooldownTimer;
 
+    [Header("Effects")]
+    [SerializeField] private GameObject doubleJumpEffectPrefab; // Kéo Prefab vào đây
+
     private PlayerEnergy energy;
 
     public int facingDirection { get; private set; } = 1;
@@ -187,6 +190,16 @@ public class Player : MonoBehaviour
         jumpCount++;
         jumpBufferTimer = 0f; // Dọn bộ nhớ đệm
         coyoteTimer = 0f;     // Hủy coyote
+
+        animator.ResetTrigger("Jump");
+        animator.SetTrigger("Jump");
+
+        if (jumpCount == 2 && doubleJumpEffectPrefab != null)
+        {
+            // Sinh ra tại vị trí groundCheck (dưới chân nhân vật)
+            // Quaternion.identity nghĩa là không xoay
+            Instantiate(doubleJumpEffectPrefab, groundCheck.position, Quaternion.identity);
+        }
 
         // Kích hoạt khiên chống nhiễu mặt đất
         jumpCooldownTimer = 0.1f;
