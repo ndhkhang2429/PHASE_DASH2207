@@ -17,7 +17,6 @@ public class Player : MonoBehaviour
     [SerializeField] private Transform groundCheck;
     [SerializeField] private float groundCheckRadius;
     [SerializeField] private LayerMask groundLayerMask;
-
     public bool IsGrounded { get; private set; }
 
     [Header("Dash")]
@@ -46,7 +45,6 @@ public class Player : MonoBehaviour
     private int jumpCount;
     private float coyoteTimer;
     private float jumpBufferTimer;
-
     private float jumpCooldownTimer;
 
     private PlayerEnergy energy;
@@ -72,11 +70,13 @@ public class Player : MonoBehaviour
     [SerializeField] private int skillEnergyCost;
 
     public bool isAttacking { get; set; }
+    private Vector3 baseScale;
 
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+        baseScale = transform.localScale;
     }
 
     private void Start()
@@ -126,7 +126,6 @@ public class Player : MonoBehaviour
         {
             TryCastSkill();
         }
-        Debug.Log(rb.velocity);
 
         HandleFlip();
     }
@@ -155,7 +154,7 @@ public class Player : MonoBehaviour
         IsGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayerMask);
 
         // Reset lại số lần nhảy và Coyote Time khi chạm đất an toàn
-        if (IsGrounded)
+        if (IsGrounded && rb.velocity.y <= 0)
         {
             coyoteTimer = coyoteTime;
             jumpCount = 0;
@@ -187,6 +186,26 @@ public class Player : MonoBehaviour
         // Kích hoạt khiên chống nhiễu mặt đất
         jumpCooldownTimer = 0.1f;
         IsGrounded = false;
+    }
+
+
+    private void HandleFlip()
+    {
+        if (!canFlip) return;
+        if (horizontal == 0) return;
+
+        facingDirection = horizontal > 0 ? 1 : -1;
+
+        // BỎ flipX. Dùng Scale lật toàn bộ hệ thống vật lý để né rãnh nứt Tilemap.
+        // Hãy đảm bảo Offset X của Collider = 0 để không bị khựng lúc quay đầu.
+        if (facingDirection == 1)
+        {
+            transform.localScale = baseScale;
+        }
+        else
+        {
+            transform.localScale = new Vector3(-baseScale.x, baseScale.y, baseScale.z);
+        }
     }
 
     public void TakeDame(int damage)
@@ -350,18 +369,6 @@ public class Player : MonoBehaviour
         );
 
         projectile.GetComponent<EnergyProjectile>().SetDirection(facingDirection);
-    }
-
-    private void HandleFlip()
-    {
-        if (!canFlip) return;
-        if (horizontal == 0) return;
-
-        facingDirection = horizontal > 0 ? 1 : -1;
-
-        // BÍ KÍP DIỆT BUG KHỰNG: Chỉ lật hình ảnh.
-        // Tuyệt đối KHÔNG lật Scale X (-1, 1, 1) hay xoay Rotation (0, 180, 0)
-        spriteRenderer.flipX = (facingDirection == -1);
     }
 
     private void OnDrawGizmosSelected()
