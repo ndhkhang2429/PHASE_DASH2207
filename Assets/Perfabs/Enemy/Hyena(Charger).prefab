@@ -225,6 +225,8 @@ MonoBehaviour:
   maxHealth: 0
   hitStunTime: 0
   energyReward: 0
+  damageTextPrefab: {fileID: 2402558531480752357, guid: d755c4b3356b0e3408e5aa5d102ea68b, type: 3}
+  damageColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!95 &4283512121408405889
 Animator:
   serializedVersion: 5

@@ -7,6 +7,7 @@ public class PlayerAttack : MonoBehaviour
     private Animator animator;
     private Player player;
     private PlayerEnergy energy;
+    private Rigidbody2D rb;
 
     [Header("Attack Setting")]
     [SerializeField] private Transform attackPoint;
@@ -24,22 +25,24 @@ public class PlayerAttack : MonoBehaviour
     [SerializeField] private GameObject windPrefab;
     [SerializeField] private Transform attack3firePoint;
 
+    [Header("Feel & Physics")]
     [SerializeField] private float knockbackForce;
-    [SerializeField] private float comboResetTime;
+    [SerializeField] private float comboResetTime = 1f;
+    [SerializeField] private float recoilForce = 4f;
 
     private int comboStep = 0;
     private float lastAttackTime;
 
     private bool isAttacking = false;
     private bool comboInputBuffered = false;
-    private bool canNextCombo = false;
 
 
     private void Awake()
     {
         energy = GetComponent<PlayerEnergy>();
-        animator = GetComponentInChildren<Animator>();
+        animator = GetComponent<Animator>();
         player = GetComponent<Player>();
+        rb = GetComponent<Rigidbody2D>();
     }
 
     private void Update()
@@ -54,6 +57,11 @@ public class PlayerAttack : MonoBehaviour
             {
                 RegisterAttackInput();
             }
+        }
+
+        if (isAttacking && Time.time - lastAttackTime > 0.5f)
+        {
+            EndAttack();
         }
 
         // reset combo nếu quá lâu không attack
@@ -78,6 +86,8 @@ public class PlayerAttack : MonoBehaviour
 
     private void StartAttack()
     {
+        rb.velocity = new Vector2(0, rb.velocity.y);
+
         comboStep++;
 
         if (comboStep > 3)
@@ -89,24 +99,20 @@ public class PlayerAttack : MonoBehaviour
         isAttacking = true;
 
         player.isAttacking = true;
-
-        animator.SetBool("isAttacking", true);
         player.canFlip = false;
 
+        animator.SetBool("isAttacking", true);
         animator.SetInteger("ComboStep", comboStep);
-        animator.SetTrigger("Attack");
+        animator.Play("Attack" + comboStep, 0, 0f);
 
     }
 
     //Goi bang animation event o giua attack
     public void EnableComboWindow()
     {
-        canNextCombo = true;
-
         if(comboInputBuffered)
         {
             comboInputBuffered = false;
-            canNextCombo = false;
             StartAttack();
         }
     }
@@ -118,7 +124,6 @@ public class PlayerAttack : MonoBehaviour
         player.canFlip = true;
 
         comboInputBuffered = false;
-        canNextCombo = false;
         animator.SetBool("isAttacking", false);
     }
 
@@ -126,12 +131,9 @@ public class PlayerAttack : MonoBehaviour
     {
         isAttacking = false;
         comboInputBuffered = false;
-        canNextCombo = false;
 
-        if (animator.GetCurrentAnimatorStateInfo(0).IsName("Idle"))
-        {
-            isAttacking = false;
-        }
+        player.isAttacking = false;
+
         player.canFlip = true;
 
         ResetCombo();
@@ -148,123 +150,87 @@ public class PlayerAttack : MonoBehaviour
     {
         if (isAttacking) return;
 
+        rb.velocity = new Vector2(rb.velocity.x, 0);
+
         isAttacking = true;
         player.isAttacking = true;
         player.canFlip = false;
 
-        //player.rb.velocity = new Vector2(0, player.rb.velocity.y);
-
         animator.SetTrigger("AirAttack");
     }
 
-    private void DealAirDamage()
+    private void ProcessDamage(Collider2D[] enemies, int damage, float kbForce)
     {
-        float airKnockBack = knockbackForce * 0.8f;
-
-        Collider2D[] enemies = Physics2D.OverlapBoxAll
-        (
-                airAttackPoint.position,
-                airSize,
-                0f,
-                enemyLayerMask
-        );
+        bool hitAnything = false;
 
         foreach (Collider2D c in enemies)
         {
-            ShieldEnemy shield = c.GetComponent<ShieldEnemy>();
-
             Vector2 direction = (c.transform.position - transform.position).normalized;
-
             bool didDamage = false;
+
+            // Kiểm tra Shield
+            ShieldEnemy shield = c.GetComponent<ShieldEnemy>();
             if (shield != null)
             {
-                didDamage = shield.TryTakeDamage(airDamage, transform, knockbackForce * 0.8f);
+                didDamage = shield.TryTakeDamage(damage, transform, kbForce);
             }
             else
             {
                 EnemyHealth health = c.GetComponent<EnemyHealth>();
                 if (health != null)
                 {
-                    health.TakeDamage(airDamage, direction, knockbackForce * 0.8f);
-                    didDamage = true;
-                }
-            }
-
-            if( didDamage )
-            {
-                energy.GainEnergy(1);
-                HitStopManager.Instance.Stop(0.04f);
-            }
-        }
-    }
-
-    private void DealDamage()
-    {
-        Vector2 size = Vector2.zero;
-        int damage = 0;
-
-        switch (comboStep)
-        {
-            case 1:
-                size = attack1Size;
-                damage = attack1Damage;
-                break;
-
-            case 2:
-                size = attack2Size;
-                damage = attack2Damage;
-                break;
-
-            case 3:
-                return;
-        }
-
-        Collider2D[] enemies = Physics2D.OverlapBoxAll(
-            attackPoint.position,
-            size,
-            0f,
-            enemyLayerMask
-        );
-
-        foreach (Collider2D enemy in enemies )
-        {
-            ShieldEnemy shield = enemy.GetComponent<ShieldEnemy>();
-
-            Vector2 direction = (enemy.transform.position - transform.position).normalized;
-            bool didDamage = false;
-            if (shield != null)
-            {
-                didDamage = shield.TryTakeDamage(damage, transform, knockbackForce);
-            }
-            else
-            {
-                EnemyHealth health = enemy.GetComponent<EnemyHealth>();
-                if (health != null)
-                {
-                    health.TakeDamage(damage, direction, knockbackForce);
+                    health.TakeDamage(damage, direction, kbForce);
                     didDamage = true;
                 }
             }
 
             if (didDamage)
             {
-                energy.GainEnergy(3);
-                HitStopManager.Instance.Stop(0.05f);
+                hitAnything = true;
+                energy.GainEnergy(player.IsGrounded ? 3 : 1);
             }
         }
+
+        if (hitAnything)
+        {
+            // Hiệu ứng "đứng hình" nhẹ và đẩy lùi nhân vật
+            HitStopManager.Instance.Stop(0.05f);
+            ApplyRecoil();
+        }
+    }
+
+    private void ApplyRecoil()
+    {
+        // Đẩy Player lùi lại một chút khi chém trúng
+        float recoilDir = -player.facingDirection;
+        rb.velocity = Vector2.zero; // Reset vận tốc trước khi đẩy
+        rb.AddForce(new Vector2(recoilDir * recoilForce, 0), ForceMode2D.Impulse);
+    }
+
+    private void DealDamage()
+    {
+        if (comboStep == 3) return; // Bước 3 bắn Wind
+
+        Vector2 size = (comboStep == 1) ? attack1Size : attack2Size;
+        int damage = (comboStep == 1) ? attack1Damage : attack2Damage;
+
+        Collider2D[] enemies = Physics2D.OverlapBoxAll(attackPoint.position, size, 0f, enemyLayerMask);
+        ProcessDamage(enemies, damage, knockbackForce);
+    }
+
+    private void DealAirDamage()
+    {
+        Collider2D[] enemies = Physics2D.OverlapBoxAll(airAttackPoint.position, airSize, 0f, enemyLayerMask);
+        ProcessDamage(enemies, airDamage, knockbackForce * 0.8f);
     }
 
     public void SpawnWind()
     {
         GameObject wind = Instantiate(windPrefab, attack3firePoint.position, Quaternion.identity);
-
         WindProjectile projectile = wind.GetComponent<WindProjectile>();
-
-        if (projectile != null)
-        {
-            projectile.SetDirection(player.facingDirection);
-        }
+        if (projectile != null) projectile.SetDirection(player.facingDirection);
     }
+
     private void OnDrawGizmosSelected()
     {
         if (attackPoint == null) return;

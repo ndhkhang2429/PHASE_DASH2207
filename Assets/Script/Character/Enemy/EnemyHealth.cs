@@ -14,6 +14,10 @@ public class EnemyHealth : MonoBehaviour
     [Header("Energy Reward")]
     [SerializeField] private int energyReward;
 
+    [Header("UI")]
+    [SerializeField] private DamageText damageTextPrefab; // Kéo thả prefab DamageText vào đây
+    [SerializeField] private Color damageColor = Color.red;
+
     private bool isDead = false;
     public bool IsStunned { get; private set; }
 
@@ -36,6 +40,15 @@ public class EnemyHealth : MonoBehaviour
 
         currentHealth -= dame;
         Debug.Log(gameObject.name + " bi trung " + dame + " damage. Mau con lai: " + currentHealth);
+
+        if (damageTextPrefab != null)
+        {
+            // Cộng thêm một chút offset (ví dụ Vector3.up) nếu muốn chữ hiện cao hơn gốc của quái
+            DamageText dmgText = Instantiate(damageTextPrefab, transform.position, Quaternion.identity);
+
+            // Gọi hàm SetData để gán số damage và màu
+            dmgText.SetData(dame.ToString(), damageColor);
+        }
 
         if (!(charger != null && charger.IsCharging()))
         {

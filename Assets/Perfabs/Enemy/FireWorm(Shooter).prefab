@@ -113,7 +113,7 @@ MonoBehaviour:
   canMove: 1
   bulletPrefab: {fileID: 339193005315520528, guid: a122dec4cfc427c41bc56f24e8c4591e, type: 3}
   firePoint: {fileID: 3193702661074326941}
-  target: {fileID: 0}
+  target: {fileID: 8936181896720625207, guid: 635ddb7ccad15794e811e06910b8e77f, type: 3}
   shootRange: 10
   shootCooldown: 2
   bulletSpeed: 10
@@ -180,6 +180,8 @@ MonoBehaviour:
   maxHealth: 2
   hitStunTime: 0.2
   energyReward: 10
+  damageTextPrefab: {fileID: 2402558531480752357, guid: d755c4b3356b0e3408e5aa5d102ea68b, type: 3}
+  damageColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!70 &5403759235838393940
 CapsuleCollider2D:
   m_ObjectHideFlags: 0

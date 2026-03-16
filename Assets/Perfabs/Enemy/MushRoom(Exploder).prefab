@@ -133,6 +133,8 @@ MonoBehaviour:
   maxHealth: 8
   hitStunTime: 0.4
   energyReward: 10
+  damageTextPrefab: {fileID: 2402558531480752357, guid: d755c4b3356b0e3408e5aa5d102ea68b, type: 3}
+  damageColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &2217384433743937440
 MonoBehaviour:
   m_ObjectHideFlags: 0

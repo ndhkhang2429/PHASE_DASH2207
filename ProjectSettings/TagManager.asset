@@ -5,7 +5,6 @@ TagManager:
   serializedVersion: 2
   tags:
   - Ground
-  - Wall
   layers:
   - Default
   - TransparentFX
@@ -19,7 +18,7 @@ TagManager:
   - BackGround
   - TileMap
   - WallBackGround
-  - 
+  - DamageText
   - 
   - 
   - 
@@ -55,18 +54,21 @@ TagManager:
   - name: Ground
     uniqueID: 1074646631
     locked: 0
-  - name: Obstacles
-    uniqueID: 2615354959
+  - name: Grass
+    uniqueID: 1335688667
     locked: 0
   - name: Enemy
     uniqueID: 2034851861
     locked: 0
-  - name: Grass
-    uniqueID: 1335688667
+  - name: Obstacles
+    uniqueID: 2615354959
     locked: 0
   - name: Env_Obj
     uniqueID: 235497849
     locked: 0
   - name: Player
     uniqueID: 2523473209
+    locked: 0
+  - name: DamageText
+    uniqueID: 2094462347
     locked: 0

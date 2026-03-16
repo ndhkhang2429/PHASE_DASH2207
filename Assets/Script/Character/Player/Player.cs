@@ -4,13 +4,10 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    [Header("Graphics")]
-    [SerializeField] private Transform graphicsTransform;
-
     [Header("Component")]
     public Rigidbody2D rb;
     [SerializeField] private Animator animator;
-
+    [SerializeField] private SpriteRenderer spriteRenderer;
 
     [Header ("Move")]
     [SerializeField] private float speed;
@@ -61,7 +58,6 @@ public class Player : MonoBehaviour
     [SerializeField] private HealthBar healthBar;
 
     [Header("Hit Effect")]
-    [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private Color hitColor;
     [SerializeField] private float hitFlashTime;
     private Color baseColor;
@@ -78,8 +74,7 @@ public class Player : MonoBehaviour
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        animator = GetComponentInChildren<Animator>();
-        spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        animator = GetComponent<Animator>();
         baseScale = transform.localScale;
     }
 
@@ -116,11 +111,6 @@ public class Player : MonoBehaviour
             jumpBufferTimer = jumpBufferTime;
         }
 
-        // --- ĐIỂM SỬA CHỮA CỐT LÕI ---
-        if (!isDashing && !isAttacking)
-        {
-            Move(); // Chuyển Move lên đây!
-        }
         // 4. Xử lý nhảy ngay trong Update để input không bị delay
         HandleJump();
 
@@ -139,6 +129,19 @@ public class Player : MonoBehaviour
         }
 
         HandleFlip();
+    }
+
+    private void FixedUpdate()
+    {
+        if (isDashing)
+        {
+            // Ép vận tốc Dash trong FixedUpdate để mượt hơn
+            rb.velocity = new Vector2(dashDirection * dashSpeed, 0);
+        }
+        else if (!isAttacking)
+        {
+            Move();
+        }
     }
 
     private void Move()
@@ -197,15 +200,13 @@ public class Player : MonoBehaviour
 
         facingDirection = horizontal > 0 ? 1 : -1;
 
-        // BỎ flipX. Dùng Scale lật toàn bộ hệ thống vật lý để né rãnh nứt Tilemap.
-        // Hãy đảm bảo Offset X của Collider = 0 để không bị khựng lúc quay đầu.
         if (facingDirection == 1)
         {
-            graphicsTransform.localScale = new Vector3(1, 1, 1);
+            transform.localScale = baseScale;
         }
         else
         {
-            graphicsTransform.localScale = new Vector3(-1, 1, 1);
+            transform.localScale = new Vector3(-baseScale.x, baseScale.y, baseScale.z);
         }
     }
 
@@ -316,9 +317,6 @@ public class Player : MonoBehaviour
         dashTimer -= Time.deltaTime;
 
         dashAttackTimer -= Time.deltaTime;
-
-        // Ép vận tốc khi dash
-        rb.velocity = new Vector2(dashDirection * dashSpeed, 0);
 
         if (dashTimer <= 0)
         {
