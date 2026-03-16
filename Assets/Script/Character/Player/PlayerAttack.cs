@@ -38,7 +38,7 @@ public class PlayerAttack : MonoBehaviour
     private void Awake()
     {
         energy = GetComponent<PlayerEnergy>();
-        animator = GetComponent<Animator>();
+        animator = GetComponentInChildren<Animator>();
         player = GetComponent<Player>();
     }
 

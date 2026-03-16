@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    [Header("Graphics")]
+    [SerializeField] private Transform graphicsTransform;
+
     [Header("Component")]
     public Rigidbody2D rb;
     [SerializeField] private Animator animator;
@@ -75,7 +78,8 @@ public class Player : MonoBehaviour
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        animator = GetComponent<Animator>();
+        animator = GetComponentInChildren<Animator>();
+        spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         baseScale = transform.localScale;
     }
 
@@ -87,6 +91,7 @@ public class Player : MonoBehaviour
         originalGravity = rb.gravityScale;
 
         healthBar.UpdateBar(currentHealth, maxHealth);
+        originalGravity = rb.gravityScale;
 
         //xet layer khi dash
         playerLayer = LayerMask.NameToLayer("Player");
@@ -110,6 +115,12 @@ public class Player : MonoBehaviour
         {
             jumpBufferTimer = jumpBufferTime;
         }
+
+        // --- ĐIỂM SỬA CHỮA CỐT LÕI ---
+        if (!isDashing && !isAttacking)
+        {
+            Move(); // Chuyển Move lên đây!
+        }
         // 4. Xử lý nhảy ngay trong Update để input không bị delay
         HandleJump();
 
@@ -128,14 +139,6 @@ public class Player : MonoBehaviour
         }
 
         HandleFlip();
-    }
-
-    private void FixedUpdate()
-    {
-        if (!isDashing && !isAttacking)
-        {
-            Move();
-        }
     }
 
     private void Move()
@@ -176,7 +179,6 @@ public class Player : MonoBehaviour
     private void PerformJump()
     {
         // FIX DOUBLE JUMP: Triệt tiêu trọng lực rơi trước khi áp dụng lực nhảy mới
-        rb.velocity = new Vector2(rb.velocity.x, 0f);
         rb.velocity = new Vector2(rb.velocity.x, jumpSpeed);
 
         jumpCount++;
@@ -191,8 +193,7 @@ public class Player : MonoBehaviour
 
     private void HandleFlip()
     {
-        if (!canFlip) return;
-        if (horizontal == 0) return;
+        if (!canFlip || horizontal == 0) return;
 
         facingDirection = horizontal > 0 ? 1 : -1;
 
@@ -200,11 +201,11 @@ public class Player : MonoBehaviour
         // Hãy đảm bảo Offset X của Collider = 0 để không bị khựng lúc quay đầu.
         if (facingDirection == 1)
         {
-            transform.localScale = baseScale;
+            graphicsTransform.localScale = new Vector3(1, 1, 1);
         }
         else
         {
-            transform.localScale = new Vector3(-baseScale.x, baseScale.y, baseScale.z);
+            graphicsTransform.localScale = new Vector3(-1, 1, 1);
         }
     }
 
