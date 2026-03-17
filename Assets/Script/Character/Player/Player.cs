@@ -41,7 +41,9 @@ public class Player : MonoBehaviour
     [SerializeField] private float jumpSpeed;
     [SerializeField] private float coyoteTime = 0.1f;
     [SerializeField] private float jumpBufferTime = 0.1f;
+    [SerializeField] private CapsuleCollider2D playerCollider;
 
+    private GameObject currentOneWayPlatform;
     private int jumpCount;
     private float coyoteTimer;
     private float jumpBufferTimer;
@@ -130,7 +132,7 @@ public class Player : MonoBehaviour
         {
             TryCastSkill();
         }
-
+        HandleOneWayPlatform();
         HandleFlip();
     }
 
@@ -154,6 +156,16 @@ public class Player : MonoBehaviour
 
     private void CheckGround()
     {
+
+        if (rb.velocity.y <= 0.1f)
+        {
+            IsGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayerMask);
+        }
+        else
+        {
+            IsGrounded = false;
+        }
+
         if (jumpCooldownTimer > 0f)
         {
             IsGrounded = false;
@@ -220,6 +232,51 @@ public class Player : MonoBehaviour
         else
         {
             transform.localScale = new Vector3(-baseScale.x, baseScale.y, baseScale.z);
+        }
+    }
+
+    private void HandleOneWayPlatform()
+    {
+        // Nếu nhấn S và đang đứng trên nền tảng cho phép xuyên qua
+        if (Input.GetKeyDown(KeyCode.S) && currentOneWayPlatform != null)
+        {
+            StartCoroutine(DisableCollision());
+        }
+    }
+
+    private IEnumerator DisableCollision()
+    {
+        if (playerCollider == null)
+        {
+            playerCollider = GetComponent<CapsuleCollider2D>(); // Tự tìm nếu quên gán
+        }
+        if (currentOneWayPlatform != null)
+        {
+            Collider2D platformCollider = currentOneWayPlatform.GetComponent<Collider2D>();
+
+            if (platformCollider != null && playerCollider != null)
+            {
+                Physics2D.IgnoreCollision(playerCollider, platformCollider, true);
+                yield return new WaitForSeconds(0.4f);
+                Physics2D.IgnoreCollision(playerCollider, platformCollider, false);
+            }
+        }
+    }
+
+    // Dùng OnCollision để xác định xem Player có đang đứng trên OneWayPlatform không
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("OneWayPlatform"))
+        {
+            currentOneWayPlatform = collision.gameObject;
+        }
+    }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("OneWayPlatform"))
+        {
+            currentOneWayPlatform = null;
         }
     }
 
