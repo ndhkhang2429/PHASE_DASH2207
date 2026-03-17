@@ -109,6 +109,7 @@ public class Player : MonoBehaviour
 
         // 2. Chuyển Ground Check lên Update để đồng bộ chuẩn xác với Animator
         CheckGround();
+        HandleOneWayPlatform();
 
         // 3. Nhận Input
         if (Input.GetKeyDown(KeyCode.Space))
@@ -132,7 +133,6 @@ public class Player : MonoBehaviour
         {
             TryCastSkill();
         }
-        HandleOneWayPlatform();
         HandleFlip();
     }
 
@@ -171,8 +171,6 @@ public class Player : MonoBehaviour
             IsGrounded = false;
             return;
         }
-
-        IsGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayerMask);
 
         // Reset lại số lần nhảy và Coyote Time khi chạm đất an toàn
         if (IsGrounded && rb.velocity.y <= 0)
@@ -266,7 +264,18 @@ public class Player : MonoBehaviour
     // Dùng OnCollision để xác định xem Player có đang đứng trên OneWayPlatform không
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("OneWayPlatform"))
+        // Kiểm tra Tag ở cả Collider và GameObject để đảm bảo không sót
+        if (collision.collider.CompareTag("OneWayPlatform") || collision.gameObject.CompareTag("OneWayPlatform"))
+        {
+            // Gán đúng cái GameObject chứa Composite Collider
+            currentOneWayPlatform = collision.gameObject;
+        }
+    }
+
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        // Thêm hàm Stay để đảm bảo nếu Enter bị lỡ thì Stay sẽ bù đắp
+        if (currentOneWayPlatform == null && (collision.collider.CompareTag("OneWayPlatform") || collision.gameObject.CompareTag("OneWayPlatform")))
         {
             currentOneWayPlatform = collision.gameObject;
         }
@@ -274,7 +283,7 @@ public class Player : MonoBehaviour
 
     private void OnCollisionExit2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("OneWayPlatform"))
+        if (collision.gameObject.CompareTag("OneWayPlatform") || collision.collider.CompareTag("OneWayPlatform"))
         {
             currentOneWayPlatform = null;
         }
