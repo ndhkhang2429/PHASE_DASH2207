@@ -11550,10 +11550,6 @@ PrefabInstance:
       value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 2444119425649933623, guid: 635ddb7ccad15794e811e06910b8e77f, type: 3}
-      propertyPath: m_Material
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 2444119425649933623, guid: 635ddb7ccad15794e811e06910b8e77f, type: 3}
       propertyPath: m_Interpolate
       value: 1
       objectReference: {fileID: 0}
@@ -15529,35 +15525,9 @@ CompositeCollider2D:
   m_GeometryType: 0
   m_GenerationType: 0
   m_EdgeRadius: 0
-  m_ColliderPaths:
-  - m_Collider: {fileID: 1978907534}
-    m_ColliderPaths:
-    - - X: -560000000
-        Y: -50000000
-      - X: -600000000
-        Y: -50000000
-      - X: -600000000
-        Y: -60000000
-      - X: -560000000
-        Y: -60000000
-    - - X: -480000000
-        Y: -50000000
-      - X: -520000000
-        Y: -50000000
-      - X: -520000000
-        Y: -60000000
-      - X: -480000000
-        Y: -60000000
+  m_ColliderPaths: []
   m_CompositePaths:
-    m_Paths:
-    - - {x: -48.00003, y: -6}
-      - {x: -48.00003, y: -5}
-      - {x: -52, y: -5.000029}
-      - {x: -51.999973, y: -6}
-    - - {x: -56.000034, y: -6}
-      - {x: -56.000034, y: -5}
-      - {x: -60, y: -5.000029}
-      - {x: -59.99997, y: -6}
+    m_Paths: []
   m_VertexDistance: 0.0005
   m_OffsetDistance: 0.00005
   m_UseDelaunayMesh: 0
@@ -15620,7 +15590,7 @@ TilemapCollider2D:
     m_Bits: 4294967295
   m_IsTrigger: 0
   m_UsedByEffector: 1
-  m_UsedByComposite: 1
+  m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   m_MaximumTileChangeCount: 1000
   m_ExtrusionFactor: 0

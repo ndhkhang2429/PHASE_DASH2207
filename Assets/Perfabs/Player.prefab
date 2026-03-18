@@ -280,6 +280,7 @@ MonoBehaviour:
   jumpSpeed: 18
   coyoteTime: 0.1
   jumpBufferTime: 0.1
+  playerCollider: {fileID: 0}
   doubleJumpEffectPrefab: {fileID: 155540448128913588, guid: 38749090ebecad54d96778c2fb91dac1, type: 3}
   canFlip: 1
   maxHealth: 100
