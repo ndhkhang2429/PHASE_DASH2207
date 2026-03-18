@@ -152,11 +152,12 @@ public class Player : MonoBehaviour
     private void Move()
     {
         rb.velocity = new Vector2(horizontal * speed, rb.velocity.y);
+        AudioController.Instance.PlayPlayerSFX(AudioController.Instance.walkSound);
     }
 
     private void CheckGround()
     {
-
+        bool wasGrounded = IsGrounded;
         if (rb.velocity.y <= 0.1f)
         {
             IsGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayerMask);
@@ -164,6 +165,11 @@ public class Player : MonoBehaviour
         else
         {
             IsGrounded = false;
+        }
+
+        if (!wasGrounded && IsGrounded)
+        {
+            AudioController.Instance.PlayPlayerSFX(AudioController.Instance.landSound);
         }
 
         if (jumpCooldownTimer > 0f)
@@ -210,6 +216,8 @@ public class Player : MonoBehaviour
             // Quaternion.identity nghĩa là không xoay
             Instantiate(doubleJumpEffectPrefab, groundCheck.position, Quaternion.identity);
         }
+
+        AudioController.Instance.PlayPlayerSFX(AudioController.Instance.jumpSound);
 
         // Kích hoạt khiên chống nhiễu mặt đất
         jumpCooldownTimer = 0.1f;
@@ -350,6 +358,7 @@ public class Player : MonoBehaviour
         {
             atk.CancelAttack();
         }
+        AudioController.Instance.PlayPlayerSFX(AudioController.Instance.hurtSound);
     }
 
     private void Die()
@@ -362,6 +371,7 @@ public class Player : MonoBehaviour
         animator.SetTrigger("Die");
 
         this.enabled = false; // tắt script điều khiển
+        AudioController.Instance.PlayBGM(AudioController.Instance.EndGameBGM);
     }
 
     private void OnDeathAnimationEnd()
@@ -386,6 +396,7 @@ public class Player : MonoBehaviour
         rb.gravityScale = 0; // tat gravity
         Physics2D.IgnoreLayerCollision(playerLayer, enemyLayer, true);
         animator.SetTrigger("Dash");
+        AudioController.Instance.PlayPlayerSFX(AudioController.Instance.dashSound);
     }
 
     //kiem tra dash trong tung frame hinh 

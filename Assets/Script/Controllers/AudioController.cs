@@ -1,4 +1,5 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -11,13 +12,20 @@ public class AudioController : MonoBehaviour
 
     [Header("Sound Effects")]
     [SerializeField] private List<AudioClip> buttonClickSFXList = new();
-    [SerializeField] private List<AudioClip> playerSFXList = new();
 
     [Header("Background Music")]
-    [SerializeField] private AudioClip menuBGM;
-    [SerializeField] private AudioClip inGameBGM;
-    [SerializeField] private AudioClip BossBGM;
-    [SerializeField] private AudioClip EndGameBGM;
+    public AudioClip menuBGM;
+    public AudioClip inGameBGM;
+    public AudioClip BossBGM;
+    public AudioClip EndGameBGM;
+
+    [Header("SFX Clips (Hiệu ứng)")]
+    public AudioClip walkSound;
+    public AudioClip dashSound;
+    public AudioClip jumpSound;
+    public AudioClip landSound;
+    public AudioClip attackSound;
+    public AudioClip hurtSound;
 
     private const string InGameSceneName = "Main";
     private const string BGMVolumeKey = "BGMVolume";
@@ -88,19 +96,12 @@ public class AudioController : MonoBehaviour
         audioSource.volume = value;
     }
 
-    public void PlayPlayerSFX() => PlayRandomSFXFromList(playerSFXList);
-
-    private void PlayRandomSFXFromList(List<AudioClip> clips)
+    public void PlayPlayerSFX(AudioClip clip)
     {
-        if (clips == null || clips.Count <= 0)
+        if (clip != null)
         {
-            return;
+            sfxAudioSource.PlayOneShot(clip);
         }
-
-        var rnd = new System.Random();
-        var randomIndex = rnd.Next(0, clips.Count);
-        var clip = clips[randomIndex];
-        PlaySFX(clip);
     }
 
     //chay Hieu ung
@@ -116,13 +117,13 @@ public class AudioController : MonoBehaviour
 
 
     //chay BGM cho background
-    private void PlayBGM(AudioClip clip)
+    public void PlayBGM(AudioClip clip)
     {
         if (bgmAudioSource == null || clip == null)
         {
             return;
         }
-
+        bgmAudioSource.Stop();
         bgmAudioSource.loop = true;
         bgmAudioSource.clip = clip;
         bgmAudioSource.Play();
