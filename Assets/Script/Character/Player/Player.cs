@@ -148,38 +148,35 @@ public class Player : MonoBehaviour
             Move();
         }
     }
-
     private void Move()
     {
         rb.velocity = new Vector2(horizontal * speed, rb.velocity.y);
-        AudioController.Instance.PlayPlayerSFX(AudioController.Instance.walkSound);
+
+        //AudioController.Instance.PlayPlayerSFX(AudioController.Instance.walkSound);
     }
+
 
     private void CheckGround()
     {
         bool wasGrounded = IsGrounded;
-        if (rb.velocity.y <= 0.1f)
-        {
-            IsGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayerMask);
-        }
-        else
+
+        // Bỏ điều kiện check vận tốc Y đi. Chỉ cần xem chân có chạm đất không là đủ!
+        IsGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayerMask);
+
+        // Nếu vừa mới bấm nút nhảy (cooldown > 0) thì chắc chắn là không chạm đất
+        if (jumpCooldownTimer > 0f)
         {
             IsGrounded = false;
         }
 
         if (!wasGrounded && IsGrounded)
         {
-            AudioController.Instance.PlayPlayerSFX(AudioController.Instance.landSound);
-        }
-
-        if (jumpCooldownTimer > 0f)
-        {
-            IsGrounded = false;
-            return;
+            // Nơi để bật âm thanh chạm đất sau này
+            // AudioController.Instance.PlayPlayerSFX(AudioController.Instance.landSound);
         }
 
         // Reset lại số lần nhảy và Coyote Time khi chạm đất an toàn
-        if (IsGrounded && rb.velocity.y <= 0)
+        if (IsGrounded)
         {
             coyoteTimer = coyoteTime;
             jumpCount = 0;
@@ -217,7 +214,7 @@ public class Player : MonoBehaviour
             Instantiate(doubleJumpEffectPrefab, groundCheck.position, Quaternion.identity);
         }
 
-        AudioController.Instance.PlayPlayerSFX(AudioController.Instance.jumpSound);
+        //AudioController.Instance.PlayPlayerSFX(AudioController.Instance.jumpSound);
 
         // Kích hoạt khiên chống nhiễu mặt đất
         jumpCooldownTimer = 0.1f;
@@ -358,7 +355,7 @@ public class Player : MonoBehaviour
         {
             atk.CancelAttack();
         }
-        AudioController.Instance.PlayPlayerSFX(AudioController.Instance.hurtSound);
+        //AudioController.Instance.PlayPlayerSFX(AudioController.Instance.hurtSound);
     }
 
     private void Die()
@@ -371,7 +368,7 @@ public class Player : MonoBehaviour
         animator.SetTrigger("Die");
 
         this.enabled = false; // tắt script điều khiển
-        AudioController.Instance.PlayBGM(AudioController.Instance.EndGameBGM);
+        //AudioController.Instance.PlayBGM(AudioController.Instance.EndGameBGM);
     }
 
     private void OnDeathAnimationEnd()
@@ -396,7 +393,7 @@ public class Player : MonoBehaviour
         rb.gravityScale = 0; // tat gravity
         Physics2D.IgnoreLayerCollision(playerLayer, enemyLayer, true);
         animator.SetTrigger("Dash");
-        AudioController.Instance.PlayPlayerSFX(AudioController.Instance.dashSound);
+        //AudioController.Instance.PlayPlayerSFX(AudioController.Instance.dashSound);
     }
 
     //kiem tra dash trong tung frame hinh 
