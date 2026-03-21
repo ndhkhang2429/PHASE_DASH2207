@@ -47,6 +47,9 @@ TagManager:
   - name: WallBackGround
     uniqueID: 3688396219
     locked: 0
+  - name: vien trang tri
+    uniqueID: 956640087
+    locked: 0
   - name: Terrain2
     uniqueID: 2783932597
     locked: 0

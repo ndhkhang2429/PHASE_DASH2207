@@ -113,12 +113,12 @@ TextureImporter:
       name: walls_side_top_0
       rect:
         serializedVersion: 2
-        x: 32
-        y: 272
-        width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        x: 48
+        y: 288
+        width: 64
+        height: 16
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -131,78 +131,15 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: walls_side_top_1
-      rect:
-        serializedVersion: 2
-        x: 64
-        y: 272
-        width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 1567e9f368bde434f99a6b25b8cf4951
-      internalID: 982794187
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: walls_side_top_2
-      rect:
-        serializedVersion: 2
-        x: 96
-        y: 272
-        width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: fa811c2a1b5bbe04a868a65eb1558791
-      internalID: -1546095685
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: walls_side_top_3
-      rect:
-        serializedVersion: 2
-        x: 128
-        y: 272
-        width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: ed40ad349b3a3c040abc2d66ad37c0ac
-      internalID: 1882938349
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
       name: walls_side_top_4
       rect:
         serializedVersion: 2
-        x: 160
-        y: 272
-        width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        x: 144
+        y: 288
+        width: 96
+        height: 16
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -210,48 +147,6 @@ TextureImporter:
       bones: []
       spriteID: 64b7c3873d8427645bcc5f40785e99f7
       internalID: 516922779
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: walls_side_top_5
-      rect:
-        serializedVersion: 2
-        x: 192
-        y: 272
-        width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: d3c1ede4104457f4bb7bf293c7514fbc
-      internalID: 1643821019
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: walls_side_top_6
-      rect:
-        serializedVersion: 2
-        x: 224
-        y: 272
-        width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: abc27b2a8ed4e834da775779465ce261
-      internalID: -913369705
       vertices: []
       indices: 
       edges: []
@@ -325,10 +220,10 @@ TextureImporter:
         serializedVersion: 2
         x: 0
         y: 240
-        width: 32
+        width: 16
         height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      alignment: 4
+      pivot: {x: 0, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -344,9 +239,9 @@ TextureImporter:
       name: walls_side_top_11
       rect:
         serializedVersion: 2
-        x: 32
+        x: 48
         y: 240
-        width: 32
+        width: 16
         height: 32
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
@@ -472,7 +367,7 @@ TextureImporter:
         serializedVersion: 2
         x: 256
         y: 240
-        width: 17
+        width: 16
         height: 32
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
@@ -494,9 +389,9 @@ TextureImporter:
         x: 288
         y: 240
         width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        height: 20
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -515,9 +410,9 @@ TextureImporter:
         x: 320
         y: 240
         width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        height: 20
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -536,9 +431,9 @@ TextureImporter:
         x: 352
         y: 240
         width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        height: 20
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -557,9 +452,9 @@ TextureImporter:
         x: 384
         y: 240
         width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        height: 20
+      alignment: 2
+      pivot: {x: 0.5, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -597,7 +492,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 448
-        y: 240
+        y: 224
         width: 32
         height: 32
       alignment: 0
@@ -619,10 +514,10 @@ TextureImporter:
         serializedVersion: 2
         x: 0
         y: 208
-        width: 32
+        width: 16
         height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      alignment: 4
+      pivot: {x: 0, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -743,8 +638,8 @@ TextureImporter:
       name: walls_side_top_30
       rect:
         serializedVersion: 2
-        x: 192
-        y: 208
+        x: 176
+        y: 32
         width: 32
         height: 32
       alignment: 0
@@ -764,9 +659,9 @@ TextureImporter:
       name: walls_side_top_31
       rect:
         serializedVersion: 2
-        x: 224
+        x: 209
         y: 208
-        width: 32
+        width: 31
         height: 32
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
@@ -912,7 +807,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 448
-        y: 208
+        y: 192
         width: 32
         height: 32
       alignment: 0
@@ -934,10 +829,10 @@ TextureImporter:
         serializedVersion: 2
         x: 0
         y: 176
-        width: 32
+        width: 16
         height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      alignment: 4
+      pivot: {x: 0, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -955,7 +850,7 @@ TextureImporter:
         serializedVersion: 2
         x: 32
         y: 176
-        width: 32
+        width: 31
         height: 32
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
@@ -1060,7 +955,7 @@ TextureImporter:
         serializedVersion: 2
         x: 192
         y: 176
-        width: 32
+        width: 16
         height: 32
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
@@ -1079,9 +974,9 @@ TextureImporter:
       name: walls_side_top_46
       rect:
         serializedVersion: 2
-        x: 224
+        x: 209
         y: 176
-        width: 32
+        width: 31
         height: 32
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
@@ -1227,7 +1122,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 448
-        y: 176
+        y: 160
         width: 32
         height: 32
       alignment: 0
@@ -1249,7 +1144,7 @@ TextureImporter:
         serializedVersion: 2
         x: 32
         y: 144
-        width: 32
+        width: 31
         height: 32
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
@@ -1354,7 +1249,7 @@ TextureImporter:
         serializedVersion: 2
         x: 192
         y: 144
-        width: 32
+        width: 16
         height: 32
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
@@ -1373,9 +1268,9 @@ TextureImporter:
       name: walls_side_top_60
       rect:
         serializedVersion: 2
-        x: 224
+        x: 209
         y: 144
-        width: 32
+        width: 31
         height: 32
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
@@ -1394,9 +1289,9 @@ TextureImporter:
       name: walls_side_top_61
       rect:
         serializedVersion: 2
-        x: 256
+        x: 284
         y: 144
-        width: 32
+        width: 4
         height: 32
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
@@ -1517,33 +1412,12 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: walls_side_top_67
-      rect:
-        serializedVersion: 2
-        x: 448
-        y: 144
-        width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: c2fb1f5494580dc42ad54ccb1aa12fcd
-      internalID: -494232682
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
       name: walls_side_top_68
       rect:
         serializedVersion: 2
         x: 32
         y: 112
-        width: 32
+        width: 31
         height: 32
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
@@ -1608,8 +1482,8 @@ TextureImporter:
         y: 112
         width: 32
         height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      alignment: 3
+      pivot: {x: 1, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -1648,7 +1522,7 @@ TextureImporter:
         serializedVersion: 2
         x: 192
         y: 112
-        width: 32
+        width: 16
         height: 32
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
@@ -1667,9 +1541,9 @@ TextureImporter:
       name: walls_side_top_74
       rect:
         serializedVersion: 2
-        x: 224
+        x: 209
         y: 112
-        width: 32
+        width: 31
         height: 32
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
@@ -1688,9 +1562,9 @@ TextureImporter:
       name: walls_side_top_75
       rect:
         serializedVersion: 2
-        x: 256
+        x: 284
         y: 112
-        width: 32
+        width: 4
         height: 32
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
@@ -1816,10 +1690,10 @@ TextureImporter:
         serializedVersion: 2
         x: 0
         y: 80
-        width: 32
+        width: 16
         height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      alignment: 4
+      pivot: {x: 0, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -1837,7 +1711,7 @@ TextureImporter:
         serializedVersion: 2
         x: 32
         y: 80
-        width: 32
+        width: 31
         height: 32
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
@@ -1941,9 +1815,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 192
-        y: 80
-        width: 32
-        height: 32
+        y: 96
+        width: 16
+        height: 16
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1961,9 +1835,9 @@ TextureImporter:
       name: walls_side_top_88
       rect:
         serializedVersion: 2
-        x: 224
+        x: 209
         y: 80
-        width: 32
+        width: 31
         height: 32
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
@@ -1984,10 +1858,10 @@ TextureImporter:
         serializedVersion: 2
         x: 256
         y: 80
-        width: 32
+        width: 16
         height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -2004,11 +1878,11 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 288
-        y: 80
+        y: 92
         width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        height: 20
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -2025,11 +1899,11 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 320
-        y: 80
+        y: 92
         width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        height: 20
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -2046,11 +1920,11 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 352
-        y: 80
+        y: 92
         width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        height: 20
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -2067,11 +1941,11 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 384
-        y: 80
+        y: 92
         width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        height: 20
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -2110,10 +1984,10 @@ TextureImporter:
         serializedVersion: 2
         x: 0
         y: 48
-        width: 32
+        width: 16
         height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      alignment: 4
+      pivot: {x: 0, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -2130,9 +2004,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 32
-        y: 48
+        y: 64
         width: 32
-        height: 32
+        height: 16
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2150,8 +2024,8 @@ TextureImporter:
       name: walls_side_top_97
       rect:
         serializedVersion: 2
-        x: 64
-        y: 48
+        x: 48
+        y: 32
         width: 32
         height: 32
       alignment: 0
@@ -2171,8 +2045,8 @@ TextureImporter:
       name: walls_side_top_98
       rect:
         serializedVersion: 2
-        x: 96
-        y: 48
+        x: 80
+        y: 32
         width: 32
         height: 32
       alignment: 0
@@ -2192,8 +2066,8 @@ TextureImporter:
       name: walls_side_top_99
       rect:
         serializedVersion: 2
-        x: 128
-        y: 48
+        x: 112
+        y: 32
         width: 32
         height: 32
       alignment: 0
@@ -2213,8 +2087,8 @@ TextureImporter:
       name: walls_side_top_100
       rect:
         serializedVersion: 2
-        x: 160
-        y: 48
+        x: 144
+        y: 32
         width: 32
         height: 32
       alignment: 0
@@ -2231,34 +2105,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: walls_side_top_101
-      rect:
-        serializedVersion: 2
-        x: 192
-        y: 48
-        width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 690d845e52c249f41ae42f57f30f44ff
-      internalID: -843861767
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
       name: walls_side_top_102
       rect:
         serializedVersion: 2
-        x: 224
-        y: 48
+        x: 208
+        y: 64
         width: 32
-        height: 32
+        height: 16
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2278,10 +2131,10 @@ TextureImporter:
         serializedVersion: 2
         x: 256
         y: 48
-        width: 32
+        width: 16
         height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      alignment: 5
+      pivot: {x: 1, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -2360,10 +2213,10 @@ TextureImporter:
       name: walls_side_top_107
       rect:
         serializedVersion: 2
-        x: 0
-        y: 16
-        width: 32
-        height: 32
+        x: 7
+        y: 32
+        width: 9
+        height: 16
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2378,139 +2231,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: walls_side_top_108
-      rect:
-        serializedVersion: 2
-        x: 32
-        y: 16
-        width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: ca3c551cbaab712418c1733453ae2c0e
-      internalID: 1926872343
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: walls_side_top_109
-      rect:
-        serializedVersion: 2
-        x: 64
-        y: 16
-        width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: cb091ddc9ce02524983b53a6cabb9ce9
-      internalID: -2121898428
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: walls_side_top_110
-      rect:
-        serializedVersion: 2
-        x: 96
-        y: 16
-        width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 8761a8f6bcee9e348ac0f0bf330c8321
-      internalID: -1993135200
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: walls_side_top_111
-      rect:
-        serializedVersion: 2
-        x: 128
-        y: 16
-        width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: c7544ee7db016d746b0530b6f09a0db2
-      internalID: -1419689472
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: walls_side_top_112
-      rect:
-        serializedVersion: 2
-        x: 160
-        y: 16
-        width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: e19200f32aa62104b94516b5cf85abe1
-      internalID: -2059277697
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: walls_side_top_113
-      rect:
-        serializedVersion: 2
-        x: 192
-        y: 16
-        width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 8afc7dc72d665a44db931bf3e3ea0bb1
-      internalID: -1625408547
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
       name: walls_side_top_114
       rect:
         serializedVersion: 2
         x: 256
-        y: 16
-        width: 32
-        height: 32
+        y: 32
+        width: 9
+        height: 16
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2659,7 +2386,7 @@ TextureImporter:
         width: 13
         height: 12
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -2680,7 +2407,7 @@ TextureImporter:
         width: 9
         height: 15
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -2701,7 +2428,7 @@ TextureImporter:
         width: 5
         height: 32
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -2709,6 +2436,132 @@ TextureImporter:
       bones: []
       spriteID: 7eb6b3a222cd0384faa873a4945e8576
       internalID: -1262164949
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: walls_side_top_1
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 0
+        width: 32
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4c4b12973f03c0d49af92fe62a94a584
+      internalID: 982794187
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: walls_side_top_2
+      rect:
+        serializedVersion: 2
+        x: 80
+        y: 0
+        width: 32
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 82417ec7a212a684cb7cc03e0e7e5e87
+      internalID: -1546095685
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: walls_side_top_3
+      rect:
+        serializedVersion: 2
+        x: 112
+        y: 7
+        width: 16
+        height: 9
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0effce002fd724b4888d45c8eb07faae
+      internalID: 1882938349
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: walls_side_top_5
+      rect:
+        serializedVersion: 2
+        x: 144
+        y: 0
+        width: 48
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c07256886735a714293de1f3eb022a12
+      internalID: 1643821019
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: walls_side_top_6
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 0
+        width: 48
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f74d9cca0258a5d4ab94689a17d952c4
+      internalID: -913369705
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: walls_side_top_67
+      rect:
+        serializedVersion: 2
+        x: 112
+        y: 288
+        width: 16
+        height: 9
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7020aae2943adff45b1e78ef7e91c0c6
+      internalID: -494232682
       vertices: []
       indices: 
       edges: []
