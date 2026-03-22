@@ -10,14 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 13b75c95f34a00d4e8c04f76b73312e6, type: 3}
-  m_Name: Den chum
+  m_Name: DomLua
   m_EditorClassIdentifier: 
   m_AnimatedSprites:
-  - {fileID: -925365403, guid: 5a81df2fb6e1975449f0990ba41bd65a, type: 3}
-  - {fileID: 114082575, guid: 5a81df2fb6e1975449f0990ba41bd65a, type: 3}
-  - {fileID: -249826152, guid: 5a81df2fb6e1975449f0990ba41bd65a, type: 3}
-  - {fileID: 1692471687, guid: 5a81df2fb6e1975449f0990ba41bd65a, type: 3}
-  - {fileID: 1228405136, guid: 5a81df2fb6e1975449f0990ba41bd65a, type: 3}
+  - {fileID: -883842020, guid: 669f4316d5620a14c95506c70b57f7cf, type: 3}
+  - {fileID: 1132750172, guid: 669f4316d5620a14c95506c70b57f7cf, type: 3}
+  - {fileID: -1969843520, guid: 669f4316d5620a14c95506c70b57f7cf, type: 3}
+  - {fileID: -19177838, guid: 669f4316d5620a14c95506c70b57f7cf, type: 3}
   m_MinSpeed: 1
   m_MaxSpeed: 1
   m_AnimationStartTime: 0

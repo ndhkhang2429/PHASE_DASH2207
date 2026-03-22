@@ -10,14 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 13b75c95f34a00d4e8c04f76b73312e6, type: 3}
-  m_Name: Den chum
+  m_Name: DauLau_Phai
   m_EditorClassIdentifier: 
   m_AnimatedSprites:
-  - {fileID: -925365403, guid: 5a81df2fb6e1975449f0990ba41bd65a, type: 3}
-  - {fileID: 114082575, guid: 5a81df2fb6e1975449f0990ba41bd65a, type: 3}
-  - {fileID: -249826152, guid: 5a81df2fb6e1975449f0990ba41bd65a, type: 3}
-  - {fileID: 1692471687, guid: 5a81df2fb6e1975449f0990ba41bd65a, type: 3}
-  - {fileID: 1228405136, guid: 5a81df2fb6e1975449f0990ba41bd65a, type: 3}
+  - {fileID: 1923818749, guid: 40b2af2f88054204887c240dbbe5e71a, type: 3}
+  - {fileID: 1451624960, guid: 40b2af2f88054204887c240dbbe5e71a, type: 3}
+  - {fileID: 576985008, guid: 40b2af2f88054204887c240dbbe5e71a, type: 3}
   m_MinSpeed: 1
   m_MaxSpeed: 1
   m_AnimationStartTime: 0
