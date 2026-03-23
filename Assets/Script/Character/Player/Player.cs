@@ -124,7 +124,7 @@ public class Player : MonoBehaviour
         animator.SetFloat("Speed", Mathf.Abs(horizontal));
         animator.SetBool("IsGround", IsGrounded);
         animator.SetFloat("YVelocity", rb.velocity.y);
-
+        animator.SetBool("IsDashing", isDashing);
 
         HandleDashInput();
         UpdateDash();
@@ -368,7 +368,19 @@ public class Player : MonoBehaviour
         animator.SetTrigger("Die");
 
         this.enabled = false; // tắt script điều khiển
+        Invoke("TriggerGameOverMenu", 1f);
         //AudioController.Instance.PlayBGM(AudioController.Instance.EndGameBGM);
+    }
+
+    private void TriggerGameOverMenu()
+    {
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.GameOver();
+        }
+
+        // Xóa nhân vật khỏi màn hình sau khi đã hiện Game Over
+        Destroy(gameObject);
     }
 
     private void OnDeathAnimationEnd()
@@ -390,8 +402,13 @@ public class Player : MonoBehaviour
         dashDirection = facingDirection;
         dashAttackTimer = dashAttackWindow;
 
+        rb.velocity = new Vector2(rb.velocity.x, 0f);
+
         rb.gravityScale = 0; // tat gravity
         Physics2D.IgnoreLayerCollision(playerLayer, enemyLayer, true);
+
+        animator.ResetTrigger("Jump");
+
         animator.SetTrigger("Dash");
         //AudioController.Instance.PlayPlayerSFX(AudioController.Instance.dashSound);
     }
