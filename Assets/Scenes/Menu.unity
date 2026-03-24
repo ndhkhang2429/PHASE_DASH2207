@@ -365,7 +365,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1973508734713440630, guid: 5e7281b44726aec4dac5c7504e56c537, type: 3}
       propertyPath: Pan2D
-      value: 1
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1973508734713440630, guid: 5e7281b44726aec4dac5c7504e56c537, type: 3}
+      propertyPath: m_PlayOnAwake
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2231810548848822054, guid: 5e7281b44726aec4dac5c7504e56c537, type: 3}
       propertyPath: m_LocalPosition.x
@@ -409,11 +413,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2879715977398269906, guid: 5e7281b44726aec4dac5c7504e56c537, type: 3}
       propertyPath: Pan2D
-      value: -1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2879715977398269906, guid: 5e7281b44726aec4dac5c7504e56c537, type: 3}
       propertyPath: m_Pitch
-      value: -3
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2879715977398269906, guid: 5e7281b44726aec4dac5c7504e56c537, type: 3}
       propertyPath: Priority
@@ -436,9 +440,29 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4136321716302868446, guid: 5e7281b44726aec4dac5c7504e56c537, type: 3}
+      propertyPath: attackAirSound
+      value: 
+      objectReference: {fileID: 8300000, guid: c003a5de0200bad47849a8ad3fa27f2e, type: 3}
+    - target: {fileID: 4136321716302868446, guid: 5e7281b44726aec4dac5c7504e56c537, type: 3}
       propertyPath: bgmAudioSource
       value: 
       objectReference: {fileID: 360052402}
+    - target: {fileID: 4136321716302868446, guid: 5e7281b44726aec4dac5c7504e56c537, type: 3}
+      propertyPath: comboSounds.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4136321716302868446, guid: 5e7281b44726aec4dac5c7504e56c537, type: 3}
+      propertyPath: comboSounds.Array.data[0]
+      value: 
+      objectReference: {fileID: 8300000, guid: 897beeba69dfab346bd4a9bce0ca6e0d, type: 3}
+    - target: {fileID: 4136321716302868446, guid: 5e7281b44726aec4dac5c7504e56c537, type: 3}
+      propertyPath: comboSounds.Array.data[1]
+      value: 
+      objectReference: {fileID: 8300000, guid: 004e788c123dc914b91e1d6e4781da29, type: 3}
+    - target: {fileID: 4136321716302868446, guid: 5e7281b44726aec4dac5c7504e56c537, type: 3}
+      propertyPath: comboSounds.Array.data[2]
+      value: 
+      objectReference: {fileID: 8300000, guid: c003a5de0200bad47849a8ad3fa27f2e, type: 3}
     - target: {fileID: 6836376453997943734, guid: 5e7281b44726aec4dac5c7504e56c537, type: 3}
       propertyPath: m_Name
       value: AudioController

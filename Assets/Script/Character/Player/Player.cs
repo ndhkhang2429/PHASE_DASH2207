@@ -13,6 +13,9 @@ public class Player : MonoBehaviour
     [SerializeField] private float speed;
     private float horizontal;
 
+    [SerializeField] private float walkStepInterval = 0.3f; // Thời gian giữa 2 bước chân
+    private float stepTimer;
+
     [Header ("Ground check")]
     [SerializeField] private Transform groundCheck;
     [SerializeField] private float groundCheckRadius;
@@ -152,7 +155,20 @@ public class Player : MonoBehaviour
     {
         rb.velocity = new Vector2(horizontal * speed, rb.velocity.y);
 
-        AudioController.Instance.PlayPlayerSFX(AudioController.Instance.walkSound);
+        if (IsGrounded && Mathf.Abs(horizontal) > 0)
+        {
+            stepTimer -= Time.fixedDeltaTime;
+            if (stepTimer <= 0)
+            {
+                AudioController.Instance.PlaySFX(AudioController.Instance.walkSound);
+                stepTimer = walkStepInterval; // Đặt lại bộ đếm cho bước tiếp theo
+            }
+        }
+        else
+        {
+            // Reset ngay lập tức khi đứng im hoặc nhảy lên không trung
+            stepTimer = 0f;
+        }
     }
 
 
@@ -172,7 +188,7 @@ public class Player : MonoBehaviour
         if (!wasGrounded && IsGrounded)
         {
             // Nơi để bật âm thanh chạm đất sau này
-            AudioController.Instance.PlayPlayerSFX(AudioController.Instance.landSound);
+            AudioController.Instance.PlaySFX(AudioController.Instance.landSound);
         }
 
         // Reset lại số lần nhảy và Coyote Time khi chạm đất an toàn
@@ -214,7 +230,7 @@ public class Player : MonoBehaviour
             Instantiate(doubleJumpEffectPrefab, groundCheck.position, Quaternion.identity);
         }
 
-        AudioController.Instance.PlayPlayerSFX(AudioController.Instance.jumpSound);
+        AudioController.Instance.PlaySFX(AudioController.Instance.jumpSound);
 
         // Kích hoạt khiên chống nhiễu mặt đất
         jumpCooldownTimer = 0.1f;
@@ -334,8 +350,10 @@ public class Player : MonoBehaviour
     {
         isInvincible = true;
         canFlip = false;
-
         isAttacking = false;
+
+        AudioController.Instance.PlaySFX(AudioController.Instance.hurtSound);
+
         if (!isAttacking)
         {
             animator.SetTrigger("Hurt");
@@ -355,7 +373,6 @@ public class Player : MonoBehaviour
         {
             atk.CancelAttack();
         }
-        AudioController.Instance.PlayPlayerSFX(AudioController.Instance.hurtSound);
     }
 
     private void Die()
@@ -410,7 +427,7 @@ public class Player : MonoBehaviour
         animator.ResetTrigger("Jump");
 
         animator.SetTrigger("Dash");
-        //AudioController.Instance.PlayPlayerSFX(AudioController.Instance.dashSound);
+        AudioController.Instance.PlaySFX(AudioController.Instance.dashSound);
     }
 
     //kiem tra dash trong tung frame hinh 

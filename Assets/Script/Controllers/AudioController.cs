@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Security.Cryptography.X509Certificates;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -24,7 +23,8 @@ public class AudioController : MonoBehaviour
     public AudioClip dashSound;
     public AudioClip jumpSound;
     public AudioClip landSound;
-    public AudioClip attackSound;
+    public AudioClip attackAirSound;
+    public AudioClip[] comboSounds;
     public AudioClip hurtSound;
 
     private const string InGameSceneName = "Main";
@@ -36,13 +36,15 @@ public class AudioController : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance != null || Instance != this)
+        if (Instance != null && Instance != this)
         {
             Destroy(Instance);
+            return;
         }
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
+
         LoadSettings();
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
@@ -96,21 +98,9 @@ public class AudioController : MonoBehaviour
         audioSource.volume = value;
     }
 
-    public void PlayPlayerSFX(AudioClip clip)
+    public void PlaySFX(AudioClip clip)
     {
-        if (clip != null)
-        {
-            sfxAudioSource.PlayOneShot(clip);
-        }
-    }
-
-    //chay Hieu ung
-    private void PlaySFX(AudioClip clip)
-    {
-        if (sfxAudioSource == null || clip == null)
-        {
-            return;
-        }
+        if (sfxAudioSource == null || clip == null) return;
 
         sfxAudioSource.PlayOneShot(clip);
     }
@@ -123,6 +113,9 @@ public class AudioController : MonoBehaviour
         {
             return;
         }
+
+        if (bgmAudioSource.clip == clip && bgmAudioSource.isPlaying) return;
+
         bgmAudioSource.Stop();
         bgmAudioSource.loop = true;
         bgmAudioSource.clip = clip;

@@ -104,7 +104,14 @@ public class PlayerAttack : MonoBehaviour
         animator.SetBool("isAttacking", true);
         animator.SetInteger("ComboStep", comboStep);
         animator.Play("Attack" + comboStep, 0, 0f);
-        AudioController.Instance.PlayPlayerSFX(AudioController.Instance.attackSound);
+        if (AudioController.Instance != null && AudioController.Instance.comboSounds.Length >= comboStep)
+        {
+            AudioClip currentHitSound = AudioController.Instance.comboSounds[comboStep - 1];
+            if (currentHitSound != null)
+            {
+                AudioController.Instance.PlaySFX(currentHitSound);
+            }
+        }
     }
 
     //Goi bang animation event o giua attack
@@ -156,8 +163,15 @@ public class PlayerAttack : MonoBehaviour
         player.isAttacking = true;
         player.canFlip = false;
 
-        animator.SetTrigger("AirAttack");
-        AudioController.Instance.PlayPlayerSFX(AudioController.Instance.attackSound);
+        lastAttackTime = Time.time;
+
+        animator.SetBool("isAttacking", true);
+
+        animator.Play("Air_Attack", 0, 0f);
+        if (AudioController.Instance != null)
+        {
+            AudioController.Instance.PlaySFX(AudioController.Instance.attackAirSound);
+        }
     }
 
     private void ProcessDamage(Collider2D[] enemies, int damage, float kbForce)
