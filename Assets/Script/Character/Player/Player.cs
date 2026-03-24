@@ -152,7 +152,7 @@ public class Player : MonoBehaviour
     {
         rb.velocity = new Vector2(horizontal * speed, rb.velocity.y);
 
-        //AudioController.Instance.PlayPlayerSFX(AudioController.Instance.walkSound);
+        AudioController.Instance.PlayPlayerSFX(AudioController.Instance.walkSound);
     }
 
 
@@ -172,7 +172,7 @@ public class Player : MonoBehaviour
         if (!wasGrounded && IsGrounded)
         {
             // Nơi để bật âm thanh chạm đất sau này
-            // AudioController.Instance.PlayPlayerSFX(AudioController.Instance.landSound);
+            AudioController.Instance.PlayPlayerSFX(AudioController.Instance.landSound);
         }
 
         // Reset lại số lần nhảy và Coyote Time khi chạm đất an toàn
@@ -214,7 +214,7 @@ public class Player : MonoBehaviour
             Instantiate(doubleJumpEffectPrefab, groundCheck.position, Quaternion.identity);
         }
 
-        //AudioController.Instance.PlayPlayerSFX(AudioController.Instance.jumpSound);
+        AudioController.Instance.PlayPlayerSFX(AudioController.Instance.jumpSound);
 
         // Kích hoạt khiên chống nhiễu mặt đất
         jumpCooldownTimer = 0.1f;
@@ -355,7 +355,7 @@ public class Player : MonoBehaviour
         {
             atk.CancelAttack();
         }
-        //AudioController.Instance.PlayPlayerSFX(AudioController.Instance.hurtSound);
+        AudioController.Instance.PlayPlayerSFX(AudioController.Instance.hurtSound);
     }
 
     private void Die()
@@ -369,7 +369,7 @@ public class Player : MonoBehaviour
 
         this.enabled = false; // tắt script điều khiển
         Invoke("TriggerGameOverMenu", 1f);
-        //AudioController.Instance.PlayBGM(AudioController.Instance.EndGameBGM);
+        AudioController.Instance.PlayBGM(AudioController.Instance.EndGameBGM);
     }
 
     private void TriggerGameOverMenu()
