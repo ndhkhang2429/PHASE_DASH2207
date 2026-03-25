@@ -8,6 +8,9 @@ public class EnemyHealth : MonoBehaviour
     [SerializeField] private int maxHealth;
     private int currentHealth;
 
+    [Header("Component")]
+    [SerializeField] private Animator animator;
+
     [Header("Hit Effect")]
     [SerializeField] private float hitStunTime;
 
@@ -41,10 +44,16 @@ public class EnemyHealth : MonoBehaviour
         currentHealth -= dame;
         Debug.Log(gameObject.name + " bi trung " + dame + " damage. Mau con lai: " + currentHealth);
 
+        if (animator != null)
+        {
+            animator.SetTrigger("Hurt"); // Nhớ kiểm tra chữ "Hurt" có viết hoa chữ H giống hệt trong Animator không nhé!
+        }
+
         if (damageTextPrefab != null)
         {
+            Vector3 spawnPos = transform.position + new Vector3(0f, 1f, -1f);
             // Cộng thêm một chút offset (ví dụ Vector3.up) nếu muốn chữ hiện cao hơn gốc của quái
-            DamageText dmgText = Instantiate(damageTextPrefab, transform.position, Quaternion.identity);
+            DamageText dmgText = Instantiate(damageTextPrefab, spawnPos, Quaternion.identity);
 
             // Gọi hàm SetData để gán số damage và màu
             dmgText.SetData(dame.ToString(), damageColor);

@@ -48,7 +48,7 @@ GameObject:
   - component: {fileID: 6630408178810397327}
   m_Layer: 7
   m_Name: FlyingDemon
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -63,7 +63,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -3.892, y: 4.796, z: -0.016279548}
-  m_LocalScale: {x: 2, y: 2, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5744829849579273709}
@@ -110,7 +110,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 2034851861
-  m_SortingLayer: 6
+  m_SortingLayer: 8
   m_SortingOrder: 0
   m_Sprite: {fileID: -584233243, guid: 43d38c7870d0c1e42b4479ca98a4bb4b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -131,7 +131,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5742787351745163872}
-  m_BodyType: 0
+  m_BodyType: 1
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
@@ -179,7 +179,7 @@ CapsuleCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -241,10 +241,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 3
+  animator: {fileID: 2404621056235906096}
   hitStunTime: 0.4
   energyReward: 5
   damageTextPrefab: {fileID: 2402558531480752357, guid: d755c4b3356b0e3408e5aa5d102ea68b, type: 3}
-  damageColor: {r: 1, g: 1, b: 1, a: 1}
+  damageColor: {r: 0.97735846, g: 0, b: 0, a: 1}
 --- !u!1 &6403166280659046387
 GameObject:
   m_ObjectHideFlags: 0

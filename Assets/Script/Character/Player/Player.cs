@@ -318,21 +318,13 @@ public class Player : MonoBehaviour
 
     public void TakeDamage(int dame, Vector2 knockbackDir, float knockbackForce)
     {
-        if(isInvincible)
+        if(isInvincible || currentHealth <= 0)
         {
             return;
         }
 
-        if (currentHealth <= 0) return;
-
         currentHealth -= dame;
-
-        // Knockback
-        if (!isAttacking)
-        {
-            rb.velocity = Vector2.zero;
-            rb.AddForce(knockbackDir * knockbackForce, ForceMode2D.Impulse);
-        }
+        healthBar.UpdateBar(currentHealth, maxHealth);
 
         if (currentHealth <= 0)
         {
@@ -340,38 +332,47 @@ public class Player : MonoBehaviour
         }
         else
         {
-            StartCoroutine(HitEffect());
+            StartCoroutine(HitEffect(knockbackDir, knockbackForce));
         }
-        healthBar.UpdateBar(currentHealth, maxHealth);
+
     }
 
-
-    private IEnumerator HitEffect()
+    private IEnumerator HitEffect(Vector2 knockbackDir, float knockbackForce)
     {
         isInvincible = true;
         canFlip = false;
         isAttacking = false;
+        rb.gravityScale = 0;
+        
+        float dir = knockbackDir.x != 0 ? Mathf.Sign(knockbackDir.x) : (facingDirection * -1);
+
+        rb.velocity = new Vector2(dir * knockbackForce, knockbackForce * 0.5f);
 
         AudioController.Instance.PlaySFX(AudioController.Instance.hurtSound);
 
-        if (!isAttacking)
-        {
-            animator.SetTrigger("Hurt");
-        }
-
+        animator.SetTrigger("Hurt");
         spriteRenderer.color = hitColor;
 
-        yield return new WaitForSeconds(hitFlashTime);
+        yield return new WaitForSeconds(0.12f);
+        rb.gravityScale = originalGravity;
+        canFlip = true;
+
+        // Duy trì bất tử thêm một lúc (nháy hình) nhưng đã có thể điều khiển
+        yield return new WaitForSeconds(hitFlashTime - 0.12f);
 
         spriteRenderer.color = baseColor;
-
-        canFlip = true;
         isInvincible = false;
-
-        PlayerAttack atk = GetComponent<PlayerAttack>();
-        if (atk != null)
+    }
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        // Kiểm tra nếu chạm phải quái mà không phải đang trong trạng thái bất tử
+        if (collision.CompareTag("Enemy") && !isInvincible)
         {
-            atk.CancelAttack();
+            // Tính hướng từ quái đến Player để nảy đúng hướng
+            Vector2 knockbackDirection = (transform.position - collision.transform.position).normalized;
+
+            // Gọi hàm nhận sát thương với lực nảy (ví dụ: lực 8)
+            TakeDamage(1, knockbackDirection, 8f);
         }
     }
 
