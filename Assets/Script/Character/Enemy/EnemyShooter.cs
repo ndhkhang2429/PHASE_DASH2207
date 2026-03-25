@@ -95,15 +95,13 @@ public class EnemyShooter : EnemyBase
         if (Time.time >= lastShootTime + shootCooldown)
         {
             lastShootTime = Time.time;
-            Shoot();
+            animator.SetTrigger("Shoot");
         }
     }
 
-    private void Shoot()
+    public void FireBullet()
     {
         if (player == null) return;
-
-        animator.SetTrigger("Shoot");
 
         GameObject bullet = Instantiate(bulletPrefab, firePoint.position, Quaternion.identity);
 
@@ -114,17 +112,6 @@ public class EnemyShooter : EnemyBase
 
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
         bullet.transform.rotation = Quaternion.Euler(0, 0, angle);
-    }
-
-    private void ShootLogic()
-    {
-        rb.velocity = new Vector2(0, rb.velocity.y);
-
-        if (Time.time >= lastShootTime + shootCooldown)
-        {
-            lastShootTime = Time.time;
-            Shoot();
-        }
     }
 
     private void FacePlayer()

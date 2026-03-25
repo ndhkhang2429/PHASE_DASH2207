@@ -19,10 +19,5 @@ public class EnemyBullet : MonoBehaviour
             collision.GetComponent<Player>().TakeDame(damage);
             Destroy(gameObject);
         }
-
-        if (collision.CompareTag("Ground"))
-        {
-            Destroy(gameObject);
-        }
     }
 }

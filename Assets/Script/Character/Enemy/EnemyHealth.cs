@@ -65,8 +65,7 @@ public class EnemyHealth : MonoBehaviour
             Rigidbody2D rb = GetComponent<Rigidbody2D>();
             if (rb != null)
             {
-                rb.velocity = Vector2.zero;
-                rb.AddForce(knockbackDirection * knockbackForce, ForceMode2D.Impulse);//day manh tuc thi
+                rb.velocity = knockbackDirection * knockbackForce;
             }
 
             //Hit stun
@@ -84,6 +83,8 @@ public class EnemyHealth : MonoBehaviour
     {
         IsStunned = true;
         yield return new WaitForSeconds(hitStunTime);
+        Rigidbody2D rb = GetComponent<Rigidbody2D>();
+        if (rb != null) rb.velocity = Vector2.zero;
         IsStunned = false;
     }
 

@@ -38144,7 +38144,7 @@ PrefabInstance:
       objectReference: {fileID: 1331282049}
     - target: {fileID: 6630408178810397327, guid: 04f552f3c366f8f4eaece26dbd1c8e57, type: 3}
       propertyPath: maxHealth
-      value: 2
+      value: 20
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -38542,6 +38542,83 @@ SpriteRenderer:
   m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1001 &1443255323
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 313078996242854082, guid: c47660d126390aa4ab4f3323c81d84c3, type: 3}
+      propertyPath: m_Name
+      value: FireWorm(Shooter)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4065364283217215383, guid: c47660d126390aa4ab4f3323c81d84c3, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 1.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4065364283217215383, guid: c47660d126390aa4ab4f3323c81d84c3, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4398450731857717091, guid: c47660d126390aa4ab4f3323c81d84c3, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -3.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 4398450731857717091, guid: c47660d126390aa4ab4f3323c81d84c3, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5805728670817849651, guid: c47660d126390aa4ab4f3323c81d84c3, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -56
+      objectReference: {fileID: 0}
+    - target: {fileID: 5805728670817849651, guid: c47660d126390aa4ab4f3323c81d84c3, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -7.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5805728670817849651, guid: c47660d126390aa4ab4f3323c81d84c3, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5805728670817849651, guid: c47660d126390aa4ab4f3323c81d84c3, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5805728670817849651, guid: c47660d126390aa4ab4f3323c81d84c3, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5805728670817849651, guid: c47660d126390aa4ab4f3323c81d84c3, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5805728670817849651, guid: c47660d126390aa4ab4f3323c81d84c3, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5805728670817849651, guid: c47660d126390aa4ab4f3323c81d84c3, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5805728670817849651, guid: c47660d126390aa4ab4f3323c81d84c3, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5805728670817849651, guid: c47660d126390aa4ab4f3323c81d84c3, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8802562694733993437, guid: c47660d126390aa4ab4f3323c81d84c3, type: 3}
+      propertyPath: canMove
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: c47660d126390aa4ab4f3323c81d84c3, type: 3}
 --- !u!1 &1468542034
 GameObject:
   m_ObjectHideFlags: 0
@@ -65909,3 +65986,4 @@ SceneRoots:
   - {fileID: 1818618607}
   - {fileID: 476020490}
   - {fileID: 1331282048}
+  - {fileID: 1443255323}
