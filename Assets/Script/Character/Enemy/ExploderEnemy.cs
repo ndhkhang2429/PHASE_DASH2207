@@ -13,6 +13,9 @@ public class ExploderEnemy : EnemyBase
         Explode//phat no
     };
 
+    [Header("VFX")]
+    [SerializeField] private GameObject explosionVFXPrefab;
+
     [Header("Patrol")]
     [SerializeField] private Transform PointA;
     [SerializeField] private Transform PointB;
@@ -25,6 +28,9 @@ public class ExploderEnemy : EnemyBase
     [SerializeField] private float windupTime;//thoi gian cho truoc khi no
     [SerializeField] private float explosionRadius;//ban kinh gay dame
     [SerializeField] private int damage;
+    [SerializeField] private int maxDamage = 40;
+    [SerializeField] private float maxKnockbackForce = 12f;
+    [SerializeField] private LayerMask playerLayer;
 
     [Header("Chase")]
     [SerializeField] private float chaseSpeed;
@@ -47,51 +53,45 @@ public class ExploderEnemy : EnemyBase
         rightLimit = PointB.position.x;
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
         spriteRenderer = GetComponent<SpriteRenderer>();
+        originalScale = transform.localScale;
     }
 
     private void Start()
     {
         currentState = State.Patrol;
         targetPoint = PointB;
-        originalScale = transform.localScale;
+
     }
 
     protected override void LogicUpdate()
     {
-        if (player == null) return;
+        if (isDead || player == null) return;
 
         float distance = Vector2.Distance(transform.position, player.position);
 
         switch (currentState)
         {
             case State.Patrol:
-                Patrol();
-
-                if (distance < detectRange)
-                    currentState = State.Chase;
+                PatrolLogic();
+                if (distance < detectRange) currentState = State.Chase;
                 break;
 
             case State.Chase:
-                Chase();
-
+                ChaseLogic();
                 if (distance < explodeRange && !isExploding)
                 {
-                    isExploding = true;
-
                     StartCoroutine(ExplodeRoutine());
                 }
-                break;
-
-            case State.ExplodeWindup:
-                break;
-
-            case State.Explode:
+                else if (distance > detectRange + 2f) // Player cắt đuôi thành công
+                {
+                    currentState = State.Patrol;
+                }
                 break;
         }
     }
 
     //Patrol
-    private void Patrol()
+    private void PatrolLogic()
     {
         animator.SetBool("isRunning", true);
         
@@ -114,7 +114,7 @@ public class ExploderEnemy : EnemyBase
     }
 
     //Chase
-    private void Chase()
+    private void ChaseLogic()
     {
         animator.SetBool("isRunning", true);
         int directionToPlayer = player.position.x > transform.position.x ? 1 : -1;
@@ -141,6 +141,7 @@ public class ExploderEnemy : EnemyBase
     //Explode Routine
     private IEnumerator ExplodeRoutine()
     {
+        isExploding = true;
         currentState = State.ExplodeWindup;
         animator.SetBool("isRunning", false);
 
@@ -157,47 +158,65 @@ public class ExploderEnemy : EnemyBase
         {
             timer += Time.deltaTime;
 
-            float t = timer / windupTime;
+            float progress = timer / windupTime;
 
             //scale phinh dan
-            transform.localScale = Vector3.Lerp(startScale, maxScale, t);
+            transform.localScale = Vector3.Lerp(startScale, maxScale, progress);
 
             //nhap nhay
-            float blink = Mathf.PingPong(Time.time * 8f, 1f);
+            float blinkSpeed = Mathf.Lerp(5f, 25f, progress);
+            float blink = Mathf.PingPong(Time.time * blinkSpeed, 1f);
             spriteRenderer.color = Color.Lerp(originalColor, Color.red, blink);
 
             yield return null;
         }
 
-        // Reset scale + color trước khi nổ
-        transform.localScale = originalScale;
-        spriteRenderer.color = originalColor;
-
-        currentState = State.Explode;
-        animator.SetTrigger("Explode");
-        Explode();
-
-        yield return new WaitForSeconds(0.5f);
-
-        Destroy(gameObject);
+        ExecuteExplosion();
     }
 
-    //Explode
-    public void Explode()
+    public void ExecuteExplosion()
     {
-       
-        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, explosionRadius, LayerMask.GetMask("Player"));
+        if (currentState == State.Explode) return; // Tránh nổ 2 lần
+        currentState = State.Explode;
 
-        foreach(Collider2D hit in hits)
+        if (explosionVFXPrefab != null)
         {
-            Player player = hit.GetComponent<Player>();
-            if (player != null)
+            Instantiate(explosionVFXPrefab, transform.position, Quaternion.identity);
+        }
+
+        // Tìm tất cả vật thể trong bán kính nổ
+        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, explosionRadius, playerLayer);
+
+        foreach (Collider2D hit in hits)
+        {
+            Player p = hit.GetComponent<Player>();
+            if (p != null)
             {
-                Vector2 dir = (hit.transform.position - transform.position).normalized;
-                player.TakeDamage(damage, dir, 5f);
+                float distance = Vector2.Distance(transform.position, hit.transform.position);
+
+                // Tỉ lệ khoảng cách: 1 ở tâm, 0 ở rìa
+                float proximity = Mathf.Clamp01(1 - (distance / explosionRadius));
+
+                // Game Feel: Tính toán Dame và Knockback giảm dần
+                int finalDamage = Mathf.CeilToInt(maxDamage * proximity);
+                float finalKnockback = maxKnockbackForce * proximity;
+                Vector2 knockDir = (hit.transform.position - transform.position).normalized;
+
+                // Tối thiểu vẫn có một chút lực đẩy nếu lỡ dính rìa
+                finalKnockback = Mathf.Max(finalKnockback, 2f);
+
+                p.TakeDamage(finalDamage, knockDir, finalKnockback);
             }
         }
 
+        Destroy(gameObject, 0.5f);
+    }
+
+    // Override lại hàm nhận Dame để nếu quái chết thì nổ luôn
+    public void TakeDamage(int damage) // Giả sử hàm này từ EnemyBase hoặc EnemyHealth
+    {
+        // Nếu bạn có hệ thống máu, khi máu <= 0 thì gọi ExecuteExplosion()
+        // Để tránh việc quái chết im lìm.
     }
 
     private void OnDrawGizmosSelected()

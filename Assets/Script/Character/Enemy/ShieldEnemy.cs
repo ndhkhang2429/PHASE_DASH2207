@@ -54,7 +54,7 @@ public class ShieldEnemy : EnemyBase
         targetPoint = PointB;
 
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
-        health = GetComponent<EnemyHealth>();
+        if (health == null) health = GetComponent<EnemyHealth>();
     }
 
     protected override void LogicUpdate()
@@ -72,26 +72,21 @@ public class ShieldEnemy : EnemyBase
         switch (currentState)
         {
             case State.Patrol:
-                Patrol();
-
-                if(distance < detectRange)
-                {
-                    currentState = State.Shield;
-                }
+                PatrolLogic(distance);
                 break;
 
             case State.Shield:
-                ShieldState(distance);
+                ShieldLogic(distance);
                 break;
 
             case State.Attack:
-                AttackState();
+                AttackLogic();
                 break;
         }
     }
 
     //Patrol
-    private void Patrol()
+    private void PatrolLogic(float distance)
     {
         isShielding = false;
         animator.SetBool("isRunning", true);
@@ -99,38 +94,54 @@ public class ShieldEnemy : EnemyBase
 
         rb.velocity = new Vector2(moveDirection * moveSpeed, rb.velocity.y);
 
+        // Đổi hướng tại điểm tuần tra
         if (moveDirection == 1 && transform.position.x >= rightLimit)
             SetDirection(-1);
         else if (moveDirection == -1 && transform.position.x <= leftLimit)
-            SetDirection(1);  
+            SetDirection(1);
+
+        // Chuyển sang Shield nếu thấy Player
+        if (distance < detectRange)
+        {
+            currentState = State.Shield;
+        }
     }
 
     //Shield
-    private void ShieldState(float distance)
+    private void ShieldLogic(float distance)
     {
         rb.velocity = Vector2.zero;
+        isShielding = true;
 
         animator.SetBool("isRunning", false);
         animator.SetBool("isShield", true);
 
-        isShielding = true;
-
         FacePlayer();
 
+        // Kiểm tra điều kiện tấn công
         if (distance < attackRange && attackTimer >= attackCooldown)
-        { 
-            isShielding = false;
-            animator.SetBool("isShield", false);
-            animator.SetTrigger("Attack");
-            isAttacking = true;
+        {
             currentState = State.Attack;
         }
-
-        if (distance > detectRange)
+        // Quay lại tuần tra nếu Player đi xa
+        else if (distance > detectRange)
         {
             currentState = State.Patrol;
         }
     }
+
+    private void AttackLogic()
+    {
+        if (isAttacking) return;
+
+        isAttacking = true;
+        isShielding = false;
+
+        rb.velocity = Vector2.zero;
+        animator.SetBool("isShield", false);
+        animator.SetTrigger("Attack");
+    }
+
     private void SetDirection(int direction)
     {
         moveDirection = direction;
@@ -139,20 +150,6 @@ public class ShieldEnemy : EnemyBase
         {
             Flip();
         }
-    }
-
-    //Attack
-    private void AttackState()
-    {
-        if (isAttacking) return;
-
-        isAttacking = true;
-        isShielding = false;
-
-        animator.SetBool("isShield", false);
-        animator.SetTrigger("Attack");
-
-        rb.velocity = Vector2.zero;
     }
 
     private void DealDamage()
@@ -228,16 +225,35 @@ public class ShieldEnemy : EnemyBase
 
         if (health.IsDead)
         {
-            isDead = true; // Biến isDead này là của EnemyBase
-            rb.velocity = Vector2.zero;
+            Die();
             return true;
         }
 
         isAttacking = false;
-        attackTimer = 0f;
-        animator.SetBool("isShield", true);
         currentState = State.Shield;
         return true;
+    }
+    private void Die()
+    {
+        isDead = true;
+        rb.velocity = Vector2.zero;
+
+        // Kích hoạt Animation Chết
+        animator.SetTrigger("Die");
+
+        // Tắt va chạm để không cản đường Player
+        Collider2D col = GetComponent<Collider2D>();
+        if (col != null) col.enabled = false;
+
+        Debug.Log("Shield Enemy Dead");
+
+        // Tùy chọn: Xóa object sau 2 giây nếu không dùng Animation Event
+        // Destroy(gameObject, 2f);
+    }
+
+    public void DestroyEnemy()
+    {
+        Destroy(gameObject);
     }
 
     private void OnDrawGizmosSelected()
