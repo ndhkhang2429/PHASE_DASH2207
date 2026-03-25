@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -20,6 +20,7 @@ public class ShieldEnemy : EnemyBase
     [SerializeField] private float detectRange;
     [SerializeField] private float attackRange;
     [SerializeField] private float attackCooldown;
+    [SerializeField] private float turnDelay = 0.5f;
 
     [Header("Attack")]
     [SerializeField] private Transform attackPoint;
@@ -40,6 +41,8 @@ public class ShieldEnemy : EnemyBase
     private float attackTimer;
     private bool isAttacking;
 
+    private float turnTimer = 0f;
+
     protected override void Awake()
     {
         base.Awake();
@@ -56,6 +59,8 @@ public class ShieldEnemy : EnemyBase
 
     protected override void LogicUpdate()
     {
+        if (isDead) return;
+
         if (player == null) return;
 
         float distance = Mathf.Infinity;
@@ -180,10 +185,25 @@ public class ShieldEnemy : EnemyBase
     //Face player
     private void FacePlayer()
     {
-        if (player.position.x > transform.position.x && !isFacingRight)
-            Flip();
-        else if (player.position.x < transform.position.x && isFacingRight)
-            Flip();
+        bool playerIsOnRight = player.position.x > transform.position.x;
+
+        if ((playerIsOnRight && !isFacingRight) || (!playerIsOnRight && isFacingRight))
+        {
+            // Bắt đầu đếm ngược thời gian trễ
+            turnTimer += Time.deltaTime;
+
+            // Nếu đếm đủ thời gian thì mới quay mặt
+            if (turnTimer >= turnDelay)
+            {
+                Flip();
+                turnTimer = 0f; // Reset lại đồng hồ
+            }
+        }
+        else
+        {
+            // Nếu Player ở ngay trước mặt, reset đồng hồ về 0 để tránh lỗi dồn thời gian
+            turnTimer = 0f;
+        }
     }
 
     public bool TryTakeDamage(int damage, Transform attacker, float knockbackForce)

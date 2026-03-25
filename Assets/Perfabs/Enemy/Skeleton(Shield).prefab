@@ -131,14 +131,14 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3457074546844633580}
-  m_BodyType: 1
+  m_BodyType: 0
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 3
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -192,6 +192,7 @@ MonoBehaviour:
   detectRange: 4
   attackRange: 3
   attackCooldown: 2
+  turnDelay: 0.5
   attackPoint: {fileID: 295451112002136054}
   attackSize: {x: 4, y: 3}
   attackDamage: 1
@@ -216,7 +217,7 @@ MonoBehaviour:
   hitStunTime: 0.5
   energyReward: 4
   damageTextPrefab: {fileID: 2402558531480752357, guid: d755c4b3356b0e3408e5aa5d102ea68b, type: 3}
-  damageColor: {r: 1, g: 1, b: 1, a: 1}
+  damageColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!70 &5313873186035176837
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -246,7 +247,7 @@ CapsuleCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
