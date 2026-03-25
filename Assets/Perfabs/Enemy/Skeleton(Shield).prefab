@@ -192,7 +192,7 @@ MonoBehaviour:
   detectRange: 4
   attackRange: 3
   attackCooldown: 2
-  turnDelay: 0.5
+  turnDelay: 1
   attackPoint: {fileID: 295451112002136054}
   attackSize: {x: 4, y: 3}
   attackDamage: 1
@@ -214,7 +214,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 4
   animator: {fileID: 4632749557756107998}
-  hitStunTime: 0.5
+  hitStunTime: 0.2
   energyReward: 4
   damageTextPrefab: {fileID: 2402558531480752357, guid: d755c4b3356b0e3408e5aa5d102ea68b, type: 3}
   damageColor: {r: 1, g: 0, b: 0, a: 1}

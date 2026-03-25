@@ -226,6 +226,17 @@ public class ShieldEnemy : EnemyBase
 
         health.TakeDamage(damage, knockbackDir, knockbackForce);
 
+        if (health.IsDead)
+        {
+            isDead = true; // Biến isDead này là của EnemyBase
+            rb.velocity = Vector2.zero;
+            return true;
+        }
+
+        isAttacking = false;
+        attackTimer = 0f;
+        animator.SetBool("isShield", true);
+        currentState = State.Shield;
         return true;
     }
 

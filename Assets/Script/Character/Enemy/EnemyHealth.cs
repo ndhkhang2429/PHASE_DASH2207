@@ -6,7 +6,8 @@ public class EnemyHealth : MonoBehaviour
 {
     [Header("Health")]
     [SerializeField] private int maxHealth;
-    private int currentHealth;
+
+    public int CurrentHealth { get; private set; }
 
     [Header("Component")]
     [SerializeField] private Animator animator;
@@ -21,17 +22,17 @@ public class EnemyHealth : MonoBehaviour
     [SerializeField] private DamageText damageTextPrefab; // Kéo thả prefab DamageText vào đây
     [SerializeField] private Color damageColor = Color.red;
 
-    private bool isDead = false;
+    public bool IsDead { get; private set; } = false;
     public bool IsStunned { get; private set; }
 
     private void Start()
     {
-        currentHealth = maxHealth;
+        CurrentHealth = maxHealth;
     }
 
     public void TakeDamage(int dame, Vector2 knockbackDirection, float knockbackForce)
     {
-        if (isDead) return;
+        if (IsDead) return;
 
         ChargerEnemy charger = GetComponent<ChargerEnemy>();
 
@@ -41,8 +42,8 @@ public class EnemyHealth : MonoBehaviour
             Debug.Log("Charger dang Charge -> giam 50% damage");
         }
 
-        currentHealth -= dame;
-        Debug.Log(gameObject.name + " bi trung " + dame + " damage. Mau con lai: " + currentHealth);
+        CurrentHealth -= dame;
+        Debug.Log(gameObject.name + " bi trung " + dame + " damage. Mau con lai: " + CurrentHealth);
 
         if (animator != null)
         {
@@ -59,23 +60,28 @@ public class EnemyHealth : MonoBehaviour
             dmgText.SetData(dame.ToString(), damageColor);
         }
 
-        if (!(charger != null && charger.IsCharging()))
+        if (CurrentHealth <= 0)
         {
-            //Knockback(day lui)
-            Rigidbody2D rb = GetComponent<Rigidbody2D>();
-            if (rb != null)
+            // NẾU HẾT MÁU: Chỉ gọi chết, không gọi Hurt, không văng lùi
+            Die();
+        }
+        else
+        {
+            // NẾU CHƯA HẾT MÁU: Mới gọi Hurt và tính toán Knockback, Stun
+            if (animator != null)
             {
-                rb.velocity = knockbackDirection * knockbackForce;
+                animator.SetTrigger("Hurt");
             }
 
-            //Hit stun
-            StartCoroutine(HitStun());
-        }
-            
-
-        if(currentHealth <= 0)
-        {
-            Die();
+            if (!(charger != null && charger.IsCharging()))
+            {
+                Rigidbody2D rb = GetComponent<Rigidbody2D>();
+                if (rb != null)
+                {
+                    rb.velocity = knockbackDirection * knockbackForce;
+                }
+                StartCoroutine(HitStun());
+            }
         }
     }
 
@@ -90,7 +96,7 @@ public class EnemyHealth : MonoBehaviour
 
     private void Die()
     {
-        isDead = true;
+        IsDead = true;
         PlayerEnergy energy = FindAnyObjectByType<PlayerEnergy>();
         if (energy != null)
         {
