@@ -9,7 +9,8 @@ public class ChargerEnemy : EnemyBase
         Patrol,
         Windup,
         Charge,
-        Stunned
+        Stunned,
+        Cooldown
     };
 
     [Header("Patrol")]
@@ -17,14 +18,16 @@ public class ChargerEnemy : EnemyBase
     [SerializeField] private Transform PointB;
 
     [Header("Detection")]
-    [SerializeField] private float detectRange;
+    [SerializeField] private float detectRangeX = 6f;
+    [SerializeField] private float detectRangeY = 2f;
+    [SerializeField] private float chargeCooldown = 2f;
 
     [Header("Charge")]
-    [SerializeField] private float windupTime;
-    [SerializeField] private float chargeSpeed;
-    [SerializeField] private float chargeDuration;
-    [SerializeField] private float stunTimeWall;
-    [SerializeField] private float stunTimePlayer;
+    [SerializeField] private float windupTime = 0.8f;
+    [SerializeField] private float chargeSpeed = 12f;
+    [SerializeField] private float chargeDuration = 1.5f; // Giới hạn tầm xa của cú tông
+    [SerializeField] private float stunTimeWall = 2f;
+    [SerializeField] private float stunTimePlayer = 1f;
 
     [Header("Attack")]
     [SerializeField] private int damage;
@@ -35,7 +38,7 @@ public class ChargerEnemy : EnemyBase
     private Transform player;
     private Vector2 chargeDirection;
 
-    private bool isCharging = false;
+    private bool canCharge = true;
     private int moveDirection = 1;
 
     private float leftLimit;
@@ -46,26 +49,27 @@ public class ChargerEnemy : EnemyBase
         base.Awake();
 
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
-        
+
         currentState = State.Patrol;
-        leftLimit = PointA.position.x;
-        rightLimit = PointB.position.x;
+        leftLimit = Mathf.Min(PointA.position.x, PointB.position.x);
+        rightLimit = Mathf.Max(PointA.position.x, PointB.position.x);
         isFacingRight = false;
     }
 
     protected override void LogicUpdate()
     {
-        if (player == null) return;
+        if (player == null || isDead) return;
 
         //khoang cach tu enemy den player
-        float distance = Vector2.Distance(transform.position, player.position);
+        float distanceX = Mathf.Abs(transform.position.x - player.position.x);
+        float distanceY = Mathf.Abs(transform.position.y - player.position.y);
 
-        switch(currentState)
+        switch (currentState)
         {
             case State.Patrol:
-                Patrol();
-
-                if(distance < detectRange)
+                PatrolLogic();
+                // Chỉ tông nếu có thể (canCharge) và thấy Player
+                if (canCharge && distanceX < detectRangeX && distanceY < detectRangeY)
                 {
                     StartCoroutine(WindupRoutine());
                 }
@@ -75,13 +79,14 @@ public class ChargerEnemy : EnemyBase
                 rb.velocity = new Vector2(chargeDirection.x * chargeSpeed, rb.velocity.y);
                 break;
 
-            case State.Stunned:
-                rb.velocity = Vector2.zero;
+            default:
+                // Các trạng thái Windup, Stunned, Cooldown thì đứng yên
+                rb.velocity = new Vector2(0, rb.velocity.y);
                 break;
         }
     }
 
-    private void Patrol()
+    private void PatrolLogic()
     {
         animator.SetBool("isRunning", true);
 
@@ -108,8 +113,11 @@ public class ChargerEnemy : EnemyBase
     private IEnumerator WindupRoutine()
     {
         currentState = State.Windup;
+        canCharge = false;
         animator.SetBool("isRunning", false);
-        rb.velocity = Vector2.zero;
+
+        float dirToPlayer = Mathf.Sign(player.position.x - transform.position.x);
+        SetDirection((int)dirToPlayer);
 
         float timer = 0f;
         Vector3 originalScale = transform.localScale;
@@ -119,7 +127,7 @@ public class ChargerEnemy : EnemyBase
             timer += Time.deltaTime;
 
             // rung nhẹ để cảnh báo
-            float scaleOffset = Mathf.Sin(Time.time * 25f) * 0.05f;
+            float scaleOffset = Mathf.Sin(Time.time * 30f) * 0.05f;
             transform.localScale = originalScale * (1f + scaleOffset);
 
             yield return null;
@@ -127,8 +135,7 @@ public class ChargerEnemy : EnemyBase
 
         transform.localScale = originalScale;
 
-        float dirX = Mathf.Sign(player.position.x - transform.position.x);
-        chargeDirection = new Vector2(dirX, 0f);
+        chargeDirection = new Vector2(dirToPlayer, 0f);
 
         StartCoroutine(ChargeRoutine());
     }
@@ -137,56 +144,48 @@ public class ChargerEnemy : EnemyBase
     {
         currentState = State.Charge;
         animator.SetBool("isRunning", true);
-        isCharging = true;
 
-        float timer = 0f;
+        yield return new WaitForSeconds(chargeDuration);
 
-        while (timer < chargeDuration)
+        if (currentState == State.Charge) // Nếu vẫn đang lao mà chưa va chạm
         {
-            timer += Time.deltaTime;
-            yield return null;
+            StartCoroutine(CooldownRoutine());
         }
-
-        StartCoroutine(StunRoutine(stunTimeWall));
     }
 
     private IEnumerator StunRoutine(float duration)
     {
         currentState = State.Stunned;
-        isCharging = false;
-
-        rb.velocity = Vector2.zero;
+        animator.SetBool("isRunning", false);
 
         yield return new WaitForSeconds(duration);
 
+        StartCoroutine(CooldownRoutine());
+    }
+    private IEnumerator CooldownRoutine()
+    {
+        currentState = State.Cooldown;
+        rb.velocity = Vector2.zero;
+        yield return new WaitForSeconds(chargeCooldown);
+        canCharge = true;
         currentState = State.Patrol;
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (!isCharging) return;
+        if (currentState != State.Charge) return;
 
         if (collision.gameObject.CompareTag("Player"))
         {
-            // Gây damage
-            collision.gameObject
-                .GetComponent<Player>()
-                ?.TakeDame(damage);
-
-            // Knockback player
-            Rigidbody2D playerRb = collision.gameObject.GetComponent<Rigidbody2D>();
-            if (playerRb != null)
+            Player p = collision.gameObject.GetComponent<Player>();
+            if (p != null)
             {
-                Vector2 knockDir =
-                    (collision.transform.position - transform.position).normalized;
-
-                playerRb.AddForce(knockDir * knockbackForce,
-                    ForceMode2D.Impulse);
+                Vector2 knockDir = (collision.transform.position - transform.position).normalized;
+                p.TakeDamage(damage, knockDir, knockbackForce);
             }
-
             StartCoroutine(StunRoutine(stunTimePlayer));
         }
-        else if (collision.gameObject.CompareTag("Wall"))
+        else if (collision.gameObject.CompareTag("Wall")) // Nhớ đặt tag Wall cho map
         {
             StartCoroutine(StunRoutine(stunTimeWall));
         }

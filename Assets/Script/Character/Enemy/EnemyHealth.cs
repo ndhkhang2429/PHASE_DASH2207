@@ -11,6 +11,8 @@ public class EnemyHealth : MonoBehaviour
 
     [Header("Component")]
     [SerializeField] private Animator animator;
+    private ChargerEnemy chargerScript;
+    private Rigidbody2D rb;
 
     [Header("Hit Effect")]
     [SerializeField] private float hitStunTime;
@@ -36,19 +38,14 @@ public class EnemyHealth : MonoBehaviour
 
         ChargerEnemy charger = GetComponent<ChargerEnemy>();
 
-        if(charger != null && charger.IsCharging())
+        bool isCharging = (chargerScript != null && chargerScript.IsCharging());
+        if (isCharging)
         {
-            dame = Mathf.CeilToInt(dame * 0.5f); // giảm 50% damage khi đang charge
-            Debug.Log("Charger dang Charge -> giam 50% damage");
+            dame = Mathf.CeilToInt(dame * 0.5f);
+            Debug.Log("Charger đang Charge -> Giảm 50% damage");
         }
 
         CurrentHealth -= dame;
-        Debug.Log(gameObject.name + " bi trung " + dame + " damage. Mau con lai: " + CurrentHealth);
-
-        if (animator != null)
-        {
-            animator.SetTrigger("Hurt"); // Nhớ kiểm tra chữ "Hurt" có viết hoa chữ H giống hệt trong Animator không nhé!
-        }
 
         if (damageTextPrefab != null)
         {
@@ -73,29 +70,36 @@ public class EnemyHealth : MonoBehaviour
                 animator.SetTrigger("Hurt");
             }
 
-            if (!(charger != null && charger.IsCharging()))
+            if (!isCharging)
             {
-                Rigidbody2D rb = GetComponent<Rigidbody2D>();
-                if (rb != null)
-                {
-                    rb.velocity = knockbackDirection * knockbackForce;
-                }
-                StartCoroutine(HitStun());
+                ApplyKnockback(knockbackDirection, knockbackForce);
             }
         }
+    }
+    private void ApplyKnockback(Vector2 direction, float force)
+    {
+        if (rb != null)
+        {
+            rb.velocity = direction * force;
+        }
+
+        // Ngừng Coroutine cũ nếu đang Stun để tránh chồng chéo
+        StopCoroutine(nameof(HitStun));
+        StartCoroutine(HitStun());
     }
 
     private IEnumerator HitStun()
     {
         IsStunned = true;
         yield return new WaitForSeconds(hitStunTime);
-        Rigidbody2D rb = GetComponent<Rigidbody2D>();
-        if (rb != null) rb.velocity = Vector2.zero;
+        if (!IsDead && rb != null)
+            rb.velocity = Vector2.zero;
         IsStunned = false;
     }
 
     private void Die()
     {
+        if (IsDead) return;
         IsDead = true;
         PlayerEnergy energy = FindAnyObjectByType<PlayerEnergy>();
         if (energy != null)

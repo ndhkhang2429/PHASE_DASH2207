@@ -94,7 +94,7 @@ AnimationClip:
   - time: 0.5833333
     functionName: OnAnimationFinished
     data: 
-    objectReferenceParameter: {fileID: 0}
+    objectReferenceParameter: {fileID: 7400000}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0

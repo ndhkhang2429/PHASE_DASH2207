@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2711543775802663435}
   - component: {fileID: 1710314294559190867}
   - component: {fileID: 2468813209523564849}
-  - component: {fileID: 6284217633968601254}
+  - component: {fileID: 7462269204689976219}
   m_Layer: 0
   m_Name: ExplosionVFX_Prefab
   m_TagString: Untagged
@@ -107,7 +107,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &6284217633968601254
+--- !u!114 &7462269204689976219
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
