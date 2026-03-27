@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class FlyingEnemy : EnemyBase
 {
@@ -17,6 +18,7 @@ public class FlyingEnemy : EnemyBase
     private Vector3 pointAPosition;
     private Vector3 pointBPosition;
     private Vector3 targetPoint;
+    private int moveDirection = 1;
 
     private float fireTimer;
     private Transform player;
@@ -51,6 +53,20 @@ public class FlyingEnemy : EnemyBase
                 moveSpeed * Time.deltaTime
             );
 
+        if (hasRoomLimits)
+        {
+            // Nếu đi lố qua giới hạn trái của phòng -> quay phải
+            if (transform.position.x <= roomLeftLimit)
+            {
+                SetDirection(1);
+            }
+            // Nếu đi lố qua giới hạn phải của phòng -> quay trái
+            else if (transform.position.x >= roomRightLimit)
+            {
+                SetDirection(-1);
+            }
+        }
+
         if (Vector2.Distance(transform.position, targetPoint) < 0.3f)
         {
             targetPoint = targetPoint == pointAPosition ? pointBPosition : pointAPosition;
@@ -59,6 +75,15 @@ public class FlyingEnemy : EnemyBase
         animator.SetBool("isFlying", true);
     }
 
+    private void SetDirection(int direction)
+    {
+        moveDirection = direction;
+        if ((moveDirection == 1 && !isFacingRight) ||
+        (moveDirection == -1 && isFacingRight))
+        {
+            Flip();
+        }
+    }
     private void DetectAndShoot()
     {
         if (player == null) return;

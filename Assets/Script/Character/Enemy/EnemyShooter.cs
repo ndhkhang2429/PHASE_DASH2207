@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class EnemyShooter : EnemyBase
 {
@@ -8,6 +9,7 @@ public class EnemyShooter : EnemyBase
     [SerializeField] private Transform leftPoint;
     [SerializeField] private Transform rightPoint;
     public bool canMove = true;
+    private int moveDirection = 1;
 
     [Header("Shoot")]
     [SerializeField] private GameObject bulletPrefab;
@@ -57,6 +59,20 @@ public class EnemyShooter : EnemyBase
 
         animator.SetBool("isWalking", true);
 
+        if (hasRoomLimits)
+        {
+            // Nếu đi lố qua giới hạn trái của phòng -> quay phải
+            if (transform.position.x <= roomLeftLimit)
+            {
+                SetDirection(1);
+            }
+            // Nếu đi lố qua giới hạn phải của phòng -> quay trái
+            else if (transform.position.x >= roomRightLimit)
+            {
+                SetDirection(-1);
+            }
+        }
+
         if (movingRight)
         {
             rb.velocity = new Vector2(moveSpeed, rb.velocity.y);
@@ -76,6 +92,16 @@ public class EnemyShooter : EnemyBase
                 movingRight = true;
                 Flip();
             }
+        }
+    }
+
+    private void SetDirection(int direction)
+    {
+        moveDirection = direction;
+        if ((moveDirection == 1 && !isFacingRight) ||
+        (moveDirection == -1 && isFacingRight))
+        {
+            Flip();
         }
     }
     private bool PlayerInRange()

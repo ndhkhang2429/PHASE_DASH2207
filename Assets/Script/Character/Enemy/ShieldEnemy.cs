@@ -94,6 +94,20 @@ public class ShieldEnemy : EnemyBase
 
         rb.velocity = new Vector2(moveDirection * moveSpeed, rb.velocity.y);
 
+        if (hasRoomLimits)
+        {
+            // Nếu đi lố qua giới hạn trái của phòng -> quay phải
+            if (transform.position.x <= roomLeftLimit)
+            {
+                SetDirection(1);
+            }
+            // Nếu đi lố qua giới hạn phải của phòng -> quay trái
+            else if (transform.position.x >= roomRightLimit)
+            {
+                SetDirection(-1);
+            }
+        }
+
         // Đổi hướng tại điểm tuần tra
         if (moveDirection == 1 && transform.position.x >= rightLimit)
             SetDirection(-1);

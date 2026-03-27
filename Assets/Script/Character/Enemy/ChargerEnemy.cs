@@ -92,6 +92,20 @@ public class ChargerEnemy : EnemyBase
 
         rb.velocity = new Vector2(moveDirection * moveSpeed, rb.velocity.y);
 
+        if (hasRoomLimits)
+        {
+            // Nếu đi lố qua giới hạn trái của phòng -> quay phải
+            if (transform.position.x <= roomLeftLimit)
+            {
+                SetDirection(1);
+            }
+            // Nếu đi lố qua giới hạn phải của phòng -> quay trái
+            else if (transform.position.x >= roomRightLimit)
+            {
+                SetDirection(-1);
+            }
+        }
+
         if (moveDirection == 1 && transform.position.x >= rightLimit)
             SetDirection(-1);
         else if (moveDirection == -1 && transform.position.x <= leftLimit)

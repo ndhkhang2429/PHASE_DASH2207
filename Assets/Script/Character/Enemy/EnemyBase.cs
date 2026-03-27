@@ -13,12 +13,22 @@ public class EnemyBase : MonoBehaviour
     protected bool isDead = false;
     protected SpriteRenderer spriteRenderer;
 
+    protected float roomLeftLimit = -9999f;
+    protected float roomRightLimit = 9999f;
+    protected bool hasRoomLimits = false;
     protected virtual void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         health = GetComponent<EnemyHealth>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+    }
+
+    public void SetRoomPatrolLimits(float leftX, float rightX)
+    {
+        roomLeftLimit = leftX;
+        roomRightLimit = rightX;
+        hasRoomLimits = true;
     }
 
     protected virtual void Update()
