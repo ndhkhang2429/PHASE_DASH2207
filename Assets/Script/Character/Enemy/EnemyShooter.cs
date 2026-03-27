@@ -9,41 +9,69 @@ public class EnemyShooter : EnemyBase
     [SerializeField] private Transform leftPoint;
     [SerializeField] private Transform rightPoint;
     public bool canMove = true;
-    private int moveDirection = 1;
+    private int moveDirection = 1; // 1: Phải, -1: Trái
+
+    // Biến lưu giới hạn gốc (an toàn cho Boss đẻ quái)
+    private float defaultLeftLimit;
+    private float defaultRightLimit;
 
     [Header("Shoot")]
     [SerializeField] private GameObject bulletPrefab;
     [SerializeField] private Transform firePoint;
-    [SerializeField] private Transform target;
     [SerializeField] private float shootRange;
     [SerializeField] private float shootCooldown;
     [SerializeField] private float bulletSpeed;
 
     private Transform player;
     private float lastShootTime;
-    private bool movingRight = true;
-    private bool isAttacking = false;
 
     protected override void Awake()
     {
         base.Awake();
-        player = GameObject.FindGameObjectWithTag("Player").transform;
 
-        leftPoint.parent = null;
-        rightPoint.parent = null;
+        GameObject pObj = GameObject.FindGameObjectWithTag("Player");
+        if (pObj != null) player = pObj.transform;
+
+        // CHỐT GIỚI HẠN GỐC (Tránh lỗi Null khi Boss đẻ quái)
+        if (leftPoint != null && rightPoint != null)
+        {
+            defaultLeftLimit = Mathf.Min(leftPoint.position.x, rightPoint.position.x);
+            defaultRightLimit = Mathf.Max(leftPoint.position.x, rightPoint.position.x);
+            leftPoint.parent = null;
+            rightPoint.parent = null;
+        }
+        else
+        {
+            defaultLeftLimit = transform.position.x;
+            defaultRightLimit = transform.position.x;
+        }
+
+        // Đảm bảo hướng đi ban đầu khớp với sprite
+        moveDirection = isFacingRight ? 1 : -1;
     }
+
+    // --- LẤY GIỚI HẠN HIỆN TẠI (Ưu tiên Lock Room) ---
+    private float GetCurrentLeftLimit()
+    {
+        return hasRoomLimits ? roomLeftLimit : defaultLeftLimit;
+    }
+
+    private float GetCurrentRightLimit()
+    {
+        return hasRoomLimits ? roomRightLimit : defaultRightLimit;
+    }
+    // ------------------------------------------------
+
     protected override void LogicUpdate()
     {
-        if (isDead) return;
+        if (player == null || isDead) return;
 
         if (PlayerInRange())
         {
-            isAttacking = true;
             AttackState();
         }
         else
         {
-            isAttacking = false;
             Patrol();
         }
     }
@@ -58,40 +86,19 @@ public class EnemyShooter : EnemyBase
         }
 
         animator.SetBool("isWalking", true);
+        rb.velocity = new Vector2(moveDirection * moveSpeed, rb.velocity.y);
 
-        if (hasRoomLimits)
+        float currentLeft = GetCurrentLeftLimit();
+        float currentRight = GetCurrentRightLimit();
+
+        // GỘP CHUNG KIỂM TRA QUAY ĐẦU
+        if (moveDirection == 1 && transform.position.x >= currentRight)
         {
-            // Nếu đi lố qua giới hạn trái của phòng -> quay phải
-            if (transform.position.x <= roomLeftLimit)
-            {
-                SetDirection(1);
-            }
-            // Nếu đi lố qua giới hạn phải của phòng -> quay trái
-            else if (transform.position.x >= roomRightLimit)
-            {
-                SetDirection(-1);
-            }
+            SetDirection(-1);
         }
-
-        if (movingRight)
+        else if (moveDirection == -1 && transform.position.x <= currentLeft)
         {
-            rb.velocity = new Vector2(moveSpeed, rb.velocity.y);
-
-            if (transform.position.x >= rightPoint.position.x)
-            {
-                movingRight = false;
-                Flip();
-            }
-        }
-        else
-        {
-            rb.velocity = new Vector2(-moveSpeed, rb.velocity.y);
-
-            if (transform.position.x <= leftPoint.position.x)
-            {
-                movingRight = true;
-                Flip();
-            }
+            SetDirection(1);
         }
     }
 
@@ -99,15 +106,15 @@ public class EnemyShooter : EnemyBase
     {
         moveDirection = direction;
         if ((moveDirection == 1 && !isFacingRight) ||
-        (moveDirection == -1 && isFacingRight))
+            (moveDirection == -1 && isFacingRight))
         {
             Flip();
         }
     }
+
     private bool PlayerInRange()
     {
         if (player == null) return false;
-
         return Vector2.Distance(transform.position, player.position) <= shootRange;
     }
 
@@ -125,16 +132,18 @@ public class EnemyShooter : EnemyBase
         }
     }
 
-    public void FireBullet()
+    public void FireBullet() // Hàm này gọi bằng Animation Event
     {
         if (player == null) return;
 
         GameObject bullet = Instantiate(bulletPrefab, firePoint.position, Quaternion.identity);
-
         Vector2 direction = (player.position - firePoint.position).normalized;
 
         Rigidbody2D bulletRb = bullet.GetComponent<Rigidbody2D>();
-        bulletRb.velocity = direction * bulletSpeed;
+        if (bulletRb != null)
+        {
+            bulletRb.velocity = direction * bulletSpeed;
+        }
 
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
         bullet.transform.rotation = Quaternion.Euler(0, 0, angle);
@@ -142,15 +151,7 @@ public class EnemyShooter : EnemyBase
 
     private void FacePlayer()
     {
-        if (player.position.x > transform.position.x && !movingRight)
-        {
-            movingRight = true;
-            Flip();
-        }
-        else if (player.position.x < transform.position.x && movingRight)
-        {
-            movingRight = false;
-            Flip();
-        }
+        int directionToPlayer = player.position.x > transform.position.x ? 1 : -1;
+        SetDirection(directionToPlayer);
     }
 }

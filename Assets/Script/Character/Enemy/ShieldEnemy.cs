@@ -16,6 +16,11 @@ public class ShieldEnemy : EnemyBase
     [SerializeField] private Transform PointA;
     [SerializeField] private Transform PointB;
 
+    // Biến lưu giới hạn gốc (An toàn khi Boss đẻ quái)
+    private float defaultLeftLimit;
+    private float defaultRightLimit;
+    private int moveDirection = 1;
+
     [Header("Combat")]
     [SerializeField] private float detectRange;
     [SerializeField] private float attackRange;
@@ -31,42 +36,56 @@ public class ShieldEnemy : EnemyBase
 
     private State currentState;
     private Transform player;
-    private Transform targetPoint;
 
-    private float leftLimit;
-    private float rightLimit;
-    private int moveDirection = 1;
-
-    private bool isShielding = true;
+    private bool isShielding = false; // Mặc định đi tuần là không giương khiên
     private float attackTimer;
     private bool isAttacking;
-
     private float turnTimer = 0f;
 
     protected override void Awake()
     {
         base.Awake();
 
-        leftLimit = PointA.position.x;
-        rightLimit = PointB.position.x;
+        GameObject pObj = GameObject.FindGameObjectWithTag("Player");
+        if (pObj != null) player = pObj.transform;
+
+        if (health == null) health = GetComponent<EnemyHealth>();
+
+        // CHỐT GIỚI HẠN GỐC AN TOÀN
+        if (PointA != null && PointB != null)
+        {
+            defaultLeftLimit = Mathf.Min(PointA.position.x, PointB.position.x);
+            defaultRightLimit = Mathf.Max(PointA.position.x, PointB.position.x);
+            PointA.parent = null;
+            PointB.parent = null;
+        }
+        else
+        {
+            defaultLeftLimit = transform.position.x;
+            defaultRightLimit = transform.position.x;
+        }
 
         currentState = State.Patrol;
-        targetPoint = PointB;
-
-        player = GameObject.FindGameObjectWithTag("Player")?.transform;
-        if (health == null) health = GetComponent<EnemyHealth>();
+        moveDirection = isFacingRight ? 1 : -1;
     }
+
+    // --- LẤY GIỚI HẠN TỔNG HỢP ---
+    private float GetCurrentLeftLimit()
+    {
+        return hasRoomLimits ? roomLeftLimit : defaultLeftLimit;
+    }
+
+    private float GetCurrentRightLimit()
+    {
+        return hasRoomLimits ? roomRightLimit : defaultRightLimit;
+    }
+    // -----------------------------
 
     protected override void LogicUpdate()
     {
-        if (isDead) return;
+        if (isDead || player == null) return;
 
-        if (player == null) return;
-
-        float distance = Mathf.Infinity;
-        if (player != null)
-            distance = Vector2.Distance(transform.position, player.position);
-
+        float distance = Vector2.Distance(transform.position, player.position);
         attackTimer += Time.deltaTime;
 
         switch (currentState)
@@ -80,12 +99,12 @@ public class ShieldEnemy : EnemyBase
                 break;
 
             case State.Attack:
-                AttackLogic();
+                // Trạng thái Attack được khóa chết bởi animation, không làm gì ở đây
                 break;
         }
     }
 
-    //Patrol
+    // Patrol
     private void PatrolLogic(float distance)
     {
         isShielding = false;
@@ -94,53 +113,50 @@ public class ShieldEnemy : EnemyBase
 
         rb.velocity = new Vector2(moveDirection * moveSpeed, rb.velocity.y);
 
-        if (hasRoomLimits)
+        float currentLeft = GetCurrentLeftLimit();
+        float currentRight = GetCurrentRightLimit();
+
+        // GỘP CHUNG KIỂM TRA QUAY ĐẦU
+        if (moveDirection == 1 && transform.position.x >= currentRight)
         {
-            // Nếu đi lố qua giới hạn trái của phòng -> quay phải
-            if (transform.position.x <= roomLeftLimit)
-            {
-                SetDirection(1);
-            }
-            // Nếu đi lố qua giới hạn phải của phòng -> quay trái
-            else if (transform.position.x >= roomRightLimit)
-            {
-                SetDirection(-1);
-            }
+            SetDirection(-1);
+        }
+        else if (moveDirection == -1 && transform.position.x <= currentLeft)
+        {
+            SetDirection(1);
         }
 
-        // Đổi hướng tại điểm tuần tra
-        if (moveDirection == 1 && transform.position.x >= rightLimit)
-            SetDirection(-1);
-        else if (moveDirection == -1 && transform.position.x <= leftLimit)
-            SetDirection(1);
-
         // Chuyển sang Shield nếu thấy Player
-        if (distance < detectRange)
+        if (distance <= detectRange)
         {
             currentState = State.Shield;
         }
     }
 
-    //Shield
+    // Shield (Bám theo mặt Player và canh me đánh)
     private void ShieldLogic(float distance)
     {
-        rb.velocity = Vector2.zero;
+        // Khi giương khiên thì đứng im
+        rb.velocity = new Vector2(0, rb.velocity.y);
         isShielding = true;
 
         animator.SetBool("isRunning", false);
         animator.SetBool("isShield", true);
 
+        // Từ từ quay mặt về phía Player
         FacePlayer();
 
-        // Kiểm tra điều kiện tấn công
-        if (distance < attackRange && attackTimer >= attackCooldown)
+        // LOGIC CHUYỂN TRẠNG THÁI:
+        // 1. Đánh nếu đủ gần và hồi chiêu xong
+        if (distance <= attackRange && attackTimer >= attackCooldown)
         {
-            currentState = State.Attack;
+            AttackLogic();
         }
-        // Quay lại tuần tra nếu Player đi xa
+        // 2. Quay lại đi tuần nếu Player chạy xa
         else if (distance > detectRange)
         {
             currentState = State.Patrol;
+            turnTimer = 0f; // Reset đồng hồ quay mặt
         }
     }
 
@@ -149,9 +165,10 @@ public class ShieldEnemy : EnemyBase
         if (isAttacking) return;
 
         isAttacking = true;
-        isShielding = false;
+        isShielding = false; // Bỏ khiên xuống để chém
+        currentState = State.Attack;
 
-        rb.velocity = Vector2.zero;
+        rb.velocity = new Vector2(0, rb.velocity.y);
         animator.SetBool("isShield", false);
         animator.SetTrigger("Attack");
     }
@@ -160,81 +177,78 @@ public class ShieldEnemy : EnemyBase
     {
         moveDirection = direction;
         if ((moveDirection == 1 && !isFacingRight) ||
-        (moveDirection == -1 && isFacingRight))
+            (moveDirection == -1 && isFacingRight))
         {
             Flip();
         }
     }
 
-    private void DealDamage()
-    {
-        Collider2D[] players = Physics2D.OverlapBoxAll(
-        attackPoint.position,
-        attackSize,
-        0f,
-        playerLayer
-        );
-
-        foreach (Collider2D p in players)
-        {
-            Player health = p.GetComponent<Player>();
-            if (health != null)
-            {
-                Vector2 knockDir = (p.transform.position - transform.position).normalized;
-                health.TakeDamage(attackDamage, knockDir, attackKnockbackForce);
-            }
-        }
-    }
-
-    public void OnAttackAnimationEnd()
-    {
-        isAttacking = false;
-        attackTimer = 0;
-        currentState = State.Shield;
-    }
-
-    //Face player
+    // Face player có độ trễ (Giữ nguyên logic cực hay của bạn)
     private void FacePlayer()
     {
         bool playerIsOnRight = player.position.x > transform.position.x;
 
         if ((playerIsOnRight && !isFacingRight) || (!playerIsOnRight && isFacingRight))
         {
-            // Bắt đầu đếm ngược thời gian trễ
             turnTimer += Time.deltaTime;
-
-            // Nếu đếm đủ thời gian thì mới quay mặt
             if (turnTimer >= turnDelay)
             {
-                Flip();
-                turnTimer = 0f; // Reset lại đồng hồ
+                SetDirection(playerIsOnRight ? 1 : -1);
+                turnTimer = 0f;
             }
         }
         else
         {
-            // Nếu Player ở ngay trước mặt, reset đồng hồ về 0 để tránh lỗi dồn thời gian
             turnTimer = 0f;
         }
     }
 
+    // Animation Event: Gọi ở frame vũ khí chém trúng
+    public void DealDamage()
+    {
+        Collider2D[] hitPlayers = Physics2D.OverlapBoxAll(attackPoint.position, attackSize, 0f, playerLayer);
+
+        foreach (Collider2D p in hitPlayers)
+        {
+            Player playerHealth = p.GetComponent<Player>();
+            if (playerHealth != null)
+            {
+                Vector2 knockDir = (p.transform.position - transform.position).normalized;
+                playerHealth.TakeDamage(attackDamage, knockDir, attackKnockbackForce);
+            }
+        }
+    }
+
+    // Animation Event: Gọi ở frame cuối của Animation Attack
+    public void OnAttackAnimationEnd()
+    {
+        isAttacking = false;
+        attackTimer = 0f;
+
+        // Sau khi chém xong, tự động lui về thủ
+        currentState = State.Shield;
+    }
+
+    // Hàm gọi khi nhận sát thương (Dùng chung với EnemyHealth)
     public bool TryTakeDamage(int damage, Transform attacker, float knockbackForce)
     {
-        if (health == null) return false;
+        if (health == null || health.IsDead) return false;
 
-        Vector2 direction = attacker.position - transform.position ;
+        Vector2 direction = attacker.position - transform.position;
 
-        bool attackerInFront =
-            (isFacingRight && direction.x > 0) ||
-            (!isFacingRight && direction.x < 0);
+        // Xác định đòn đánh đến từ phía trước
+        bool attackerInFront = (isFacingRight && direction.x > 0) || (!isFacingRight && direction.x < 0);
 
+        // Nếu ĐANG THỦ và ĐÁNH TỪ MẶT TRƯỚC -> Chặn sát thương
         if (isShielding && attackerInFront)
         {
-            Debug.Log("Blocked by Shield");
+            Debug.Log("Đã dùng Khiên đỡ thành công!");
+            // Tùy chọn: Chạy animation "Block" ở đây nếu có
             return false;
         }
 
+        // Nếu ĐÁNH LÉN TỪ SAU LƯNG hoặc ĐANG CHÉM HỞ SƯỜN -> Nhận sát thương
         Vector2 knockbackDir = (transform.position - attacker.position).normalized;
-
         health.TakeDamage(damage, knockbackDir, knockbackForce);
 
         if (health.IsDead)
@@ -243,28 +257,26 @@ public class ShieldEnemy : EnemyBase
             return true;
         }
 
+        // Bị đánh đau quá thì bỏ chém, quay về thủ ngay lập tức
         isAttacking = false;
         currentState = State.Shield;
         return true;
     }
+
     private void Die()
     {
+        // Ghi đè thay vì dùng OnDeath() của Base vì bạn có logic riêng
         isDead = true;
         rb.velocity = Vector2.zero;
-
-        // Kích hoạt Animation Chết
         animator.SetTrigger("Die");
 
-        // Tắt va chạm để không cản đường Player
         Collider2D col = GetComponent<Collider2D>();
         if (col != null) col.enabled = false;
 
         Debug.Log("Shield Enemy Dead");
-
-        // Tùy chọn: Xóa object sau 2 giây nếu không dùng Animation Event
-        // Destroy(gameObject, 2f);
     }
 
+    // Dùng cho Animation Event: Gọi ở cuối anim chết để dọn dẹp xác
     public void DestroyEnemy()
     {
         Destroy(gameObject);
@@ -273,7 +285,6 @@ public class ShieldEnemy : EnemyBase
     private void OnDrawGizmosSelected()
     {
         if (attackPoint == null) return;
-
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireCube(attackPoint.position, attackSize);
     }

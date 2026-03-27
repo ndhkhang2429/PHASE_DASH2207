@@ -1,13 +1,17 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 public class FlyingEnemy : EnemyBase
 {
-    [Header("Patrol")] //khu vuc bay tu A->B cua enemy
+    [Header("Patrol")]
     [SerializeField] private Transform leftPoint;
     [SerializeField] private Transform rightPoint;
+
+    // Biến lưu giới hạn gốc (An toàn khi Boss đẻ quái)
+    private float defaultLeftLimit;
+    private float defaultRightLimit;
+    private int moveDirection = 1;
 
     [Header("Attack")]
     [SerializeField] private GameObject bulletPrefab;
@@ -15,100 +19,121 @@ public class FlyingEnemy : EnemyBase
     [SerializeField] private float detectRange;
     [SerializeField] private float fireCooldown;
 
-    private Vector3 pointAPosition;
-    private Vector3 pointBPosition;
-    private Vector3 targetPoint;
-    private int moveDirection = 1;
-
     private float fireTimer;
     private Transform player;
 
     protected override void Awake()
     {
         base.Awake();
+
+        // Đặt mặc định mặt quay sang trái hoặc phải tùy sprite của bạn
         isFacingRight = false;
 
-        player = GameObject.FindGameObjectWithTag("Player")?.transform;
+        GameObject pObj = GameObject.FindGameObjectWithTag("Player");
+        if (pObj != null) player = pObj.transform;
 
-        // LƯU WORLD POSITION
-        pointAPosition = leftPoint.position;
-        pointBPosition = rightPoint.position;
+        // CHỐT GIỚI HẠN AN TOÀN
+        if (leftPoint != null && rightPoint != null)
+        {
+            defaultLeftLimit = Mathf.Min(leftPoint.position.x, rightPoint.position.x);
+            defaultRightLimit = Mathf.Max(leftPoint.position.x, rightPoint.position.x);
+            leftPoint.parent = null;
+            rightPoint.parent = null;
+        }
+        else
+        {
+            defaultLeftLimit = transform.position.x;
+            defaultRightLimit = transform.position.x;
+        }
 
-        targetPoint = pointAPosition;
+        moveDirection = isFacingRight ? 1 : -1;
     }
+
+    // --- LẤY GIỚI HẠN TỔNG HỢP ---
+    private float GetCurrentLeftLimit()
+    {
+        return hasRoomLimits ? roomLeftLimit : defaultLeftLimit;
+    }
+
+    private float GetCurrentRightLimit()
+    {
+        return hasRoomLimits ? roomRightLimit : defaultRightLimit;
+    }
+    // -----------------------------
 
     protected override void LogicUpdate()
     {
+        if (isDead) return;
+
         Patrol();
         DetectAndShoot();
     }
 
     private void Patrol()
     {
-        //di chuyen tu vi tri hien tai den target point
-        transform.position = Vector2.MoveTowards
-            (
-                transform.position,
-                targetPoint,
-                moveSpeed * Time.deltaTime
-            );
-
-        if (hasRoomLimits)
-        {
-            // Nếu đi lố qua giới hạn trái của phòng -> quay phải
-            if (transform.position.x <= roomLeftLimit)
-            {
-                SetDirection(1);
-            }
-            // Nếu đi lố qua giới hạn phải của phòng -> quay trái
-            else if (transform.position.x >= roomRightLimit)
-            {
-                SetDirection(-1);
-            }
-        }
-
-        if (Vector2.Distance(transform.position, targetPoint) < 0.3f)
-        {
-            targetPoint = targetPoint == pointAPosition ? pointBPosition : pointAPosition;
-            Flip();
-        }
         animator.SetBool("isFlying", true);
+
+        // Di chuyển bằng velocity thay vì MoveTowards để đồng bộ với cơ chế vật lý
+        // Lưu ý: Đảm bảo Rigidbody2D của quái bay này có Gravity Scale = 0
+        rb.velocity = new Vector2(moveDirection * moveSpeed, rb.velocity.y);
+
+        float currentLeft = GetCurrentLeftLimit();
+        float currentRight = GetCurrentRightLimit();
+
+        // GỘP CHUNG KIỂM TRA QUAY ĐẦU
+        if (moveDirection == 1 && transform.position.x >= currentRight)
+        {
+            SetDirection(-1);
+        }
+        else if (moveDirection == -1 && transform.position.x <= currentLeft)
+        {
+            SetDirection(1);
+        }
     }
 
     private void SetDirection(int direction)
     {
         moveDirection = direction;
         if ((moveDirection == 1 && !isFacingRight) ||
-        (moveDirection == -1 && isFacingRight))
+            (moveDirection == -1 && isFacingRight))
         {
             Flip();
         }
     }
+
     private void DetectAndShoot()
     {
         if (player == null) return;
 
         fireTimer += Time.deltaTime;
-     
-        float distance = Vector2.Distance(transform.position, player.transform.position);
+
+        float distance = Vector2.Distance(transform.position, player.position);
         if (distance < detectRange && fireTimer >= fireCooldown)
         {
-            Shoot(player.transform);
+            Shoot(player);
             fireTimer = 0f;
         }
     }
 
-    private void Shoot(Transform player)
+    private void Shoot(Transform targetPlayer)
     {
-        if (player.position.x > transform.position.x && !isFacingRight)
-            Flip();
-        else if (player.position.x < transform.position.x && isFacingRight)
-            Flip();
+        // Kiểm tra và quay mặt về phía Player trước khi bắn
+        if (targetPlayer.position.x > transform.position.x && !isFacingRight)
+            SetDirection(1);
+        else if (targetPlayer.position.x < transform.position.x && isFacingRight)
+            SetDirection(-1);
 
-        Vector2 direction = (player.position - firePoint.position).normalized;
+        Vector2 direction = (targetPlayer.position - firePoint.position).normalized;
 
         GameObject bullet = Instantiate(bulletPrefab, firePoint.position, Quaternion.identity);
-        bullet.GetComponent<FlyingEnemyBullet>().SetDirection(direction);//tao vien dan tai firePoint
+
+        // Kiểm tra an toàn trước khi gọi hàm SetDirection của đạn
+        FlyingEnemyBullet bulletScript = bullet.GetComponent<FlyingEnemyBullet>();
+        if (bulletScript != null)
+        {
+            bulletScript.SetDirection(direction);
+        }
+
         animator.SetTrigger("Shoot");
     }
 }
