@@ -37156,7 +37156,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f62d94b1feee093418ac9cdaa9c06d16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 1010
+  maxHealth: 3
   animator: {fileID: 935274114}
   hitStunTime: 0
   energyReward: 10
@@ -65497,7 +65497,7 @@ Transform:
   m_GameObject: {fileID: 1837388169}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 161.58, y: 16.86, z: 0}
+  m_LocalPosition: {x: 144.6, y: 31.2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
