@@ -91,6 +91,11 @@ public class SpawnBoss : EnemyBase
         lastAttackTime = Time.time;
         lastSpawnTime = Time.time;
         Debug.Log("Boss Activated!");
+
+        if (BossHealthUI.Instance != null)
+        {
+            BossHealthUI.Instance.ShowHealthBar();
+        }
     }
 
     void Patrol()

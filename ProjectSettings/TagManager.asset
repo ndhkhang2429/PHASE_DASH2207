@@ -8,6 +8,7 @@ TagManager:
   - Wall
   - OneWayPlatform
   - Enemy
+  - Boss
   layers:
   - Default
   - TransparentFX

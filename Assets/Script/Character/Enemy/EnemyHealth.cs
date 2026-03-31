@@ -57,6 +57,11 @@ public class EnemyHealth : MonoBehaviour
             dmgText.SetData(dame.ToString(), damageColor);
         }
 
+        if (gameObject.CompareTag("Boss") && BossHealthUI.Instance != null)
+        {
+            BossHealthUI.Instance.UpdateHealthBar(CurrentHealth, maxHealth); // Thay bằng tên biến HP của bạn
+        }
+
         if (CurrentHealth <= 0)
         {
             // NẾU HẾT MÁU: Chỉ gọi chết, không gọi Hurt, không văng lùi
