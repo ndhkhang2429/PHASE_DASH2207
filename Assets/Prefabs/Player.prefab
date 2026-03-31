@@ -72,7 +72,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1771494087
-  m_SortingLayer: 9
+  m_SortingLayer: 11
   m_SortingOrder: 0
   m_Sprite: {fileID: 1179370560, guid: a48faaa9055b20d469c57378e4255525, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -189,7 +189,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1771494087
-  m_SortingLayer: 9
+  m_SortingLayer: 11
   m_SortingOrder: 0
   m_Sprite: {fileID: 1179370560, guid: a48faaa9055b20d469c57378e4255525, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -266,6 +266,7 @@ MonoBehaviour:
   animator: {fileID: 2693891465218965627}
   spriteRenderer: {fileID: 6955919112993652392}
   speed: 5
+  walkStepInterval: 0.3
   groundCheck: {fileID: 3255788496002847525}
   groundCheckRadius: 0.16
   groundLayerMask:
@@ -281,7 +282,7 @@ MonoBehaviour:
   coyoteTime: 0.1
   jumpBufferTime: 0.1
   playerCollider: {fileID: 0}
-  doubleJumpEffectPrefab: {fileID: 155540448128913588, guid: 38749090ebecad54d96778c2fb91dac1, type: 3}
+  doubleJumpEffectPrefab: {fileID: 155540448128913588, guid: 34a72401f7e1d384f9b282c0938cdca0, type: 3}
   canFlip: 1
   maxHealth: 100
   healthBar: {fileID: 0}

@@ -9,6 +9,8 @@ public class SpawnBossRoomController : MonoBehaviour
     public GameObject leftDoor;
     public GameObject rightDoor;
     public SpawnBoss boss;
+    private Animator leftDoorAnim;
+    private Animator rightDoorAnim;
 
     [Header("Cinemachine Cameras")]
     public CinemachineVirtualCamera zoomBossCam; // Cam 1: Nhìn sát Boss
@@ -25,8 +27,10 @@ public class SpawnBossRoomController : MonoBehaviour
 
     private void Start()
     {
-        if (leftDoor != null) leftDoor.SetActive(false);
-        if (rightDoor != null) rightDoor.SetActive(false);
+        if (leftDoor != null) leftDoorAnim = leftDoor.GetComponent<Animator>();
+        if (rightDoor != null) rightDoorAnim = rightDoor.GetComponent<Animator>();
+        //if (leftDoorAnim != null) leftDoorAnim.SetTrigger("Raise");
+        //if (rightDoorAnim != null) rightDoorAnim.SetTrigger("Raise");
 
         if (boss != null)
         {
@@ -49,11 +53,9 @@ public class SpawnBossRoomController : MonoBehaviour
 
     private IEnumerator BossIntroCutscene()
     {
-        Debug.Log("Đạo diễn hô: ACTION!");
-
         // 1. SẬP CỬA & PHÁT TIẾNG ĐỘNG
-        if (leftDoor != null) leftDoor.SetActive(true);
-        if (rightDoor != null) rightDoor.SetActive(true);
+        if (leftDoorAnim != null) leftDoorAnim.SetTrigger("Slam");
+        if (rightDoorAnim != null) rightDoorAnim.SetTrigger("Slam");
 
         if (AudioController.Instance != null && doorCloseSFX != null)
         {
@@ -95,8 +97,8 @@ public class SpawnBossRoomController : MonoBehaviour
     public void UnlockRoom()
     {
         Debug.Log("Boss đã chết! Mở cửa phòng!");
-        if (leftDoor != null) leftDoor.SetActive(false);
-        if (rightDoor != null) rightDoor.SetActive(false);
+        if (leftDoorAnim != null) leftDoorAnim.SetTrigger("Raise");
+        if (rightDoorAnim != null) rightDoorAnim.SetTrigger("Raise");
 
         // 1. TRẢ CAMERA LẠI CHO PLAYER (Hạ hết Priority xuống 9)
         if (zoomBossCam != null) zoomBossCam.Priority = 9;

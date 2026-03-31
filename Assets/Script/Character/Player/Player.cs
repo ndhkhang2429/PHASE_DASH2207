@@ -9,14 +9,14 @@ public class Player : MonoBehaviour
     [SerializeField] private Animator animator;
     [SerializeField] private SpriteRenderer spriteRenderer;
 
-    [Header ("Move")]
+    [Header("Move")]
     [SerializeField] private float speed;
     private float horizontal;
 
-    [SerializeField] private float walkStepInterval = 0.3f; // Thời gian giữa 2 bước chân
+    [SerializeField] private float walkStepInterval = 0.3f;
     private float stepTimer;
 
-    [Header ("Ground check")]
+    [Header("Ground check")]
     [SerializeField] private Transform groundCheck;
     [SerializeField] private float groundCheckRadius;
     [SerializeField] private LayerMask groundLayerMask;
@@ -24,18 +24,17 @@ public class Player : MonoBehaviour
 
     [Header("Dash")]
     [SerializeField] private float dashSpeed;
-    [SerializeField] private float dashDuration; //dash trong bao nhieu lau
-    [SerializeField] private float dashCoolDown; //thoi gian cho truoc khi dash lai
+    [SerializeField] private float dashDuration;
+    [SerializeField] private float dashCoolDown;
     [SerializeField] private int dashEnergyCost;
     [SerializeField] private float dashAttackWindow = 0.2f;
-    private float dashAttackTimer;
 
-    //kiem tra trang thai dash
-    private float originalGravity;//vung bien private
+    private float dashAttackTimer;
+    private float originalGravity;
     private bool isDashing;
-    private float dashTimer; //dem nguoc thoi gian dash
-    private float dashCooldownTimer; //dem nguoc hoi chieu
-    private float dashDirection; //luu lai thoi gian luc bat dau dash
+    private float dashTimer;
+    private float dashCooldownTimer;
+    private float dashDirection;
     private int playerLayer;
     private int enemyLayer;
 
@@ -52,8 +51,11 @@ public class Player : MonoBehaviour
     private float jumpBufferTimer;
     private float jumpCooldownTimer;
 
+    // [THÊM MỚI] Cờ hiệu báo cho FixedUpdate biết Player muốn nhảy
+    private bool wantsToJump;
+
     [Header("Effects")]
-    [SerializeField] private GameObject doubleJumpEffectPrefab; // Kéo Prefab vào đây
+    [SerializeField] private GameObject doubleJumpEffectPrefab;
 
     private PlayerEnergy energy;
 
@@ -70,6 +72,9 @@ public class Player : MonoBehaviour
     [SerializeField] private float hitFlashTime;
     private Color baseColor;
     private bool isInvincible;
+
+    // [THÊM MỚI] Cờ hiệu báo Player đang bị thương (knockback)
+    private bool isHurt;
 
     [Header("Skill")]
     [SerializeField] private GameObject projectilePerfab;
@@ -94,9 +99,7 @@ public class Player : MonoBehaviour
         originalGravity = rb.gravityScale;
 
         healthBar.UpdateBar(currentHealth, maxHealth);
-        originalGravity = rb.gravityScale;
 
-        //xet layer khi dash
         playerLayer = LayerMask.NameToLayer("Player");
         enemyLayer = LayerMask.NameToLayer("Enemy");
     }
@@ -105,22 +108,22 @@ public class Player : MonoBehaviour
     {
         horizontal = Input.GetAxisRaw("Horizontal");
 
-        // 1. Cập nhật các bộ đếm thời gian (Timers)
+        // 1. Cập nhật Timers
         if (coyoteTimer > 0) coyoteTimer -= Time.deltaTime;
         if (jumpBufferTimer > 0) jumpBufferTimer -= Time.deltaTime;
         if (jumpCooldownTimer > 0) jumpCooldownTimer -= Time.deltaTime;
 
-        // 2. Chuyển Ground Check lên Update để đồng bộ chuẩn xác với Animator
+        // 2. Ground Check
         CheckGround();
         HandleOneWayPlatform();
 
-        // 3. Nhận Input
+        // 3. Nhận Input Nhảy
         if (Input.GetKeyDown(KeyCode.Space))
         {
             jumpBufferTimer = jumpBufferTime;
         }
 
-        // 4. Xử lý nhảy ngay trong Update để input không bị delay
+        // 4. Xử lý Logic Nhảy (Chỉ set cờ hiệu, không ép lực ở đây)
         HandleJump();
 
         // 5. Cập nhật Animator
@@ -132,7 +135,7 @@ public class Player : MonoBehaviour
         HandleDashInput();
         UpdateDash();
 
-        if(Input.GetKeyDown(KeyCode.K))
+        if (Input.GetKeyDown(KeyCode.K))
         {
             TryCastSkill();
         }
@@ -141,16 +144,31 @@ public class Player : MonoBehaviour
 
     private void FixedUpdate()
     {
+        // [ĐÃ SỬA LẠI TOÀN BỘ CẤU TRÚC FIXED UPDATE]
+
+        // 1. Xử lý các trạng thái Ưu Tiên (Dash, Bị thương)
         if (isDashing)
         {
-            // Ép vận tốc Dash trong FixedUpdate để mượt hơn
             rb.velocity = new Vector2(dashDirection * dashSpeed, 0);
+        }
+        else if (isHurt)
+        {
+            // Đang bị knockback, KHÔNG gọi hàm Move() để tránh ghi đè lực nảy
         }
         else if (!isAttacking)
         {
+            // Trạng thái bình thường -> Cho phép di chuyển
             Move();
         }
+
+        // 2. Xử lý lực Nhảy một cách an toàn trong nhịp vật lý
+        if (wantsToJump)
+        {
+            rb.velocity = new Vector2(rb.velocity.x, jumpSpeed);
+            wantsToJump = false; // Tắt cờ sau khi nảy lên
+        }
     }
+
     private void Move()
     {
         rb.velocity = new Vector2(horizontal * speed, rb.velocity.y);
@@ -161,25 +179,20 @@ public class Player : MonoBehaviour
             if (stepTimer <= 0)
             {
                 AudioController.Instance.PlaySFX(AudioController.Instance.walkSound);
-                stepTimer = walkStepInterval; // Đặt lại bộ đếm cho bước tiếp theo
+                stepTimer = walkStepInterval;
             }
         }
         else
         {
-            // Reset ngay lập tức khi đứng im hoặc nhảy lên không trung
             stepTimer = 0f;
         }
     }
 
-
     private void CheckGround()
     {
         bool wasGrounded = IsGrounded;
-
-        // Bỏ điều kiện check vận tốc Y đi. Chỉ cần xem chân có chạm đất không là đủ!
         IsGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayerMask);
 
-        // Nếu vừa mới bấm nút nhảy (cooldown > 0) thì chắc chắn là không chạm đất
         if (jumpCooldownTimer > 0f)
         {
             IsGrounded = false;
@@ -187,11 +200,9 @@ public class Player : MonoBehaviour
 
         if (!wasGrounded && IsGrounded)
         {
-            // Nơi để bật âm thanh chạm đất sau này
             AudioController.Instance.PlaySFX(AudioController.Instance.landSound);
         }
 
-        // Reset lại số lần nhảy và Coyote Time khi chạm đất an toàn
         if (IsGrounded)
         {
             coyoteTimer = coyoteTime;
@@ -203,7 +214,6 @@ public class Player : MonoBehaviour
     {
         if (jumpBufferTimer > 0f)
         {
-            // Cho phép nhảy nếu đang trên đất/rơi nhẹ (coyote) HOẶC số lần nhảy < max
             if (coyoteTimer > 0f || jumpCount < maxJumpCount)
             {
                 PerformJump();
@@ -213,30 +223,25 @@ public class Player : MonoBehaviour
 
     private void PerformJump()
     {
-        // FIX DOUBLE JUMP: Triệt tiêu trọng lực rơi trước khi áp dụng lực nhảy mới
-        rb.velocity = new Vector2(rb.velocity.x, jumpSpeed);
+        wantsToJump = true;
 
         jumpCount++;
-        jumpBufferTimer = 0f; // Dọn bộ nhớ đệm
-        coyoteTimer = 0f;     // Hủy coyote
+        jumpBufferTimer = 0f;
+        coyoteTimer = 0f;
 
         animator.ResetTrigger("Jump");
         animator.SetTrigger("Jump");
 
         if (jumpCount == 2 && doubleJumpEffectPrefab != null)
         {
-            // Sinh ra tại vị trí groundCheck (dưới chân nhân vật)
-            // Quaternion.identity nghĩa là không xoay
             Instantiate(doubleJumpEffectPrefab, groundCheck.position, Quaternion.identity);
         }
 
         AudioController.Instance.PlaySFX(AudioController.Instance.jumpSound);
 
-        // Kích hoạt khiên chống nhiễu mặt đất
         jumpCooldownTimer = 0.1f;
         IsGrounded = false;
     }
-
 
     private void HandleFlip()
     {
@@ -256,7 +261,6 @@ public class Player : MonoBehaviour
 
     private void HandleOneWayPlatform()
     {
-        // Nếu nhấn S và đang đứng trên nền tảng cho phép xuyên qua
         if (Input.GetKeyDown(KeyCode.S) && currentOneWayPlatform != null)
         {
             StartCoroutine(DisableCollision());
@@ -267,7 +271,7 @@ public class Player : MonoBehaviour
     {
         if (playerCollider == null)
         {
-            playerCollider = GetComponent<CapsuleCollider2D>(); // Tự tìm nếu quên gán
+            playerCollider = GetComponent<CapsuleCollider2D>();
         }
         if (currentOneWayPlatform != null)
         {
@@ -282,20 +286,16 @@ public class Player : MonoBehaviour
         }
     }
 
-    // Dùng OnCollision để xác định xem Player có đang đứng trên OneWayPlatform không
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        // Kiểm tra Tag ở cả Collider và GameObject để đảm bảo không sót
         if (collision.collider.CompareTag("OneWayPlatform") || collision.gameObject.CompareTag("OneWayPlatform"))
         {
-            // Gán đúng cái GameObject chứa Composite Collider
             currentOneWayPlatform = collision.gameObject;
         }
     }
 
     private void OnCollisionStay2D(Collision2D collision)
     {
-        // Thêm hàm Stay để đảm bảo nếu Enter bị lỡ thì Stay sẽ bù đắp
         if (currentOneWayPlatform == null && (collision.collider.CompareTag("OneWayPlatform") || collision.gameObject.CompareTag("OneWayPlatform")))
         {
             currentOneWayPlatform = collision.gameObject;
@@ -318,7 +318,7 @@ public class Player : MonoBehaviour
 
     public void TakeDamage(int dame, Vector2 knockbackDir, float knockbackForce)
     {
-        if(isInvincible || currentHealth <= 0)
+        if (isInvincible || currentHealth <= 0)
         {
             return;
         }
@@ -334,7 +334,6 @@ public class Player : MonoBehaviour
         {
             StartCoroutine(HitEffect(knockbackDir, knockbackForce));
         }
-
     }
 
     private IEnumerator HitEffect(Vector2 knockbackDir, float knockbackForce)
@@ -342,10 +341,14 @@ public class Player : MonoBehaviour
         isInvincible = true;
         canFlip = false;
         isAttacking = false;
+
+        // [THÊM MỚI] Bật cờ bị thương để ngắt điều khiển Move()
+        isHurt = true;
         rb.gravityScale = 0;
-        
+
         float dir = knockbackDir.x != 0 ? Mathf.Sign(knockbackDir.x) : (facingDirection * -1);
 
+        // Lực nảy này giờ đã an toàn, không bị Move() đè lên nữa
         rb.velocity = new Vector2(dir * knockbackForce, knockbackForce * 0.5f);
 
         AudioController.Instance.PlaySFX(AudioController.Instance.hurtSound);
@@ -354,24 +357,24 @@ public class Player : MonoBehaviour
         spriteRenderer.color = hitColor;
 
         yield return new WaitForSeconds(0.12f);
+
         rb.gravityScale = originalGravity;
         canFlip = true;
 
-        // Duy trì bất tử thêm một lúc (nháy hình) nhưng đã có thể điều khiển
+        // [THÊM MỚI] Trả lại quyền di chuyển
+        isHurt = false;
+
         yield return new WaitForSeconds(hitFlashTime - 0.12f);
 
         spriteRenderer.color = baseColor;
         isInvincible = false;
     }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        // Kiểm tra nếu chạm phải quái mà không phải đang trong trạng thái bất tử
         if (collision.CompareTag("Enemy") && !isInvincible)
         {
-            // Tính hướng từ quái đến Player để nảy đúng hướng
             Vector2 knockbackDirection = (transform.position - collision.transform.position).normalized;
-
-            // Gọi hàm nhận sát thương với lực nảy (ví dụ: lực 8)
             TakeDamage(1, knockbackDirection, 8f);
         }
     }
@@ -385,7 +388,7 @@ public class Player : MonoBehaviour
 
         animator.SetTrigger("Die");
 
-        this.enabled = false; // tắt script điều khiển
+        this.enabled = false;
         Invoke("TriggerGameOverMenu", 1f);
         AudioController.Instance.PlayBGM(AudioController.Instance.EndGameBGM);
     }
@@ -396,8 +399,6 @@ public class Player : MonoBehaviour
         {
             GameManager.Instance.GameOver();
         }
-
-        // Xóa nhân vật khỏi màn hình sau khi đã hiện Game Over
         Destroy(gameObject);
     }
 
@@ -407,7 +408,6 @@ public class Player : MonoBehaviour
         Destroy(gameObject);
     }
 
-
     private void Dash()
     {
         isDashing = true;
@@ -416,28 +416,24 @@ public class Player : MonoBehaviour
 
         dashTimer = dashDuration;
         dashCooldownTimer = dashCoolDown;
-
         dashDirection = facingDirection;
         dashAttackTimer = dashAttackWindow;
 
-        rb.velocity = new Vector2(rb.velocity.x, 0f);
+        // [ĐÃ XÓA] rb.velocity = new Vector2(rb.velocity.x, 0f); -> Đã được ép lực an toàn ở FixedUpdate
 
-        rb.gravityScale = 0; // tat gravity
+        rb.gravityScale = 0;
         Physics2D.IgnoreLayerCollision(playerLayer, enemyLayer, true);
 
         animator.ResetTrigger("Jump");
-
         animator.SetTrigger("Dash");
         AudioController.Instance.PlaySFX(AudioController.Instance.dashSound);
     }
 
-    //kiem tra dash trong tung frame hinh 
     private void UpdateDash()
     {
         if (!isDashing) return;
 
         dashTimer -= Time.deltaTime;
-
         dashAttackTimer -= Time.deltaTime;
 
         if (dashTimer <= 0)
@@ -450,15 +446,12 @@ public class Player : MonoBehaviour
     {
         isDashing = false;
         isInvincible = false;
-
         canFlip = true;
 
         rb.gravityScale = originalGravity;
-
         Physics2D.IgnoreLayerCollision(playerLayer, enemyLayer, false);
     }
 
-    //Quan ly bam nut dash
     private void HandleDashInput()
     {
         if (dashCooldownTimer > 0)
@@ -468,12 +461,11 @@ public class Player : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.E) && dashCooldownTimer <= 0 && !isDashing)
         {
-            if(energy != null && energy.UseEnergy(dashEnergyCost))
+            if (energy != null && energy.UseEnergy(dashEnergyCost))
             {
                 Dash();
             }
         }
-
     }
 
     private void TryCastSkill()

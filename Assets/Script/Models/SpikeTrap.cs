@@ -20,8 +20,8 @@ public class SpikeTrap : MonoBehaviour
                 // Nảy lên trên một chút để văng ra khỏi bẫy gai
                 Vector2 knockbackDirection = new Vector2(0, 1f).normalized;
 
-                // Gọi hàm trừ máu và nảy lùi trong code của bạn (Lực nảy là 10f, bạn có thể chỉnh)
-                playerScript.TakeDamage(damage, knockbackDirection, 10f);
+                // Gọi hàm trừ máu và nảy lùi trong code của bạn (Lực nảy là 10f)
+                playerScript.TakeDamage(damage, knockbackDirection, 5f);
             }
         }
     }
