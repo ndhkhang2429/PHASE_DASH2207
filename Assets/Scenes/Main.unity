@@ -68020,7 +68020,7 @@ Tilemap:
       - {fileID: 1807906845, guid: ff680b97debd6c34d8edbca7a0649510, type: 3}
       - {fileID: 1944788208, guid: ff680b97debd6c34d8edbca7a0649510, type: 3}
       - {fileID: -1997005251, guid: ff680b97debd6c34d8edbca7a0649510, type: 3}
-      m_AnimationSpeed: 5.0000005
+      m_AnimationSpeed: 5
       m_AnimationTimeOffset: 0
       m_Flags: 0
   m_TileAssetArray:

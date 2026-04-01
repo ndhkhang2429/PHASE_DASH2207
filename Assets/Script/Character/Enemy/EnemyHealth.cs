@@ -69,9 +69,15 @@ public class EnemyHealth : MonoBehaviour
         }
         else
         {
+            EnemyBase enemy = GetComponent<EnemyBase>();
             // NẾU CHƯA HẾT MÁU: Mới gọi Hurt và tính toán Knockback, Stun
-            if (animator != null)
+            if (enemy != null)
             {
+                enemy.PlayHurtAnimation();
+            }
+            else if (animator != null)
+            {
+                // Đề phòng trường hợp object có Health nhưng không có EnemyBase
                 animator.SetTrigger("Hurt");
             }
 

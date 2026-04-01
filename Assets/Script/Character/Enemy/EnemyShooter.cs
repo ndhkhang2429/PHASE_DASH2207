@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Rendering;
 
 public class EnemyShooter : EnemyBase
 {
@@ -131,10 +132,15 @@ public class EnemyShooter : EnemyBase
             animator.SetTrigger("Shoot");
         }
     }
-
+    public void PlayFakeHurt()
+    {
+        enemyAudio.PlayCustom(enemyAudio.attackSound, 0.4f, 0.1f); // Pitch cực thấp để tạo tiếng "Hự" trầm
+        enemyAudio.PlayHurt();
+    }
     public void FireBullet() // Hàm này gọi bằng Animation Event
     {
         if (player == null) return;
+        if (enemyAudio != null) enemyAudio.PlayAttack();
 
         GameObject bullet = Instantiate(bulletPrefab, firePoint.position, Quaternion.identity);
         Vector2 direction = (player.position - firePoint.position).normalized;

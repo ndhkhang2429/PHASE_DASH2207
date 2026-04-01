@@ -24,6 +24,9 @@ public class WalkerEnemy : EnemyBase
     [SerializeField] private int attackDamage;
     [SerializeField] private LayerMask playerLayer;
 
+    [Header("Detection")]//phat hien player
+    private bool hasSpottedPlayer = false;
+
     private Transform player;
     private float lastAttackTime;
 
@@ -73,6 +76,10 @@ public class WalkerEnemy : EnemyBase
         // NẾU: Đủ gần VÀ đang đứng trong giới hạn tuần tra
         if (distanceToPlayer <= detectRange && IsInsidePatrolZone())
         {
+            if (!hasSpottedPlayer)
+            {
+                TriggerSpotPlayer(); // Gọi hàm phát hiện
+            }
             // Tấn công nếu trong tầm đánh
             if (distanceToPlayer <= attackRange)
             {
@@ -86,10 +93,24 @@ public class WalkerEnemy : EnemyBase
         }
         else
         {
+            hasSpottedPlayer = false;
             Patrol();
         }
     }
+    private void TriggerSpotPlayer()
+    {
+        hasSpottedPlayer = true;
 
+        // Phát âm thanh hú (Lấy từ script EnemyAudio hoặc AudioSource trực tiếp)
+        if (enemyAudio != null)
+        {
+            // Bạn có thể viết thêm hàm PlaySpot() trong EnemyAudio
+            enemyAudio.PlaySpot();
+        }
+
+        // (Tùy chọn) Cho quái khựng lại 1 chút hoặc hiện dấu chấm hỏi trên đầu cho "ngầu"
+        Debug.Log("Hú! Thấy thằng Player rồi!");
+    }
     private void Patrol()
     {
         animator.SetBool("isRunning", true);
@@ -163,6 +184,7 @@ public class WalkerEnemy : EnemyBase
     private void DealDamage()
     {
         Collider2D[] hits = Physics2D.OverlapCircleAll(attackPoint.position, attackRadius, playerLayer);
+        if (enemyAudio != null) enemyAudio.PlayAttack();
 
         foreach (Collider2D hit in hits)
         {

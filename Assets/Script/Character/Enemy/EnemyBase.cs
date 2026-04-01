@@ -9,6 +9,8 @@ public class EnemyBase : MonoBehaviour
     [SerializeField] protected EnemyHealth health;
     [SerializeField] protected float moveSpeed;
 
+    protected AudioEnemyController enemyAudio;
+
     protected bool isFacingRight = true;
     protected bool isDead = false;
     protected SpriteRenderer spriteRenderer;
@@ -22,6 +24,8 @@ public class EnemyBase : MonoBehaviour
         animator = GetComponent<Animator>();
         health = GetComponent<EnemyHealth>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+
+        enemyAudio = GetComponent<AudioEnemyController>();
     }
 
     public void SetRoomPatrolLimits(float leftX, float rightX)
@@ -57,6 +61,8 @@ public class EnemyBase : MonoBehaviour
             animator.SetTrigger("Die");
         }
 
+        if (enemyAudio != null) enemyAudio.PlayDie();
+
         rb.velocity = Vector2.zero;
         rb.simulated = false;
 
@@ -69,6 +75,7 @@ public class EnemyBase : MonoBehaviour
         {
             animator.SetTrigger("Hurt");
         }
+        if (enemyAudio != null) enemyAudio.PlayHurt();
     }
 
     // Hàm hỗ trợ flip (dùng chung)
