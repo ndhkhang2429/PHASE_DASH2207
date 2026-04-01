@@ -141,12 +141,8 @@ public class Player : MonoBehaviour
         HandleDashInput();
         UpdateDash();
 
-        if (Input.GetKeyDown(KeyCode.K))
+        if (Input.GetKeyDown(KeyCode.K) && !isUsingUlti)
         {
-            if (isUsingUlti == false)
-            {
-                jumpBufferTimer = jumpBufferTime;
-            }
             TryCastSkill();
         }
         HandleFlip();
