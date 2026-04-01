@@ -342,7 +342,7 @@ public class Player : MonoBehaviour
         canFlip = false;
         isAttacking = false;
 
-        // [THÊM MỚI] Bật cờ bị thương để ngắt điều khiển Move()
+        //Bật cờ bị thương để ngắt điều khiển Move()
         isHurt = true;
         rb.gravityScale = 0;
 
@@ -361,7 +361,7 @@ public class Player : MonoBehaviour
         rb.gravityScale = originalGravity;
         canFlip = true;
 
-        // [THÊM MỚI] Trả lại quyền di chuyển
+        // Trả lại quyền di chuyển
         isHurt = false;
 
         yield return new WaitForSeconds(hitFlashTime - 0.12f);

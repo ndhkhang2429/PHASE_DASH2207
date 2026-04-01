@@ -112,6 +112,15 @@ public class EnemyHealth : MonoBehaviour
             energy.GainEnergy(energyReward);
         }
 
+        if (gameObject.CompareTag("Boss"))
+        {
+            VictoryManager victoryManager = FindAnyObjectByType<VictoryManager>();
+            if (victoryManager != null)
+            {
+                victoryManager.StartVictorySequence();
+            }
+        }
+
         EnemyBase enemy = GetComponent<EnemyBase>();
         if (enemy != null)
         {

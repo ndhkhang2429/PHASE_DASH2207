@@ -100,9 +100,9 @@ public class SpawnBossRoomController : MonoBehaviour
         if (leftDoorAnim != null) leftDoorAnim.SetTrigger("Raise");
         if (rightDoorAnim != null) rightDoorAnim.SetTrigger("Raise");
 
-        // 1. TRẢ CAMERA LẠI CHO PLAYER (Hạ hết Priority xuống 9)
-        if (zoomBossCam != null) zoomBossCam.Priority = 9;
-        if (arenaCam != null) arenaCam.Priority = 9;
+        //// 1. TRẢ CAMERA LẠI CHO PLAYER (Hạ hết Priority xuống 9)
+        //if (zoomBossCam != null) zoomBossCam.Priority = 9;
+        //if (arenaCam != null) arenaCam.Priority = 9;
 
         // 2. ĐỔI NHẠC VỀ LẠI BÌNH THƯỜNG
         if (AudioController.Instance != null && AudioController.Instance.inGameBGM != null)

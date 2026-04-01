@@ -188,12 +188,12 @@ public class SpawnBoss : EnemyBase
 
     void SpawnEnemies()
     {
-        // SỬA LẠI: Truyền danh sách tọa độ (Vector3) thay vì Transform
+        // Truyền danh sách tọa độ (Vector3) thay vì Transform
         if (Random.value > 0.7f) SpawnFromList(flyingEnemyPrefabs, fixedFlyingSpawnPos);
         else SpawnFromList(groundEnemyPrefabs, fixedGroundSpawnPos);
     }
 
-    // CẬP NHẬT: Nhận List<Vector3> thay vì List<Transform>
+    // Nhận List<Vector3> thay vì List<Transform>
     void SpawnFromList(GameObject[] prefabs, List<Vector3> points)
     {
         if (prefabs.Length > 0 && points.Count > 0)
