@@ -25,6 +25,12 @@ public class PlayerAttack : MonoBehaviour
     [SerializeField] private GameObject windPrefab;
     [SerializeField] private Transform attack3firePoint;
 
+    [Header("Ulti Setting")]
+    [SerializeField] private int ultiEnergyCost = 50;
+    [SerializeField] private int ultiDamage = 20;
+    [SerializeField] private Vector2 ultiSize = new Vector2(4f, 4f);
+    [SerializeField] private Transform ultiCenter;
+
     [Header("Feel & Physics")]
     [SerializeField] private float knockbackForce;
     [SerializeField] private float comboResetTime = 1f;
@@ -49,7 +55,11 @@ public class PlayerAttack : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.J))
         {
-            if(!player.IsGrounded)
+            if (player.isUsingUlti)
+            {
+                return;
+            }
+            if (!player.IsGrounded)
             {
                 AirAttack();
             }
@@ -59,15 +69,26 @@ public class PlayerAttack : MonoBehaviour
             }
         }
 
-        if (isAttacking && Time.time - lastAttackTime > 0.5f)
+        if (isAttacking)
         {
-            EndAttack();
+            if (player.isUsingUlti == false)
+            {
+                if (Time.time - lastAttackTime > 0.5f)
+                {
+                    EndAttack();
+                }
+            }
         }
 
         // reset combo nếu quá lâu không attack
         if (Time.time - lastAttackTime > comboResetTime)
         {
             ResetCombo();
+        }
+
+        if (Input.GetKeyDown(KeyCode.H))
+        {
+            TryUseUlti();
         }
     }
 
@@ -174,6 +195,25 @@ public class PlayerAttack : MonoBehaviour
         }
     }
 
+    private void TryUseUlti()
+    {
+        if (isAttacking) return;
+
+        if (energy.UseEnergy(ultiEnergyCost))
+        {
+            player.isUsingUlti = true;
+            isAttacking = true;
+            player.isAttacking = true;
+            player.canFlip = false;
+            lastAttackTime = Time.time;
+
+            player.SetUntargetable(true);
+
+            // 2. Chạy Animation
+            animator.SetTrigger("Ulti");
+        }
+    }
+
     private void ProcessDamage(Collider2D[] enemies, int damage, float kbForce)
     {
         bool hitAnything = false;
@@ -214,6 +254,7 @@ public class PlayerAttack : MonoBehaviour
         }
     }
 
+
     private void ApplyRecoil()
     {
         // Đẩy Player lùi lại một chút khi chém trúng
@@ -239,6 +280,64 @@ public class PlayerAttack : MonoBehaviour
         ProcessDamage(enemies, airDamage, knockbackForce * 0.8f);
     }
 
+    public void DealUltiDamageTick()
+    {
+        Vector2 checkPosition = transform.position;
+        if (ultiCenter != null)
+        {
+            checkPosition = ultiCenter.position;
+        }
+
+        Collider2D[] enemies = Physics2D.OverlapBoxAll(checkPosition, ultiSize, 0f, enemyLayerMask);
+        ProcessUltiDamage(enemies, ultiDamage);
+    }
+
+    // Viết riêng một hàm xử lý damage cho Ulti để KHÔNG bị giật lùi (ApplyRecoil)
+    private void ProcessUltiDamage(Collider2D[] enemies, int damage)
+    {
+        bool hitAnything = false;
+
+        foreach (Collider2D c in enemies)
+        {
+            Vector2 direction = (c.transform.position - transform.position).normalized;
+            bool didDamage = false;
+
+            ShieldEnemy shield = c.GetComponent<ShieldEnemy>();
+            if (shield != null)
+            {
+                // Force đẩy lùi = 0 để quái không bị văng ra khỏi vùng chém
+                didDamage = shield.TryTakeDamage(damage, transform, 0f);
+            }
+            else
+            {
+                EnemyHealth health = c.GetComponent<EnemyHealth>();
+                if (health != null)
+                {
+                    health.TakeDamage(damage, direction, 0f);
+                    didDamage = true;
+                }
+            }
+
+            if (didDamage)
+            {
+                hitAnything = true;
+            }
+        }
+
+        if (hitAnything)
+        {
+            // Chỉ khựng hình nhẹ để tạo cảm giác chém trúng, tuyệt đối không gọi ApplyRecoil()
+            HitStopManager.Instance.Stop(0.02f);
+        }
+    }
+
+    public void EndUlti()
+    {
+        player.isUsingUlti = false;
+        EndAttack(); // Reset cờ isAttacking và canFlip (hàm có sẵn của bạn)
+        player.SetUntargetable(false); // Hiện hình lại, nhận va chạm bình thường
+    }
+
     public void SpawnWind()
     {
         GameObject wind = Instantiate(windPrefab, attack3firePoint.position, Quaternion.identity);
@@ -258,5 +357,12 @@ public class PlayerAttack : MonoBehaviour
 
         Gizmos.DrawWireCube(attackPoint.position, size);
         Gizmos.DrawWireCube(airAttackPoint.position, airSize);
+        Vector2 centerPos = transform.position;
+        if (ultiCenter != null)
+        {
+            centerPos = ultiCenter.position;
+        }
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireCube(centerPos, ultiSize);
     }
 }

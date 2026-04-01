@@ -53,6 +53,7 @@ public class Player : MonoBehaviour
 
     // [THÊM MỚI] Cờ hiệu báo cho FixedUpdate biết Player muốn nhảy
     private bool wantsToJump;
+    public bool isUsingUlti { get; set; }
 
     [Header("Effects")]
     [SerializeField] private GameObject doubleJumpEffectPrefab;
@@ -108,6 +109,11 @@ public class Player : MonoBehaviour
     {
         horizontal = Input.GetAxisRaw("Horizontal");
 
+        if (isUsingUlti)
+        {
+            horizontal = 0;
+        }
+
         // 1. Cập nhật Timers
         if (coyoteTimer > 0) coyoteTimer -= Time.deltaTime;
         if (jumpBufferTimer > 0) jumpBufferTimer -= Time.deltaTime;
@@ -137,6 +143,10 @@ public class Player : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.K))
         {
+            if (isUsingUlti == false)
+            {
+                jumpBufferTimer = jumpBufferTime;
+            }
             TryCastSkill();
         }
         HandleFlip();
@@ -461,9 +471,12 @@ public class Player : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.E) && dashCooldownTimer <= 0 && !isDashing)
         {
-            if (energy != null && energy.UseEnergy(dashEnergyCost))
+            if (isUsingUlti == false)
             {
-                Dash();
+                if (energy != null && energy.UseEnergy(dashEnergyCost))
+                {
+                    Dash();
+                }
             }
         }
     }
@@ -482,6 +495,26 @@ public class Player : MonoBehaviour
         );
 
         projectile.GetComponent<EnergyProjectile>().SetDirection(facingDirection);
+    }
+
+    public void SetUntargetable(bool state)
+    {
+        isInvincible = state;
+        if (state)
+        {
+            // Tắt trọng lực và khóa cứng vị trí
+            rb.gravityScale = 0f;
+            rb.velocity = Vector2.zero;
+
+            // Xuyên qua quái (tắt va chạm giữa 2 layer)
+            Physics2D.IgnoreLayerCollision(playerLayer, enemyLayer, true);
+        }
+        else
+        {
+            // Trả lại trạng thái bình thường
+            rb.gravityScale = originalGravity;
+            Physics2D.IgnoreLayerCollision(playerLayer, enemyLayer, false);
+        }
     }
 
     private void OnDrawGizmosSelected()
