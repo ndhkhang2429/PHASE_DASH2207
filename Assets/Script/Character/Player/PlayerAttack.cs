@@ -201,16 +201,27 @@ public class PlayerAttack : MonoBehaviour
 
         if (energy.UseEnergy(ultiEnergyCost))
         {
-            player.isUsingUlti = true;
-            isAttacking = true;
-            player.isAttacking = true;
-            player.canFlip = false;
-            lastAttackTime = Time.time;
+            if (energy.UseEnergy(ultiEnergyCost))
+            {
+                player.isUsingUlti = true;
+                isAttacking = true;
+                player.isAttacking = true;
+                player.canFlip = false;
+                lastAttackTime = Time.time;
 
-            player.SetUntargetable(true);
+                player.SetUntargetable(true);
 
-            // 2. Chạy Animation
-            animator.SetTrigger("Ulti");
+                // 2. Chạy Animation
+                animator.SetTrigger("Ulti");
+            }
+            else // Nếu UseEnergy trả về false (không đủ mana)
+            {
+                if (UIManager.Instance != null)
+                {
+                    UIManager.Instance.ShowManaWarning();
+                }
+            }
+            
         }
     }
 

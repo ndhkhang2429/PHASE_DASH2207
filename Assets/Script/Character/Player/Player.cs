@@ -473,9 +473,19 @@ public class Player : MonoBehaviour
         {
             if (isUsingUlti == false)
             {
-                if (energy != null && energy.UseEnergy(dashEnergyCost))
+                if (energy != null)
                 {
-                    Dash();
+                    if (energy.UseEnergy(dashEnergyCost))
+                    {
+                        Dash();
+                    }
+                    else // Nếu UseEnergy trả về false (không đủ mana)
+                    {
+                        if (UIManager.Instance != null)
+                        {
+                            UIManager.Instance.ShowManaWarning();
+                        }
+                    }
                 }
             }
         }
@@ -485,7 +495,14 @@ public class Player : MonoBehaviour
     {
         if (energy == null) return;
 
-        if (!energy.UseEnergy(skillEnergyCost)) return;
+        if (!energy.UseEnergy(skillEnergyCost))
+        {
+            if (UIManager.Instance != null)
+            {
+                UIManager.Instance.ShowManaWarning();
+            }
+            return;
+        }
 
         GameObject projectile = Instantiate
         (
