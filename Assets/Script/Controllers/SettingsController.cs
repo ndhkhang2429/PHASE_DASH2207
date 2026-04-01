@@ -1,39 +1,34 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public class SettingsController : MonoBehaviour
 {
-    [Header("Audio Sources")]
-    public AudioSource bgmSource;
-    public AudioSource sfxSource;
-
     [Header("UI sliders")]
     public Slider bgmSlider;
     public Slider sfxSlider;
 
-    void Start()
+    private void Start()
     {
-        if (bgmSource != null && bgmSlider != null)
+        if (bgmSlider != null)
         {
-            bgmSlider.value = bgmSource.volume;
+            bgmSlider.value = AudioController.Instance.VolumeBGM;
+            bgmSlider.onValueChanged.AddListener(SetBGMVolume);
         }
 
-        if (sfxSource != null && sfxSlider != null)
+        if (sfxSlider != null)
         {
-            sfxSlider.value = sfxSource.volume;
+            sfxSlider.value = AudioController.Instance.VolumeSFX;
+            sfxSlider.onValueChanged.AddListener(SetSFXVolume);
         }
     }
 
     public void SetBGMVolume(float volume)
     {
-        if (bgmSource != null)
-            bgmSource.volume = volume;
+        AudioController.Instance.SetVolumeBGM(volume);
     }
+
     public void SetSFXVolume(float volume)
     {
-        if (sfxSource != null)
-            sfxSource.volume = volume;
+        AudioController.Instance.SetVolumeSFX(volume);
     }
 }

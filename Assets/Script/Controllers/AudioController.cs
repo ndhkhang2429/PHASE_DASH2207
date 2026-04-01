@@ -6,8 +6,8 @@ public class AudioController : MonoBehaviour
 {
     public static AudioController Instance;
 
-    [SerializeField] private AudioSource sfxAudioSource; // hieu ung
-    [SerializeField] private AudioSource bgmAudioSource; // nhac nen
+    [SerializeField] private AudioSource sfxAudioSource;
+    [SerializeField] private AudioSource bgmAudioSource;
 
     [Header("Sound Effects")]
     [SerializeField] private List<AudioClip> buttonClickSFXList = new();
@@ -18,7 +18,7 @@ public class AudioController : MonoBehaviour
     public AudioClip BossBGM;
     public AudioClip EndGameBGM;
 
-    [Header("SFX Clips (Hiệu ứng)")]
+    [Header("SFX Clips")]
     public AudioClip walkSound;
     public AudioClip dashSound;
     public AudioClip jumpSound;
@@ -38,7 +38,7 @@ public class AudioController : MonoBehaviour
     {
         if (Instance != null && Instance != this)
         {
-            Destroy(Instance);
+            Destroy(gameObject);
             return;
         }
 
@@ -105,8 +105,6 @@ public class AudioController : MonoBehaviour
         sfxAudioSource.PlayOneShot(clip);
     }
 
-
-    //chay BGM cho background
     public void PlayBGM(AudioClip clip)
     {
         if (bgmAudioSource == null || clip == null)
