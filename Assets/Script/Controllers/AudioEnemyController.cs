@@ -16,6 +16,12 @@ public class AudioEnemyController : MonoBehaviour
     [Header("Boss Special Sounds")]
     [SerializeField] private AudioClip roarSound;
 
+    [Header("Charger Special")]
+    public AudioClip windupSound;
+
+    [Header("Shield Special")]
+    public AudioClip blockSound; // Tiếng Keng kim loại
+
     private void Awake()
     {
         audioSource = GetComponent<AudioSource>();
@@ -34,10 +40,18 @@ public class AudioEnemyController : MonoBehaviour
         audioSource.pitch = finalPitch;
         audioSource.PlayOneShot(clip);
     }
+
+    //enemy base
     public void PlayHurt() => PlayCustom(hurtSound, 1f, 0.15f);
     public void PlayDie() => PlayCustom(dieSound, 0.9f, 0.05f); // Chết thì ít random hơn cho nghiêm túc
     public void PlayAttack() => PlayCustom(attackSound, 1f, 0.1f);
     public void PlaySpot() => PlayCustom(spotSound, 1f, 0.1f);
+
+    //Charger(hyena)
+    public void PlayWindup() => PlayCustom(windupSound, 1f, 0.05f);
+
+    //Shield
+    public void PlayBlock() => PlayCustom(blockSound, 1.2f, 0.2f);
 
     public void PlayRoar() => PlayCustom(roarSound, 1f, 0.05f);
 }

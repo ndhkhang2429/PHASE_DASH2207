@@ -166,6 +166,8 @@ public class ChargerEnemy : EnemyBase
         canCharge = false;
         animator.SetBool("isRunning", false);
 
+        if (enemyAudio != null) enemyAudio.PlayWindup();
+
         float dirToPlayer = Mathf.Sign(player.position.x - transform.position.x);
         SetDirection((int)dirToPlayer);
 
@@ -191,6 +193,8 @@ public class ChargerEnemy : EnemyBase
         currentState = State.Charge;
         animator.SetBool("isRunning", true);
 
+        if (enemyAudio != null) enemyAudio.PlayAttack();
+
         yield return new WaitForSeconds(chargeDuration);
 
         if (currentState == State.Charge)
@@ -203,7 +207,6 @@ public class ChargerEnemy : EnemyBase
     {
         currentState = State.Stunned;
         animator.SetBool("isRunning", false);
-
         yield return new WaitForSeconds(duration);
 
         StartCoroutine(CooldownRoutine());

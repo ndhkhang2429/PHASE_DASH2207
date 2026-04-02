@@ -187,6 +187,12 @@ public class ExploderEnemy : EnemyBase
         animator.SetBool("isRunning", false);
         rb.velocity = Vector2.zero;
 
+        if (enemyAudio != null)
+        {
+            // Dùng windupSound, Pitch tăng dần để tạo sự dồn dập
+            enemyAudio.PlayCustom(enemyAudio.windupSound, 1f, 0.1f);
+        }
+
         float timer = 0f;
 
         Color originalColor = spriteRenderer.color;
@@ -219,6 +225,7 @@ public class ExploderEnemy : EnemyBase
     {
         if (currentState == State.Explode) return; // Tránh nổ 2 lần
         currentState = State.Explode;
+
         if (explosionVFXPrefab != null)
         {
             Instantiate(explosionVFXPrefab, transform.position, Quaternion.identity);
@@ -246,7 +253,7 @@ public class ExploderEnemy : EnemyBase
                 p.TakeDamage(finalDamage, knockDir, finalKnockback);
             }
         }
-        Destroy(gameObject, 0.5f);
+        Destroy(gameObject, 0.1f);
     }
 
     // Lưu ý nhỏ ở hàm OnDeath (Ghi đè từ EnemyBase)

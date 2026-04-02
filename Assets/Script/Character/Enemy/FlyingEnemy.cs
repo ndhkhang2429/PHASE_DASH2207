@@ -117,6 +117,11 @@ public class FlyingEnemy : EnemyBase
 
     private void Shoot(Transform targetPlayer)
     {
+        if (enemyAudio != null)
+        {
+            // Air Puff với Pitch cao (1.6f) tạo cảm giác ma thuật/lửa
+            enemyAudio.PlayCustom(enemyAudio.attackSound, 1.6f, 0.1f);
+        }
         // Kiểm tra và quay mặt về phía Player trước khi bắn
         if (targetPlayer.position.x > transform.position.x && !isFacingRight)
             SetDirection(1);

@@ -235,31 +235,24 @@ public class ShieldEnemy : EnemyBase
         if (health == null || health.IsDead) return false;
 
         Vector2 direction = attacker.position - transform.position;
-
-        // Xác định đòn đánh đến từ phía trước
         bool attackerInFront = (isFacingRight && direction.x > 0) || (!isFacingRight && direction.x < 0);
 
-        // Nếu ĐANG THỦ và ĐÁNH TỪ MẶT TRƯỚC -> Chặn sát thương
         if (isShielding && attackerInFront)
         {
-            Debug.Log("Đã dùng Khiên đỡ thành công!");
-            // Tùy chọn: Chạy animation "Block" ở đây nếu có
-            return false;
-        }
+            if (enemyAudio != null) enemyAudio.PlayBlock(); // Tiếng Keng!
 
-        // Nếu ĐÁNH LÉN TỪ SAU LƯNG hoặc ĐANG CHÉM HỞ SƯỜN -> Nhận sát thương
-        Vector2 knockbackDir = (transform.position - attacker.position).normalized;
-        health.TakeDamage(damage, knockbackDir, knockbackForce);
+            // GIẢM 70% DAMAGE (Chỉ nhận 30%)
+            int reducedDamage = Mathf.CeilToInt(damage * 0.3f);
+            Vector2 knockbackDir = (transform.position - attacker.position).normalized;
 
-        if (health.IsDead)
-        {
-            Die();
+            // Gọi xuống Health để trừ số máu đã giảm
+            health.TakeDamage(reducedDamage, knockbackDir, knockbackForce * 0.3f);
             return true;
         }
 
-        // Bị đánh đau quá thì bỏ chém, quay về thủ ngay lập tức
-        isAttacking = false;
-        currentState = State.Shield;
+        // Đánh sau lưng thì ăn trọn damage
+        Vector2 normalKnockback = (transform.position - attacker.position).normalized;
+        health.TakeDamage(damage, normalKnockback, knockbackForce);
         return true;
     }
 

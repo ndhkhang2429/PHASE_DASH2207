@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -38,9 +38,17 @@ public class WindProjectile : MonoBehaviour
         if (((1 << collision.gameObject.layer) & enemyLayer) != 0)
         {
             EnemyHealth enemy = collision.GetComponent<EnemyHealth>();
-            if (enemy != null)
+            ShieldEnemy shieldEnemy = collision.GetComponent<ShieldEnemy>();
+            Vector2 dir = new Vector2(direction * 0.3f, 1f).normalized;
+            if (shieldEnemy != null)
             {
-                Vector2 dir = new Vector2(direction * 0.3f, 1f).normalized;
+                // Truyền transform.parent hoặc chính projectile này để tính hướng chặn
+                // Nếu chặn thành công, hàm này sẽ tự xử lý giảm dame hoặc triệt tiêu
+                shieldEnemy.TryTakeDamage(damage, transform, knockBack);
+            }
+            else if (enemy != null)
+            {
+                // Nếu không phải quái khiên thì trừ máu như cũ
                 enemy.TakeDamage(damage, dir, knockBack);
             }
 

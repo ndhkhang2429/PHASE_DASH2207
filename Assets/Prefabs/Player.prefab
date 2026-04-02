@@ -309,13 +309,17 @@ MonoBehaviour:
   enemyLayerMask:
     serializedVersion: 2
     m_Bits: 128
-  airDamage: 1
+  airDamage: 15
   attack1Size: {x: 1.5, y: 2}
   attack2Size: {x: 2.5, y: 2.5}
-  attack1Damage: 1
-  attack2Damage: 1
-  windPrefab: {fileID: 7535122425016066514, guid: 4acf0c13834c49f4b940f68abd10b594, type: 3}
+  attack1Damage: 10
+  attack2Damage: 14
+  windPrefab: {fileID: 7535122425016066514, guid: 2087b6f1d706ea141b5740b74eed3f4b, type: 3}
   attack3firePoint: {fileID: 7485310030904787497}
+  ultiEnergyCost: 55
+  ultiDamage: 10
+  ultiSize: {x: 5, y: 3}
+  ultiCenter: {fileID: 0}
   knockbackForce: 0.2
   comboResetTime: 3
   recoilForce: 4
