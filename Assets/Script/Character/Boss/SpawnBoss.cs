@@ -40,10 +40,8 @@ public class SpawnBoss : EnemyBase
     [SerializeField] private float speedMultiplier = 1.5f;
     [SerializeField] private int projectilesUpgrade = 18;
     [SerializeField] private GameObject lightningPrefab;
-    [SerializeField] private int numberOfLightningStrikes = 6;
     [SerializeField] private float lightningSpawnDelay = 0.15f;
-    [SerializeField] private float lightningYPosition = 0f;
-
+    [SerializeField] private List<Transform> lightningSpawnPoints;
     // Trạng thái kiểm soát
     // SỬA LẠI: Ban đầu isActive nên để = false, chờ Player đi vào Trigger mới = true
     private bool isActive = false;
@@ -125,20 +123,29 @@ public class SpawnBoss : EnemyBase
 
     IEnumerator ExecuteLightningRain()
     {
-        float roomWidth = rightLimit - leftLimit;
-        float interval = roomWidth / (numberOfLightningStrikes + 1);
-
-        for (int i = 0; i < numberOfLightningStrikes; i++)
+        if (lightningSpawnPoints == null || lightningSpawnPoints.Count == 0)
         {
-            float spawnX = leftLimit + (interval * (i + 1));
-            Vector3 spawnPos = new Vector3(spawnX, lightningYPosition, 0);
+            Debug.LogWarning("Chưa kéo thả Lightning Spawn Points vào Boss!");
+            yield break;
+        }
 
-            if (lightningPrefab != null)
+        for (int i = 0; i < lightningSpawnPoints.Count; i++)
+        {
+            if (lightningSpawnPoints[i] != null && lightningPrefab != null)
             {
+                // Lấy vị trí chính xác của điểm Marker bạn đặt trong Scene
+                Vector3 spawnPos = lightningSpawnPoints[i].position;
+
+                // Để chắc chắn sét hiện lên trên cùng, bạn có thể ép Z = -1 ở đây
+                spawnPos.z = -1f;
+
                 Instantiate(lightningPrefab, spawnPos, Quaternion.identity);
             }
+
+            // Đợi một chút trước khi tia sét tiếp theo xuất hiện
             yield return new WaitForSeconds(lightningSpawnDelay);
         }
+
         yield return new WaitForSeconds(0.5f);
     }
     public void ActivateBoss()
