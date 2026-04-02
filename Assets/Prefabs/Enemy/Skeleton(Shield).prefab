@@ -186,7 +186,7 @@ MonoBehaviour:
   rb: {fileID: 8117844534624944529}
   animator: {fileID: 4632749557756107998}
   health: {fileID: 1074922763127691745}
-  moveSpeed: 3
+  moveSpeed: 4
   PointA: {fileID: 3564653314794094211}
   PointB: {fileID: 8759812849344380834}
   detectRange: 4
@@ -195,7 +195,7 @@ MonoBehaviour:
   turnDelay: 1
   attackPoint: {fileID: 295451112002136054}
   attackSize: {x: 4, y: 3}
-  attackDamage: 1
+  attackDamage: 15
   playerLayer:
     serializedVersion: 2
     m_Bits: 64
@@ -212,10 +212,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f62d94b1feee093418ac9cdaa9c06d16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 4
+  maxHealth: 40
   animator: {fileID: 4632749557756107998}
   hitStunTime: 0.2
-  energyReward: 4
+  energyReward: 25
   damageTextPrefab: {fileID: 2402558531480752357, guid: 171c05e79735e224bb38bfad7e1f191a, type: 3}
   damageColor: {r: 0.9150943, g: 0.082013145, b: 0.082013145, a: 1}
 --- !u!70 &5313873186035176837

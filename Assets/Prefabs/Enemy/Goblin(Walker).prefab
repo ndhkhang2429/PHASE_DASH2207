@@ -198,7 +198,7 @@ MonoBehaviour:
   rb: {fileID: 176117688848457993}
   animator: {fileID: 3833303788000228540}
   health: {fileID: 4548025734672370252}
-  moveSpeed: 3
+  moveSpeed: 4
   leftPoint: {fileID: 1071549715718926841}
   rightPoint: {fileID: 6002699892212497174}
   detectRange: 6
@@ -222,7 +222,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f62d94b1feee093418ac9cdaa9c06d16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 10
+  maxHealth: 30
   animator: {fileID: 3833303788000228540}
   hitStunTime: 0.2
   energyReward: 10
@@ -392,6 +392,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e9ca782f3c4a02742a821e02787e70a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  audioSource: {fileID: 0}
   hurtSound: {fileID: 8300000, guid: 01fae867b1987494a9e87ed61461c3d5, type: 3}
   dieSound: {fileID: 8300000, guid: 9ae7d834a72a92b409c37350de3fce28, type: 3}
   attackSound: {fileID: 8300000, guid: 3e827122e38fb45458c500a1f941063f, type: 3}

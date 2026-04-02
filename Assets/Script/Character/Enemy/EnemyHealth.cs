@@ -46,6 +46,23 @@ public class EnemyHealth : MonoBehaviour
         }
 
         CurrentHealth -= dame;
+        if (gameObject.CompareTag("Boss"))
+        {
+            if (BossHealthUI.Instance != null)
+            {
+                BossHealthUI.Instance.UpdateHealthBar(CurrentHealth, maxHealth);
+            }
+
+            // Kiểm tra nếu máu xuống dưới 50%
+            if (CurrentHealth <= maxHealth * 0.5f)
+            {
+                SpawnBoss bossScript = GetComponent<SpawnBoss>();
+                if (bossScript != null)
+                {
+                    bossScript.TriggerPhase2(); // Gọi hàm kích hoạt phase 2 bên script Boss
+                }
+            }
+        }
 
         if (damageTextPrefab != null)
         {

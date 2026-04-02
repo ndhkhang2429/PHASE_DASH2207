@@ -240,10 +240,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f62d94b1feee093418ac9cdaa9c06d16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 3
+  maxHealth: 30
   animator: {fileID: 2404621056235906096}
   hitStunTime: 0.4
-  energyReward: 5
+  energyReward: 8
   damageTextPrefab: {fileID: 2402558531480752357, guid: 171c05e79735e224bb38bfad7e1f191a, type: 3}
   damageColor: {r: 0.9150943, g: 0.082013145, b: 0.082013145, a: 1}
 --- !u!1 &6403166280659046387

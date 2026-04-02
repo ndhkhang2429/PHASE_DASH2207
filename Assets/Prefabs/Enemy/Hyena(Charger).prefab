@@ -197,18 +197,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rb: {fileID: 4069822583733500196}
-  animator: {fileID: 0}
+  animator: {fileID: 4283512121408405889}
   health: {fileID: 1164106343741207220}
   moveSpeed: 5
   PointA: {fileID: 6324685434009728084}
   PointB: {fileID: 778879043070507333}
-  detectRange: 10
+  detectRangeX: 6
+  detectRangeY: 2
+  chargeCooldown: 2
   windupTime: 0.5
-  chargeSpeed: 9
+  chargeSpeed: 20
   chargeDuration: 3
   stunTimeWall: 4
   stunTimePlayer: 3
-  damage: 2
+  damage: 15
   knockbackForce: 4
 --- !u!114 &1164106343741207220
 MonoBehaviour:
@@ -222,10 +224,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f62d94b1feee093418ac9cdaa9c06d16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 0
+  maxHealth: 25
   animator: {fileID: 4283512121408405889}
-  hitStunTime: 0
-  energyReward: 0
+  hitStunTime: 0.2
+  energyReward: 20
   damageTextPrefab: {fileID: 2402558531480752357, guid: 171c05e79735e224bb38bfad7e1f191a, type: 3}
   damageColor: {r: 0.9150943, g: 0.082013145, b: 0.082013145, a: 1}
 --- !u!95 &4283512121408405889

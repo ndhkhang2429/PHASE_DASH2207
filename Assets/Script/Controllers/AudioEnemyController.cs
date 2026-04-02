@@ -13,6 +13,9 @@ public class AudioEnemyController : MonoBehaviour
     public AudioClip attackSound;
     [SerializeField] private AudioClip spotSound;
 
+    [Header("Boss Special Sounds")]
+    [SerializeField] private AudioClip roarSound;
+
     private void Awake()
     {
         audioSource = GetComponent<AudioSource>();
@@ -35,4 +38,6 @@ public class AudioEnemyController : MonoBehaviour
     public void PlayDie() => PlayCustom(dieSound, 0.9f, 0.05f); // Chết thì ít random hơn cho nghiêm túc
     public void PlayAttack() => PlayCustom(attackSound, 1f, 0.1f);
     public void PlaySpot() => PlayCustom(spotSound, 1f, 0.1f);
+
+    public void PlayRoar() => PlayCustom(roarSound, 1f, 0.05f);
 }

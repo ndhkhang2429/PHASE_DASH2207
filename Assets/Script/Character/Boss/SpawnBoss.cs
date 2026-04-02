@@ -8,8 +8,6 @@ public class SpawnBoss : EnemyBase
     [Header("Patrol Settings (Di chuyển)")]
     public Transform pointA;
     public Transform pointB;
-
-    // Đã thay đổi: Dùng tọa độ tuyệt đối để chốt giới hạn
     private float leftLimit;
     private float rightLimit;
     private int moveDirection = 1;
@@ -38,10 +36,19 @@ public class SpawnBoss : EnemyBase
     private List<Vector3> fixedFlyingSpawnPos = new List<Vector3>();
     private List<Vector3> fixedGroundSpawnPos = new List<Vector3>();
 
+    [Header("Phase 2 Upgrade")]
+    [SerializeField] private float speedMultiplier = 1.5f;
+    [SerializeField] private int projectilesUpgrade = 18;
+    [SerializeField] private GameObject lightningPrefab;
+    [SerializeField] private int numberOfLightningStrikes = 6;
+    [SerializeField] private float lightningSpawnDelay = 0.15f;
+    [SerializeField] private float lightningYPosition = 0f;
+
     // Trạng thái kiểm soát
     // SỬA LẠI: Ban đầu isActive nên để = false, chờ Player đi vào Trigger mới = true
     private bool isActive = false;
     private bool isBusy = false;
+    private bool isPhase2Triggered = false;
 
     protected override void Awake()
     {
@@ -85,6 +92,55 @@ public class SpawnBoss : EnemyBase
         }
     }
 
+    public void TriggerPhase2()
+    {
+        if (isPhase2Triggered) return;
+        StartCoroutine(Phase2TransitionRoutine());
+    }
+
+    IEnumerator Phase2TransitionRoutine()
+    {
+        isBusy = true;
+        isPhase2Triggered = true;
+
+        rb.velocity = Vector2.zero;
+        animator.SetBool("walk", false);
+
+        // Gầm (dùng Anim Fire)
+        animator.SetTrigger("Fire");
+
+        AudioEnemyController audioEnemy = GetComponent<AudioEnemyController>();
+
+        yield return new WaitForSeconds(0.4f);
+
+        // Giáng sét
+        yield return StartCoroutine(ExecuteLightningRain());
+
+        // Nâng cấp chỉ số
+        moveSpeed *= speedMultiplier;
+        numberOfProjectiles = projectilesUpgrade;
+
+        isBusy = false;
+    }
+
+    IEnumerator ExecuteLightningRain()
+    {
+        float roomWidth = rightLimit - leftLimit;
+        float interval = roomWidth / (numberOfLightningStrikes + 1);
+
+        for (int i = 0; i < numberOfLightningStrikes; i++)
+        {
+            float spawnX = leftLimit + (interval * (i + 1));
+            Vector3 spawnPos = new Vector3(spawnX, lightningYPosition, 0);
+
+            if (lightningPrefab != null)
+            {
+                Instantiate(lightningPrefab, spawnPos, Quaternion.identity);
+            }
+            yield return new WaitForSeconds(lightningSpawnDelay);
+        }
+        yield return new WaitForSeconds(0.5f);
+    }
     public void ActivateBoss()
     {
         isActive = true;

@@ -130,10 +130,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f62d94b1feee093418ac9cdaa9c06d16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 8
+  maxHealth: 40
   animator: {fileID: 5368394088941545852}
   hitStunTime: 0.4
-  energyReward: 10
+  energyReward: 20
   damageTextPrefab: {fileID: 2402558531480752357, guid: 171c05e79735e224bb38bfad7e1f191a, type: 3}
   damageColor: {r: 0.9150943, g: 0.082013145, b: 0.082013145, a: 1}
 --- !u!114 &2217384433743937440
@@ -159,7 +159,6 @@ MonoBehaviour:
   explodeRange: 3
   windupTime: 0.75
   explosionRadius: 4
-  damage: 6
   maxDamage: 40
   maxKnockbackForce: 12
   playerLayer:
