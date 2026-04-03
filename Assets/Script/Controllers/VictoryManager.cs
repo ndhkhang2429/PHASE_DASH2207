@@ -10,10 +10,6 @@ public class VictoryManager : MonoBehaviour
     [Header("Phân cảnh 2: Giao diện")]
     [SerializeField] private GameObject victoryPanel;
 
-    [Header("Âm thanh")]
-    [SerializeField] private AudioSource bgmAudioSource;
-    [SerializeField] private AudioClip victoryBGM;
-
     public void StartVictorySequence()
     {
         StartCoroutine(VictoryRoutine());
@@ -35,15 +31,13 @@ public class VictoryManager : MonoBehaviour
         {
             if (firework != null)
             {
+                if (AudioController.Instance != null)
+                {
+                    AudioController.Instance.PlaySFX(AudioController.Instance.fireWork);
+                }
                 firework.SetActive(true);
-            }
-        }
 
-        // Bật nhạc Victory
-        if (bgmAudioSource != null && victoryBGM != null)
-        {
-            bgmAudioSource.Stop();
-            bgmAudioSource.PlayOneShot(victoryBGM);
+            }
         }
 
         // 4. CHỜ NGƯỜI CHƠI TẬN HƯỞNG (3 giây)

@@ -19,6 +19,7 @@ public class SpawnBoss : EnemyBase
     public float spawnInterval = 10f;
     private float lastAttackTime = 0f;
     private float lastSpawnTime = 0f;
+    public int touchDamage = 15;
 
     [Header("Radial Attack")]
     public GameObject projectilePrefab;
@@ -106,10 +107,12 @@ public class SpawnBoss : EnemyBase
 
         // Gầm (dùng Anim Fire)
         animator.SetTrigger("Fire");
-
         AudioEnemyController audioEnemy = GetComponent<AudioEnemyController>();
-
-        yield return new WaitForSeconds(0.4f);
+        if (audioEnemy != null)
+        {
+            audioEnemy.PlayRoar(); // Gọi tiếng Gầm
+        }
+        yield return new WaitForSeconds(1.5f);
 
         // Giáng sét
         yield return StartCoroutine(ExecuteLightningRain());
@@ -119,6 +122,7 @@ public class SpawnBoss : EnemyBase
         numberOfProjectiles = projectilesUpgrade;
 
         isBusy = false;
+        animator.SetBool("walk", true);
     }
 
     IEnumerator ExecuteLightningRain()
@@ -199,8 +203,16 @@ public class SpawnBoss : EnemyBase
         animator.SetBool("walk", false);
         animator.SetTrigger("Fire");
 
-        yield return new WaitForSeconds(0.5f);
 
+
+        AudioEnemyController audioEnemy = GetComponent<AudioEnemyController>();
+        if (audioEnemy != null)
+        {
+            audioEnemy.PlayAttack();         // Phát tiếng phép thuật nổ (Xoẹt!)
+            audioEnemy.PlayRandomVoiceLine();// Có 40% tỉ lệ Boss sẽ gầm lên "Monster!"
+        }
+
+        yield return new WaitForSeconds(0.5f);
         PerformRadialAttack();
 
         yield return new WaitForSeconds(0.5f);
@@ -217,6 +229,13 @@ public class SpawnBoss : EnemyBase
 
         animator.SetBool("walk", false);
         animator.SetTrigger("Spawn");
+
+        AudioEnemyController audioEnemy = GetComponent<AudioEnemyController>();
+        if (audioEnemy != null)
+        {
+            audioEnemy.PlaySpawn();          // Phát tiếng chuông/cổng không gian
+            audioEnemy.PlayRandomVoiceLine();// Có 40% tỉ lệ Boss sẽ quát tháo
+        }
 
         yield return new WaitForSeconds(0.6f);
 
@@ -276,6 +295,19 @@ public class SpawnBoss : EnemyBase
         }
     }
 
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            Player player = collision.gameObject.GetComponent<Player>();
+            if (player != null)
+            {
+                // Gọi hàm trừ máu (Giữ đúng tên hàm TakeDame của bạn)
+                player.TakeDame(touchDamage);
+            }
+        }
+    }
+
     public override void OnDeath()
     {
         StopAllCoroutines();
@@ -284,6 +316,10 @@ public class SpawnBoss : EnemyBase
         if (roomManager != null)
         {
             roomManager.UnlockRoom();
+        }
+        if (AudioController.Instance != null)
+        {
+            AudioController.Instance.PlayBGM(AudioController.Instance.WinGameBGM);
         }
         base.OnDeath();
     }

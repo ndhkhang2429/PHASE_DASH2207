@@ -10,11 +10,21 @@ public class Lightning : MonoBehaviour
 
     private void Start()
     {
+        SpawnBoss boss = FindObjectOfType<SpawnBoss>();
+        if (boss != null)
+        {
+            AudioEnemyController bossAudio = boss.GetComponent<AudioEnemyController>();
+            if (bossAudio != null)
+            {
+                // Tạo độ trầm bổng ngẫu nhiên để các tia sét không bị kêu y hệt nhau
+                float randomPitch = 1f + Random.Range(-0.2f, 0.2f);
+
+                // Gọi hàm phát tiếng sét mà ta vừa thêm ở AudioEnemyController
+                bossAudio.PlayLightning(randomPitch);
+            }
+        }
         // Tự động xóa tia sét sau một khoảng thời gian để tránh rác bộ nhớ
         Destroy(gameObject, lifetime);
-
-        // [Tùy chọn] Nếu bạn có AudioController, phát tiếng sét đánh ở đây
-        // AudioController.Instance.PlaySFX(AudioController.Instance.lightningSound);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

@@ -309,6 +309,8 @@ MonoBehaviour:
   inGameBGM: {fileID: 8300000, guid: 6a9758c13a948e144b0d2115a28413a4, type: 3}
   BossBGM: {fileID: 8300000, guid: ef21bc60054e9044c998800fea0d5d34, type: 3}
   EndGameBGM: {fileID: 8300000, guid: 17a606e8fbe56a6489aca79c700d9bd3, type: 3}
+  WinGameBGM: {fileID: 8300000, guid: de62f2e3b0c56a94dadc874ab3d0bacf, type: 3}
+  fireWork: {fileID: 8300000, guid: 895aa4af8ce76df42aa0deffae975ad3, type: 3}
   walkSound: {fileID: 8300000, guid: 8bf683ec0bf0434498826f92d83cd975, type: 3}
   dashSound: {fileID: 8300000, guid: 2fa12d40e9e61ee40a7136a2be3dcbd8, type: 3}
   jumpSound: {fileID: 8300000, guid: b233c49508fb40440bd4d12293336a85, type: 3}

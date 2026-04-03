@@ -17,6 +17,10 @@ public class AudioController : MonoBehaviour
     public AudioClip inGameBGM;
     public AudioClip BossBGM;
     public AudioClip EndGameBGM;
+    public AudioClip WinGameBGM;
+
+    [Header("FireWork")]
+    public AudioClip fireWork;
 
     [Header("SFX Clips")]
     public AudioClip walkSound;
