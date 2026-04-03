@@ -42,6 +42,9 @@ public class DamageText : MonoBehaviour
 
     private void SelfDestroy()
     {
-        Destroy(this.gameObject);
+        transform.DOMoveY(transform.position.y + 2f, 1f).OnComplete(() =>
+        {
+            Destroy(gameObject);
+        });
     }
 }

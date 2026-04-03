@@ -10,7 +10,7 @@ public class AudioController : MonoBehaviour
     [SerializeField] private AudioSource bgmAudioSource;
 
     [Header("Sound Effects")]
-    [SerializeField] private List<AudioClip> buttonClickSFXList = new();
+    [SerializeField] private AudioClip buttonClickSFX;
 
     [Header("Background Music")]
     public AudioClip menuBGM;
@@ -34,6 +34,7 @@ public class AudioController : MonoBehaviour
     private const string InGameSceneName = "Main";
     private const string BGMVolumeKey = "BGMVolume";
     private const string SFXVolumeKey = "SFXVolume";
+    private Coroutine fadeCoroutine;
 
     public float VolumeBGM => bgmAudioSource.volume;
     public float VolumeSFX => sfxAudioSource.volume;
@@ -86,6 +87,14 @@ public class AudioController : MonoBehaviour
         PlayerPrefs.SetFloat(BGMVolumeKey, volume);
     }
 
+    public void PlayButtonSFX()
+    {
+        if (buttonClickSFX != null)
+        {
+            PlaySFX(buttonClickSFX, 1f);
+        }
+    }
+
     public void SetVolumeSFX(float volume)
     {
         SetVolume(sfxAudioSource, volume);
@@ -102,10 +111,10 @@ public class AudioController : MonoBehaviour
         audioSource.volume = value;
     }
 
-    public void PlaySFX(AudioClip clip)
+    public void PlaySFX(AudioClip clip, float pitch = 1f)
     {
         if (sfxAudioSource == null || clip == null) return;
-
+        sfxAudioSource.pitch = pitch;
         sfxAudioSource.PlayOneShot(clip);
     }
 
@@ -117,10 +126,44 @@ public class AudioController : MonoBehaviour
         }
 
         if (bgmAudioSource.clip == clip && bgmAudioSource.isPlaying) return;
+        if (fadeCoroutine != null)
+        {
+            StopCoroutine(fadeCoroutine);
+        }
+        fadeCoroutine = StartCoroutine(FadeBGM(clip, 1f));
+    }
+    private System.Collections.IEnumerator FadeBGM(AudioClip newClip, float fadeDuration)
+    {
+        float startVolume = bgmAudioSource.volume;
+        float targetVolume = PlayerPrefs.GetFloat(BGMVolumeKey, 1f); // Lấy âm lượng gốc
 
+        // 1. Fade Out (Nhỏ dần nhạc cũ)
+        if (bgmAudioSource.isPlaying)
+        {
+            float timer = 0f;
+            while (timer < fadeDuration / 2f)
+            {
+                timer += Time.deltaTime;
+                bgmAudioSource.volume = Mathf.Lerp(startVolume, 0f, timer / (fadeDuration / 2f));
+                yield return null;
+            }
+        }
+
+        // 2. Đổi nhạc
         bgmAudioSource.Stop();
+        bgmAudioSource.clip = newClip;
         bgmAudioSource.loop = true;
-        bgmAudioSource.clip = clip;
         bgmAudioSource.Play();
+
+        // 3. Fade In (To dần nhạc mới lên bằng với âm lượng setting)
+        float timerIn = 0f;
+        while (timerIn < fadeDuration / 2f)
+        {
+            timerIn += Time.deltaTime;
+            bgmAudioSource.volume = Mathf.Lerp(0f, targetVolume, timerIn / (fadeDuration / 2f));
+            yield return null;
+        }
+
+        bgmAudioSource.volume = targetVolume; // Đảm bảo chốt lại đúng âm lượng
     }
 }

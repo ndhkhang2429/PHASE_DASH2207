@@ -304,7 +304,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sfxAudioSource: {fileID: 1973508734713440630}
   bgmAudioSource: {fileID: 2879715977398269906}
-  buttonClickSFXList: []
+  buttonClickSFX: {fileID: 8300000, guid: fd81f26666645664e89b81129f332ab2, type: 3}
   menuBGM: {fileID: 8300000, guid: 7e879d5083cdbaf43a3c53c69c5eb43a, type: 3}
   inGameBGM: {fileID: 8300000, guid: 6a9758c13a948e144b0d2115a28413a4, type: 3}
   BossBGM: {fileID: 8300000, guid: ef21bc60054e9044c998800fea0d5d34, type: 3}

@@ -7,11 +7,13 @@ public class MenuController : MonoBehaviour
 {
     public void OnClickPlayButton()
     {
+        AudioController.Instance.PlayButtonSFX();
         SceneManager.LoadScene("Main");
     }
 
     public void OnClickQuitButton()
     {
+        AudioController.Instance.PlayButtonSFX();
         Application.Quit();
     }
 }

@@ -130,7 +130,7 @@ public class PlayerAttack : MonoBehaviour
             AudioClip currentHitSound = AudioController.Instance.comboSounds[comboStep - 1];
             if (currentHitSound != null)
             {
-                AudioController.Instance.PlaySFX(currentHitSound);
+                AudioController.Instance.PlaySFX(currentHitSound, Random.Range(0.9f, 1.1f));
             }
         }
     }
@@ -191,7 +191,7 @@ public class PlayerAttack : MonoBehaviour
         animator.Play("Air_Attack", 0, 0f);
         if (AudioController.Instance != null)
         {
-            AudioController.Instance.PlaySFX(AudioController.Instance.attackAirSound);
+            AudioController.Instance.PlaySFX(AudioController.Instance.attackAirSound, Random.Range(0.9f, 1.1f));
         }
     }
 
