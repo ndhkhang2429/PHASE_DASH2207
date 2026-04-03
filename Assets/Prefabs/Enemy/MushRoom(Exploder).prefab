@@ -157,7 +157,7 @@ MonoBehaviour:
   explosionVFXPrefab: {fileID: 7331267625579797469, guid: e6614db83ac960a4693cce2ac9c88b78, type: 3}
   PointA: {fileID: 4915144654491347702}
   PointB: {fileID: 7816342230533321979}
-  detectRange: 10
+  detectRange: 6
   explodeRange: 3
   windupTime: 0.75
   explosionRadius: 4
@@ -335,7 +335,7 @@ MonoBehaviour:
   hurtSound: {fileID: 0}
   dieSound: {fileID: 0}
   attackSound: {fileID: 0}
-  spotSound: {fileID: 0}
+  spotSound: {fileID: 8300000, guid: 2e1c704fd4c0eb842b34a2be6fb1ac5d, type: 3}
   roarSound: {fileID: 0}
   windupSound: {fileID: 8300000, guid: 7bd0f92c8d06940408b078b6d05d9f0a, type: 3}
   blockSound: {fileID: 0}

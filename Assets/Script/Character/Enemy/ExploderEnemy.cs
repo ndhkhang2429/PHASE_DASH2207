@@ -100,7 +100,17 @@ public class ExploderEnemy : EnemyBase
         {
             case State.Patrol:
                 PatrolLogic();
-                if (distance < detectRange) currentState = State.Chase;
+                if (distance < detectRange)
+                {
+                    // 1. Phát tiếng "Á!" (Pitch cao cho the thé)
+                    if (enemyAudio != null)
+                    {
+                        enemyAudio.PlayCustom(enemyAudio.spotSound, 1.8f, 0.1f);
+                    }
+
+                    // 2. Chuyển sang trạng thái rượt đuổi
+                    currentState = State.Chase;
+                }
                 break;
 
             case State.Chase:
@@ -147,7 +157,6 @@ public class ExploderEnemy : EnemyBase
             currentState = State.Patrol;
             return;
         }
-
         // 3. Tiến hành đuổi
         int directionToPlayer = player.position.x > transform.position.x ? 1 : -1;
         float currentLeft = GetCurrentLeftLimit();
@@ -256,7 +265,6 @@ public class ExploderEnemy : EnemyBase
         Destroy(gameObject, 0.1f);
     }
 
-    // Lưu ý nhỏ ở hàm OnDeath (Ghi đè từ EnemyBase)
     public override void OnDeath()
     {
         if (isExploding) return; // Nếu đang gồng nổ thì không cho chạy anim chết thường

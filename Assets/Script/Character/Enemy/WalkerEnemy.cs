@@ -104,7 +104,6 @@ public class WalkerEnemy : EnemyBase
         // Phát âm thanh hú (Lấy từ script EnemyAudio hoặc AudioSource trực tiếp)
         if (enemyAudio != null)
         {
-            // Bạn có thể viết thêm hàm PlaySpot() trong EnemyAudio
             enemyAudio.PlaySpot();
         }
 

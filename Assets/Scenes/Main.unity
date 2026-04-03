@@ -324,7 +324,7 @@ Transform:
   m_GameObject: {fileID: 91102342}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -18.64, y: -6.77, z: -10}
+  m_LocalPosition: {x: 150.6, y: 17.8, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -65315,7 +65315,7 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -18.64, y: -6.77, z: -10}
+  m_LocalPosition: {x: 150.5348, y: 19.14065, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -68012,7 +68012,7 @@ Tilemap:
       - {fileID: 1807906845, guid: ff680b97debd6c34d8edbca7a0649510, type: 3}
       - {fileID: 1944788208, guid: ff680b97debd6c34d8edbca7a0649510, type: 3}
       - {fileID: -1997005251, guid: ff680b97debd6c34d8edbca7a0649510, type: 3}
-      m_AnimationSpeed: 5.0000005
+      m_AnimationSpeed: 5
       m_AnimationTimeOffset: 0
       m_Flags: 0
   - first: {x: 80, y: 7, z: 0}
@@ -68402,8 +68402,16 @@ PrefabInstance:
       value: MushRoom(Exploder)
       objectReference: {fileID: 0}
     - target: {fileID: 2217384433743937440, guid: 723c1153c332db0469434edb0cf983d5, type: 3}
+      propertyPath: windupTime
+      value: 0.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 2217384433743937440, guid: 723c1153c332db0469434edb0cf983d5, type: 3}
       propertyPath: detectRange
-      value: 11
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 2217384433743937440, guid: 723c1153c332db0469434edb0cf983d5, type: 3}
+      propertyPath: explosionRadius
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 4915144654491347702, guid: 723c1153c332db0469434edb0cf983d5, type: 3}
       propertyPath: m_LocalPosition.x
@@ -132190,7 +132198,7 @@ MonoBehaviour:
   pointA: {fileID: 420012424}
   pointB: {fileID: 276133735}
   roomManager: {fileID: 1489699490}
-  attackInterval: 1000
+  attackInterval: 3
   spawnInterval: 8
   projectilePrefab: {fileID: 339193005315520528, guid: a6efd30d4de535a40ad995139ae14fee, type: 3}
   attackPoint: {fileID: 1747410074}
@@ -133501,11 +133509,11 @@ PrefabInstance:
       objectReference: {fileID: 1741330183}
     - target: {fileID: 8936181896720625207, guid: 8f3b4614e7ad2684b9a86a2f68469ae8, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -18.64
+      value: 150.6
       objectReference: {fileID: 0}
     - target: {fileID: 8936181896720625207, guid: 8f3b4614e7ad2684b9a86a2f68469ae8, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -6.77
+      value: 17.8
       objectReference: {fileID: 0}
     - target: {fileID: 8936181896720625207, guid: 8f3b4614e7ad2684b9a86a2f68469ae8, type: 3}
       propertyPath: m_LocalPosition.z

@@ -11,7 +11,7 @@ public class AudioEnemyController : MonoBehaviour
 
     [Header("Action Sounds")]
     public AudioClip attackSound;
-    [SerializeField] private AudioClip spotSound;
+    public AudioClip spotSound;
 
     [Header("Boss Special Sounds")]
     [SerializeField] private AudioClip roarSound;
