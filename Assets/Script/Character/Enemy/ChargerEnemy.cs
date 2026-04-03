@@ -32,6 +32,7 @@ public class ChargerEnemy : EnemyBase
     [Header("Attack")]
     [SerializeField] private int damage;
     [SerializeField] private float knockbackForce;
+    [SerializeField] private int touchDamage;
 
     private State currentState;
     private Transform player;
@@ -261,5 +262,19 @@ public class ChargerEnemy : EnemyBase
     {
         StopAllCoroutines();
         base.OnDeath();
+    }
+
+    private void OnTriggerEnter2D(UnityEngine.Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            Player player = collision.gameObject.GetComponent<Player>();
+            if (player != null)
+            {
+                // Gọi hàm trừ máu (Giữ đúng tên hàm TakeDame của bạn)
+                player.TakeDame(touchDamage);
+            }
+
+        }
     }
 }

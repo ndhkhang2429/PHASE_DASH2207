@@ -33,6 +33,7 @@ public class ShieldEnemy : EnemyBase
     [SerializeField] private int attackDamage;
     [SerializeField] private LayerMask playerLayer;
     [SerializeField] private float attackKnockbackForce;
+    [SerializeField] private int touchDamage = 5;
 
     private State currentState;
     private Transform player;
@@ -280,5 +281,18 @@ public class ShieldEnemy : EnemyBase
         if (attackPoint == null) return;
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireCube(attackPoint.position, attackSize);
+    }
+    private void OnTriggerEnter2D(UnityEngine.Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            Player player = collision.gameObject.GetComponent<Player>();
+            if (player != null)
+            {
+                // Gọi hàm trừ máu (Giữ đúng tên hàm TakeDame của bạn)
+                player.TakeDame(touchDamage);
+            }
+
+        }
     }
 }

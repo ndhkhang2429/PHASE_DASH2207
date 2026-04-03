@@ -22,6 +22,7 @@ public class EnemyShooter : EnemyBase
     [SerializeField] private float shootRange;
     [SerializeField] private float shootCooldown;
     [SerializeField] private float bulletSpeed;
+    [SerializeField] private int touchDamage;
 
     private Transform player;
     private float lastShootTime;
@@ -159,5 +160,19 @@ public class EnemyShooter : EnemyBase
     {
         int directionToPlayer = player.position.x > transform.position.x ? 1 : -1;
         SetDirection(directionToPlayer);
+    }
+
+    private void OnTriggerEnter2D(UnityEngine.Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            Player player = collision.gameObject.GetComponent<Player>();
+            if (player != null)
+            {
+                // Gọi hàm trừ máu (Giữ đúng tên hàm TakeDame của bạn)
+                player.TakeDame(touchDamage);
+            }
+
+        }
     }
 }

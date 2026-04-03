@@ -147,7 +147,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 313078996242854082}
-  m_BodyType: 0
+  m_BodyType: 1
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
@@ -213,7 +213,7 @@ CapsuleCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -332,6 +332,13 @@ MonoBehaviour:
   dieSound: {fileID: 8300000, guid: 02b5306744b31e24eaa01ecbf59398ba, type: 3}
   attackSound: {fileID: 8300000, guid: 36a7de87110d8fc43a18728a8f72a180, type: 3}
   spotSound: {fileID: 8300000, guid: 36a7de87110d8fc43a18728a8f72a180, type: 3}
+  roarSound: {fileID: 0}
+  lightningZapSound: {fileID: 0}
+  spawnSound: {fileID: 0}
+  voiceLines: []
+  voiceChance: 0.4
+  windupSound: {fileID: 0}
+  blockSound: {fileID: 0}
 --- !u!1 &922002260831109445
 GameObject:
   m_ObjectHideFlags: 0

@@ -23,6 +23,7 @@ public class WalkerEnemy : EnemyBase
     [SerializeField] private float attackRadius;
     [SerializeField] private int attackDamage;
     [SerializeField] private LayerMask playerLayer;
+    [SerializeField] private int touchDamage = 5;
 
     [Header("Detection")]//phat hien player
     private bool hasSpottedPlayer = false;
@@ -209,5 +210,18 @@ public class WalkerEnemy : EnemyBase
         if (attackPoint == null) return;
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(attackPoint.position, attackRadius);
+    }
+    private void OnTriggerEnter2D(UnityEngine.Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            Player player = collision.gameObject.GetComponent<Player>();
+            if (player != null)
+            {
+                // Gọi hàm trừ máu (Giữ đúng tên hàm TakeDame của bạn)
+                player.TakeDame(touchDamage);
+            }
+
+        }
     }
 }

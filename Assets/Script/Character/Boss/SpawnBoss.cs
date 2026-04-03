@@ -19,14 +19,14 @@ public class SpawnBoss : EnemyBase
     public float spawnInterval = 10f;
     private float lastAttackTime = 0f;
     private float lastSpawnTime = 0f;
-    public int touchDamage = 15;
+
 
     [Header("Radial Attack")]
     public GameObject projectilePrefab;
     public Transform attackPoint;
     public float projectileSpeed = 8f;
     public int numberOfProjectiles = 12;
-
+    public int touchDamage = 15;
     [Header("Spawns")]
     public GameObject[] flyingEnemyPrefabs;
     public List<Transform> flyingSpawnPoints; // Transforms từ Inspector
@@ -295,7 +295,7 @@ public class SpawnBoss : EnemyBase
         }
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnTriggerEnter2D(UnityEngine.Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))
         {

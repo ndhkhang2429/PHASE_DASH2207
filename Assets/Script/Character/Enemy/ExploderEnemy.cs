@@ -29,6 +29,8 @@ public class ExploderEnemy : EnemyBase
     [SerializeField] private int maxDamage = 40;
     [SerializeField] private float maxKnockbackForce = 12f;
     [SerializeField] private LayerMask playerLayer;
+    [SerializeField] private int touchDamage = 5;
+
 
     [Header("Chase")]
     [SerializeField] private float chaseSpeed;
@@ -270,5 +272,18 @@ public class ExploderEnemy : EnemyBase
         if (isExploding) return; // Nếu đang gồng nổ thì không cho chạy anim chết thường
 
         base.OnDeath(); // Chạy logic chết bình thường của EnemyBase
+    }
+
+    private void OnTriggerEnter2D(UnityEngine.Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            Player player = collision.gameObject.GetComponent<Player>();
+            if (player != null)
+            {
+                // Gọi hàm trừ máu (Giữ đúng tên hàm TakeDame của bạn)
+                player.TakeDame(touchDamage);
+            }
+        }
     }
 }
