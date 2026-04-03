@@ -316,7 +316,7 @@ MonoBehaviour:
   attack2Damage: 14
   windPrefab: {fileID: 7535122425016066514, guid: 2087b6f1d706ea141b5740b74eed3f4b, type: 3}
   attack3firePoint: {fileID: 7485310030904787497}
-  ultiEnergyCost: 55
+  ultiEnergyCost: 0
   ultiDamage: 10
   ultiSize: {x: 5, y: 3}
   ultiCenter: {fileID: 0}

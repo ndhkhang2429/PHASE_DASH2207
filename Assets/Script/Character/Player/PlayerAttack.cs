@@ -342,6 +342,12 @@ public class PlayerAttack : MonoBehaviour
         }
     }
 
+    public void PlayUltiSlash()
+    {
+        // Dùng Random pitch từ 0.9f đến 1.2f để tiếng chém liên tục không bị nhàm chán
+        AudioController.Instance.PlaySFX(AudioController.Instance.ultiSlashSound, Random.Range(0.9f, 1.2f));
+    }
+
     public void EndUlti()
     {
         player.isUsingUlti = false;

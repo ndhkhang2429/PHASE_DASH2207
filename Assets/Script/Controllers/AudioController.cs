@@ -30,6 +30,7 @@ public class AudioController : MonoBehaviour
     public AudioClip attackAirSound;
     public AudioClip[] comboSounds;
     public AudioClip hurtSound;
+    public AudioClip ultiSlashSound;
 
     private const string InGameSceneName = "Main";
     private const string BGMVolumeKey = "BGMVolume";
@@ -166,4 +167,5 @@ public class AudioController : MonoBehaviour
 
         bgmAudioSource.volume = targetVolume; // Đảm bảo chốt lại đúng âm lượng
     }
+
 }

@@ -321,3 +321,4 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 004e788c123dc914b91e1d6e4781da29, type: 3}
   - {fileID: 8300000, guid: 1570cc5141387134e81b0c4b7740a742, type: 3}
   hurtSound: {fileID: 8300000, guid: 12d4fb97d62ccaf49869d800c51ac6e4, type: 3}
+  ultiSlashSound: {fileID: 8300000, guid: b401c56a3bdad394e8b1aa828022b959, type: 3}
