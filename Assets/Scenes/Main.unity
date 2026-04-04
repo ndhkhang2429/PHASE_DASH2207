@@ -64128,11 +64128,12 @@ PolygonCollider2D:
       - {x: 116.98733, y: 9.523977}
       - {x: 125.53771, y: 10.196574}
       - {x: 125.9884, y: 11.064641}
-      - {x: 154.85222, y: 10.906801}
-      - {x: 154.96056, y: 22.755558}
-      - {x: 194.69861, y: 23.366861}
-      - {x: 195.00822, y: 39.752728}
-      - {x: 164.14197, y: 38.354347}
+      - {x: 155.03981, y: 10.906801}
+      - {x: 155.14813, y: 16.659182}
+      - {x: 156.22421, y: 16.216885}
+      - {x: 205.39072, y: 16.238792}
+      - {x: 205.9817, y: 40.78442}
+      - {x: 164.14197, y: 40.230156}
       - {x: 163.95471, y: 43.414436}
       - {x: 154.14032, y: 43.16164}
       - {x: 124.22956, y: 43.75728}
@@ -166397,7 +166398,7 @@ Transform:
   m_GameObject: {fileID: 1837388169}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -67.81, y: -8.7, z: 0}
+  m_LocalPosition: {x: 146.67, y: 21.73, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -169220,6 +169221,10 @@ PrefabInstance:
     - target: {fileID: 443927194338133091, guid: 5f42d260d5b4c4141b6b29a312c0e715, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6370658117900110978, guid: 5f42d260d5b4c4141b6b29a312c0e715, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -2.36
       objectReference: {fileID: 0}
     - target: {fileID: 7894335038030308434, guid: 5f42d260d5b4c4141b6b29a312c0e715, type: 3}
       propertyPath: m_Name
