@@ -33,6 +33,7 @@ public class AudioController : MonoBehaviour
     public AudioClip ultiSlashSound;
 
     private const string InGameSceneName = "Main";
+    private const string MenuSceneName = "Menu";
     private const string BGMVolumeKey = "BGMVolume";
     private const string SFXVolumeKey = "SFXVolume";
     private Coroutine fadeCoroutine;
@@ -79,6 +80,10 @@ public class AudioController : MonoBehaviour
         if (string.Equals(scene.name, InGameSceneName))
         {
             PlayBGM(inGameBGM);
+        }
+        else if (scene.name == MenuSceneName)
+        {
+            PlayBGM(menuBGM);
         }
     }
 

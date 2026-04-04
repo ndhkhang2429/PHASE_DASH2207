@@ -7,7 +7,8 @@ public class BossHealthUI : MonoBehaviour
 
     [Header("UI References")]
     public GameObject healthPanel; 
-    public Image fillImage;        
+    public Image fillImage;
+    public GameObject rawImage;
 
     private void Awake()
     {
@@ -16,12 +17,14 @@ public class BossHealthUI : MonoBehaviour
 
         // Giấu thanh máu đi khi mới vào game
         if (healthPanel != null) healthPanel.SetActive(false);
+        if (rawImage != null) rawImage.SetActive(false);
     }
 
     // Hàm để Boss gọi khi nó thức dậy
     public void ShowHealthBar()
     {
         if (healthPanel != null) healthPanel.SetActive(true);
+        if (rawImage != null) rawImage.SetActive(true);
         if (fillImage != null) fillImage.fillAmount = 1f; // Bơm đầy máu
     }
 

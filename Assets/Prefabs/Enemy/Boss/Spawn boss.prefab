@@ -335,7 +335,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 2034851861
-  m_SortingLayer: 8
+  m_SortingLayer: 10
   m_SortingOrder: 1
   m_Sprite: {fileID: 250677673, guid: 59085a89910d8e046ae428475acbf2c9, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -435,7 +435,7 @@ MonoBehaviour:
   roomManager: {fileID: 0}
   attackInterval: 3
   spawnInterval: 8
-  projectilePrefab: {fileID: 339193005315520528, guid: a6efd30d4de535a40ad995139ae14fee, type: 3}
+  projectilePrefab: {fileID: 4877394767282345950, guid: 119b36974703b6e4ba16e4c537f98e81, type: 3}
   attackPoint: {fileID: 3747760743210047827}
   projectileSpeed: 8
   numberOfProjectiles: 12

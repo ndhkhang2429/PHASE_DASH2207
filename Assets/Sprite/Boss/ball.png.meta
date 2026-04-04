@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: a5dcdb88ceb141544bb3a9f96ba803d3
+guid: 7e7d3879cf6eb2246aaa5eb42796f9dd
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -93,30 +93,17 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 3
-    buildTarget: Android
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Fire Effect and Bullet 16x16_0
+      name: ball_0
       rect:
         serializedVersion: 2
-        x: 481
-        y: 192
-        width: 15
-        height: 16
+        x: 18
+        y: 312
+        width: 68
+        height: 67
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -124,20 +111,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: b88c228a32810fe4cb71b2f08b57a13b
-      internalID: 1380016056
+      spriteID: 62c352f48776eb04ba8ae8e170ff2e22
+      internalID: -378170314
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Fire Effect and Bullet 16x16_1
+      name: ball_1
       rect:
         serializedVersion: 2
-        x: 496
-        y: 192
-        width: 15
-        height: 16
+        x: 122
+        y: 311
+        width: 66
+        height: 69
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -145,20 +132,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f827937163ca2ab4f806ad6892a60adb
-      internalID: 1724370767
+      spriteID: d21236d15a1244045a7d0df36cb1d707
+      internalID: 1541267011
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Fire Effect and Bullet 16x16_2
+      name: ball_2
       rect:
         serializedVersion: 2
-        x: 513
-        y: 192
-        width: 15
-        height: 16
+        x: 228
+        y: 312
+        width: 68
+        height: 66
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -166,20 +153,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 091fd811edf06a845b43b8dc0949e097
-      internalID: 1037013687
+      spriteID: 5cb4383b4c4abc64fb8952e385412ff7
+      internalID: -727697922
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Fire Effect and Bullet 16x16_3
+      name: ball_3
       rect:
         serializedVersion: 2
-        x: 529
-        y: 192
-        width: 16
-        height: 16
+        x: 21
+        y: 210
+        width: 61
+        height: 62
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -187,20 +174,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 7a79d82eed82a404fb70700d541bc733
-      internalID: -365494269
+      spriteID: 67e15185914d32e4aaac04cb51546e8e
+      internalID: -1707855416
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Fire Effect and Bullet 16x16_4
+      name: ball_4
       rect:
         serializedVersion: 2
-        x: 545
-        y: 192
-        width: 15
-        height: 16
+        x: 128
+        y: 213
+        width: 59
+        height: 55
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -208,20 +195,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 0df1168606a187441bdd252036be6903
-      internalID: -1063911058
+      spriteID: 03f7a2369ad374048beb7b6f269a3832
+      internalID: 730652155
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Fire Effect and Bullet 16x16_5
+      name: ball_5
       rect:
         serializedVersion: 2
-        x: 561
-        y: 192
-        width: 15
-        height: 16
+        x: 234
+        y: 215
+        width: 52
+        height: 53
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -229,8 +216,92 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 368dbcf4e1b741f438fa9f53c66a3c0e
-      internalID: 1884927330
+      spriteID: c1b949fe7a8df37489d52c81161c2d27
+      internalID: 743647882
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ball_6
+      rect:
+        serializedVersion: 2
+        x: 29
+        y: 113
+        width: 46
+        height: 47
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 44a8474f1181bba48b07f949ef33472f
+      internalID: -1566605765
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ball_7
+      rect:
+        serializedVersion: 2
+        x: 133
+        y: 114
+        width: 44
+        height: 43
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 31abd07def93f2c42be72640ff737d80
+      internalID: -1098872988
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ball_8
+      rect:
+        serializedVersion: 2
+        x: 242
+        y: 116
+        width: 36
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d4dc9ded10412024fa96f04e85293cd8
+      internalID: -773394333
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ball_9
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 6
+        width: 119
+        height: 56
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 27393e960f60c364f891326b3ac54fc2
+      internalID: -817198982
       vertices: []
       indices: 
       edges: []
@@ -246,12 +317,16 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      Fire Effect and Bullet 16x16_0: 1380016056
-      Fire Effect and Bullet 16x16_1: 1724370767
-      Fire Effect and Bullet 16x16_2: 1037013687
-      Fire Effect and Bullet 16x16_3: -365494269
-      Fire Effect and Bullet 16x16_4: -1063911058
-      Fire Effect and Bullet 16x16_5: 1884927330
+      ball_0: -378170314
+      ball_1: 1541267011
+      ball_2: -727697922
+      ball_3: -1707855416
+      ball_4: 730652155
+      ball_5: 743647882
+      ball_6: -1566605765
+      ball_7: -1098872988
+      ball_8: -773394333
+      ball_9: -817198982
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
