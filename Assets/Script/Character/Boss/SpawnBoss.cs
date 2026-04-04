@@ -43,6 +43,13 @@ public class SpawnBoss : EnemyBase
     [SerializeField] private GameObject lightningPrefab;
     [SerializeField] private float lightningSpawnDelay = 0.15f;
     [SerializeField] private List<Transform> lightningSpawnPoints;
+
+    [Header("Chieu moi sau phase 2")]
+    [SerializeField] private GameObject bigProjectilePrefab; // Kéo Prefab đạn lớn vào đây
+    [SerializeField] private float bigProjectileSpeed = 12f;
+
+    [SerializeField] private GameObject laserAnimationObject;
+    [SerializeField] private float laserDuration = 2f;
     // Trạng thái kiểm soát
     // SỬA LẠI: Ban đầu isActive nên để = false, chờ Player đi vào Trigger mới = true
     private bool isActive = false;
@@ -90,68 +97,6 @@ public class SpawnBoss : EnemyBase
             StartCoroutine(SpawnRoutine());
         }
     }
-
-    public void TriggerPhase2()
-    {
-        if (isPhase2Triggered) return;
-        StartCoroutine(Phase2TransitionRoutine());
-    }
-
-    IEnumerator Phase2TransitionRoutine()
-    {
-        isBusy = true;
-        isPhase2Triggered = true;
-
-        rb.velocity = Vector2.zero;
-        animator.SetBool("walk", false);
-
-        // Gầm (dùng Anim Fire)
-        animator.SetTrigger("Fire");
-        AudioEnemyController audioEnemy = GetComponent<AudioEnemyController>();
-        if (audioEnemy != null)
-        {
-            audioEnemy.PlayRoar(); // Gọi tiếng Gầm
-        }
-        yield return new WaitForSeconds(1.5f);
-
-        // Giáng sét
-        yield return StartCoroutine(ExecuteLightningRain());
-
-        // Nâng cấp chỉ số
-        moveSpeed *= speedMultiplier;
-        numberOfProjectiles = projectilesUpgrade;
-
-        isBusy = false;
-        animator.SetBool("walk", true);
-    }
-
-    IEnumerator ExecuteLightningRain()
-    {
-        if (lightningSpawnPoints == null || lightningSpawnPoints.Count == 0)
-        {
-            Debug.LogWarning("Chưa kéo thả Lightning Spawn Points vào Boss!");
-            yield break;
-        }
-
-        for (int i = 0; i < lightningSpawnPoints.Count; i++)
-        {
-            if (lightningSpawnPoints[i] != null && lightningPrefab != null)
-            {
-                // Lấy vị trí chính xác của điểm Marker bạn đặt trong Scene
-                Vector3 spawnPos = lightningSpawnPoints[i].position;
-
-                // Để chắc chắn sét hiện lên trên cùng, bạn có thể ép Z = -1 ở đây
-                spawnPos.z = -1f;
-
-                Instantiate(lightningPrefab, spawnPos, Quaternion.identity);
-            }
-
-            // Đợi một chút trước khi tia sét tiếp theo xuất hiện
-            yield return new WaitForSeconds(lightningSpawnDelay);
-        }
-
-        yield return new WaitForSeconds(0.5f);
-    }
     public void ActivateBoss()
     {
         isActive = true;
@@ -168,7 +113,6 @@ public class SpawnBoss : EnemyBase
     void Patrol()
     {
         animator.SetBool("walk", true);
-
         // Di chuyển bằng velocity
         rb.velocity = new Vector2(moveDirection * moveSpeed, rb.velocity.y);
 
@@ -203,7 +147,7 @@ public class SpawnBoss : EnemyBase
         animator.SetBool("walk", false);
         animator.SetTrigger("Fire");
 
-
+        yield return new WaitForSeconds(0.4f);
 
         AudioEnemyController audioEnemy = GetComponent<AudioEnemyController>();
         if (audioEnemy != null)
@@ -212,8 +156,23 @@ public class SpawnBoss : EnemyBase
             audioEnemy.PlayRandomVoiceLine();// Có 40% tỉ lệ Boss sẽ gầm lên "Monster!"
         }
 
-        yield return new WaitForSeconds(0.5f);
-        PerformRadialAttack();
+        int attackChoice = Random.Range(0, 3);
+
+        switch (attackChoice)
+        {
+            case 0:
+                if (audioEnemy != null) audioEnemy.PlayAttack();
+                PerformRadialAttack();
+                break;
+            case 1:
+                if (audioEnemy != null) audioEnemy.PlayAttack(); // Hoặc dùng tiếng bắn riêng
+                PerformBigProjectileAttack();
+                break;
+            case 2:
+                // Chiêu Laser cần một Coroutine riêng vì nó diễn ra theo thời gian
+                yield return StartCoroutine(PerformLaserSweepAttack());
+                break;
+        }
 
         yield return new WaitForSeconds(0.5f);
 
@@ -246,6 +205,7 @@ public class SpawnBoss : EnemyBase
         isBusy = false;
     }
 
+    //Đạn tỏa
     void PerformRadialAttack()
     {
         if (projectilePrefab != null && attackPoint != null)
@@ -265,6 +225,49 @@ public class SpawnBoss : EnemyBase
 
                 baseAngle += angleStep;
             }
+        }
+    }
+
+    //Đạn hướng về player
+    void PerformBigProjectileAttack()
+    {
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null && bigProjectilePrefab != null && attackPoint != null)
+        {
+            Vector3 direction = (player.transform.position - attackPoint.position).normalized;
+            GameObject bullet = Instantiate(bigProjectilePrefab, attackPoint.position, Quaternion.identity);
+
+            // Kiểm tra an toàn trước khi gọi hàm SetDirection của đạn
+            FlyingEnemyBullet bulletScript = bullet.GetComponent<FlyingEnemyBullet>();
+            if (bulletScript != null)
+            {
+                bulletScript.SetDirection(direction);
+            }
+        }
+    }
+
+    //Lazer
+    IEnumerator PerformLaserSweepAttack()
+    {
+        if (laserAnimationObject != null)
+        {
+            laserAnimationObject.SetActive(true);
+
+            float elapsed = 0f;
+            float currentAngle = 0f;
+
+            while (elapsed < laserDuration)
+            {
+                currentAngle -= (360f / laserDuration) * Time.deltaTime;
+
+                laserAnimationObject.transform.localRotation = Quaternion.Euler(0, 0, currentAngle);
+
+                elapsed += Time.deltaTime;
+                yield return null;
+            }
+
+            laserAnimationObject.SetActive(false);
+            laserAnimationObject.transform.localRotation = Quaternion.Euler(0, 0, 0f);
         }
     }
 
@@ -306,6 +309,69 @@ public class SpawnBoss : EnemyBase
                 player.TakeDame(touchDamage);
             }
         }
+    }
+
+    public void TriggerPhase2()
+    {
+        if (isPhase2Triggered) return;
+        StartCoroutine(Phase2TransitionRoutine());
+    }
+
+    IEnumerator Phase2TransitionRoutine()
+    {
+        isBusy = true;
+        isPhase2Triggered = true;
+
+        rb.velocity = Vector2.zero;
+        animator.SetBool("walk", false);
+
+        // Gầm (dùng Anim Fire)
+        animator.SetTrigger("Fire");
+        AudioEnemyController audioEnemy = GetComponent<AudioEnemyController>();
+        if (audioEnemy != null)
+        {
+            audioEnemy.PlayRoar(); // Gọi tiếng Gầm
+        }
+
+        if (CameraShake.Instance != null)
+        {
+            CameraShake.Instance.Shake(1.5f, 0.15f);
+        }
+        yield return new WaitForSeconds(1.5f);
+
+        // Giáng sét
+        yield return StartCoroutine(ExecuteLightningRain());
+
+        yield return new WaitForSeconds(0.5f);
+
+        // Nâng cấp chỉ số
+        moveSpeed *= speedMultiplier;
+        numberOfProjectiles = projectilesUpgrade;
+
+        isBusy = false;
+        animator.SetBool("walk", true);
+    }
+
+    IEnumerator ExecuteLightningRain()
+    {
+        for (int i = 0; i < lightningSpawnPoints.Count; i++)
+        {
+            if (lightningSpawnPoints[i] != null && lightningPrefab != null)
+            {
+                // Lấy vị trí chính xác của điểm Marker bạn đặt trong Scene
+                Vector3 spawnPos = lightningSpawnPoints[i].position;
+
+                // Để chắc chắn sét hiện lên trên cùng, bạn có thể ép Z = -1 ở đây
+                spawnPos.z = -1f;
+
+                Instantiate(lightningPrefab, spawnPos, Quaternion.identity);
+            }
+
+            // Đợi một chút trước khi tia sét tiếp theo xuất hiện
+            yield return new WaitForSeconds(lightningSpawnDelay);
+        }
+
+        yield return new WaitForSeconds(0.5f);
     }
 
     public override void OnDeath()

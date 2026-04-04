@@ -63707,8 +63707,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 2094462347
+  m_SortingLayer: 12
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: d873410aea7f4f249bea7588aff40511, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -64963,6 +64963,7 @@ GameObject:
   - component: {fileID: 519420029}
   - component: {fileID: 519420030}
   - component: {fileID: 519420033}
+  - component: {fileID: 519420034}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -65122,6 +65123,18 @@ MonoBehaviour:
   m_CameraActivatedEvent:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &519420034
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 519420028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d82760691e19f6b42b6d427660e809e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &528303408
 GameObject:
   m_ObjectHideFlags: 0
@@ -133642,8 +133655,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 2094462347
+  m_SortingLayer: 12
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 5bd5ec6b68d778945a9892e54a34e928, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -165477,8 +165490,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 2094462347
+  m_SortingLayer: 12
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: eadcef8f00d7eb34599612a435ea7887, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -169163,6 +169176,14 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1489699490}
     - target: {fileID: 406633556717103805, guid: 5f42d260d5b4c4141b6b29a312c0e715, type: 3}
+      propertyPath: laserRenderer
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 406633556717103805, guid: 5f42d260d5b4c4141b6b29a312c0e715, type: 3}
+      propertyPath: laserAnimationObject
+      value: 
+      objectReference: {fileID: 1332582319931183019, guid: f72ee8a91677b024d8ca81c4414c8a81, type: 3}
+    - target: {fileID: 406633556717103805, guid: 5f42d260d5b4c4141b6b29a312c0e715, type: 3}
       propertyPath: lightningSpawnPoints.Array.data[0]
       value: 
       objectReference: {fileID: 859165075}
@@ -169222,9 +169243,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4451010001304723493, guid: 5f42d260d5b4c4141b6b29a312c0e715, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -2.14
+      objectReference: {fileID: 0}
+    - target: {fileID: 4590039512085037723, guid: 5f42d260d5b4c4141b6b29a312c0e715, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -2.15
+      objectReference: {fileID: 0}
     - target: {fileID: 6370658117900110978, guid: 5f42d260d5b4c4141b6b29a312c0e715, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2.36
+      value: -2.31
       objectReference: {fileID: 0}
     - target: {fileID: 7894335038030308434, guid: 5f42d260d5b4c4141b6b29a312c0e715, type: 3}
       propertyPath: m_Name
