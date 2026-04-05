@@ -535,6 +535,21 @@ public class Player : MonoBehaviour
         }
     }
 
+    public void Heal(int healAmount)
+    {
+        currentHealth += healAmount;
+        if (currentHealth > maxHealth)
+        {
+            currentHealth = maxHealth; // Chặn không cho máu vượt quá max
+        }
+
+        // Cập nhật lên thanh máu (healthBar của mày)
+        if (healthBar != null)
+        {
+            healthBar.UpdateBar(currentHealth, maxHealth);
+        }
+    }
+
     private void OnDrawGizmosSelected()
     {
         if (groundCheck == null) return;

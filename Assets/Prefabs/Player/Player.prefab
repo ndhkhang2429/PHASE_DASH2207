@@ -267,6 +267,7 @@ MonoBehaviour:
   spriteRenderer: {fileID: 6955919112993652392}
   speed: 5
   walkStepInterval: 0.3
+  canMove: 1
   groundCheck: {fileID: 3255788496002847525}
   groundCheckRadius: 0.16
   groundLayerMask:
@@ -288,9 +289,9 @@ MonoBehaviour:
   healthBar: {fileID: 0}
   hitColor: {r: 0.9169811, g: 0.15052326, b: 0.15052326, a: 0}
   hitFlashTime: 0
-  projectilePerfab: {fileID: 32944015193084876, guid: f9fc3fa35284aa040b1b8b6e1ff7f9e5, type: 3}
+  projectilePerfab: {fileID: 5221555551161383803, guid: 5fb515977e369c447aa2744b26314766, type: 3}
   firePoint: {fileID: 26144950575415274}
-  skillEnergyCost: 20
+  skillEnergyCost: 10
 --- !u!114 &4846970553500253203
 MonoBehaviour:
   m_ObjectHideFlags: 0
