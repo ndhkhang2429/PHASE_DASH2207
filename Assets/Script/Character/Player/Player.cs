@@ -14,6 +14,7 @@ public class Player : MonoBehaviour
     private float horizontal;
 
     [SerializeField] private float walkStepInterval = 0.3f;
+    public bool canMove = true;
     private float stepTimer;
 
     [Header("Ground check")]
@@ -107,11 +108,13 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        horizontal = Input.GetAxisRaw("Horizontal");
-
-        if (isUsingUlti)
+        if (!canMove || isUsingUlti)
         {
             horizontal = 0;
+        }
+        else
+        {
+            horizontal = Input.GetAxisRaw("Horizontal");
         }
 
         // 1. Cập nhật Timers
@@ -121,31 +124,33 @@ public class Player : MonoBehaviour
 
         // 2. Ground Check
         CheckGround();
-        HandleOneWayPlatform();
-
-        // 3. Nhận Input Nhảy
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (canMove)
         {
-            jumpBufferTimer = jumpBufferTime;
+            HandleOneWayPlatform();
+
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                jumpBufferTimer = jumpBufferTime;
+            }
+
+            HandleDashInput();
+
+            if (Input.GetKeyDown(KeyCode.K) && !isUsingUlti)
+            {
+                TryCastSkill();
+            }
+
+            HandleFlip();
         }
 
-        // 4. Xử lý Logic Nhảy (Chỉ set cờ hiệu, không ép lực ở đây)
         HandleJump();
+        UpdateDash();
 
-        // 5. Cập nhật Animator
         animator.SetFloat("Speed", Mathf.Abs(horizontal));
         animator.SetBool("IsGround", IsGrounded);
         animator.SetFloat("YVelocity", rb.velocity.y);
         animator.SetBool("IsDashing", isDashing);
 
-        HandleDashInput();
-        UpdateDash();
-
-        if (Input.GetKeyDown(KeyCode.K) && !isUsingUlti)
-        {
-            TryCastSkill();
-        }
-        HandleFlip();
     }
 
     private void FixedUpdate()

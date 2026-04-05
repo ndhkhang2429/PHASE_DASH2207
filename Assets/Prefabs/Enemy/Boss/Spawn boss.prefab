@@ -468,7 +468,7 @@ MonoBehaviour:
   - {fileID: 0}
   bigProjectilePrefab: {fileID: 7748722462926892313, guid: cde1238dc1173e240b20a1f2edfd3001, type: 3}
   bigProjectileSpeed: 12
-  laserAnimationObject: {fileID: 7372234759519584964, guid: 381db3c89b302ef438ea3aa43a410eaf, type: 3}
+  laserAnimationObject: {fileID: 1332582319931183019, guid: f72ee8a91677b024d8ca81c4414c8a81, type: 3}
   laserDuration: 2
 --- !u!70 &7270058200245406481
 CapsuleCollider2D:

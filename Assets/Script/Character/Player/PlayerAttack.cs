@@ -86,7 +86,7 @@ public class PlayerAttack : MonoBehaviour
             ResetCombo();
         }
 
-        if (Input.GetKeyDown(KeyCode.H))
+        if (Input.GetKeyDown(KeyCode.L))
         {
             TryUseUlti();
         }
@@ -185,6 +185,7 @@ public class PlayerAttack : MonoBehaviour
         player.canFlip = false;
 
         lastAttackTime = Time.time;
+        animator.ResetTrigger("Jump");
 
         animator.SetBool("isAttacking", true);
 
@@ -201,27 +202,24 @@ public class PlayerAttack : MonoBehaviour
 
         if (energy.UseEnergy(ultiEnergyCost))
         {
-            if (energy.UseEnergy(ultiEnergyCost))
-            {
-                player.isUsingUlti = true;
-                isAttacking = true;
-                player.isAttacking = true;
-                player.canFlip = false;
-                lastAttackTime = Time.time;
 
-                player.SetUntargetable(true);
+            player.isUsingUlti = true;
+            isAttacking = true;
+            player.isAttacking = true;
+            player.canFlip = false;
+            lastAttackTime = Time.time;
 
-                // 2. Chạy Animation
-                animator.SetTrigger("Ulti");
-            }
-            else // Nếu UseEnergy trả về false (không đủ mana)
+            player.SetUntargetable(true);
+
+            //2.Chạy Animation
+            animator.SetTrigger("Ulti");
+        }
+        else // Nếu UseEnergy trả về false (không đủ mana)
+        {
+            if (UIManager.Instance != null)
             {
-                if (UIManager.Instance != null)
-                {
-                    UIManager.Instance.ShowManaWarning();
-                }
+                UIManager.Instance.ShowManaWarning();
             }
-            
         }
     }
 

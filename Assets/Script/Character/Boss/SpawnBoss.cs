@@ -46,10 +46,7 @@ public class SpawnBoss : EnemyBase
 
     [Header("Chieu moi sau phase 2")]
     [SerializeField] private GameObject bigProjectilePrefab; // Kéo Prefab đạn lớn vào đây
-    [SerializeField] private float bigProjectileSpeed = 12f;
 
-    [SerializeField] private GameObject laserAnimationObject;
-    [SerializeField] private float laserDuration = 2f;
     // Trạng thái kiểm soát
     // SỬA LẠI: Ban đầu isActive nên để = false, chờ Player đi vào Trigger mới = true
     private bool isActive = false;
@@ -156,7 +153,8 @@ public class SpawnBoss : EnemyBase
             audioEnemy.PlayRandomVoiceLine();// Có 40% tỉ lệ Boss sẽ gầm lên "Monster!"
         }
 
-        int attackChoice = Random.Range(0, 3);
+        int maxAttack = isPhase2Triggered ? 3 : 2;
+        int attackChoice = Random.Range(0, maxAttack);
 
         switch (attackChoice)
         {
@@ -169,8 +167,9 @@ public class SpawnBoss : EnemyBase
                 PerformBigProjectileAttack();
                 break;
             case 2:
-                // Chiêu Laser cần một Coroutine riêng vì nó diễn ra theo thời gian
-                yield return StartCoroutine(PerformLaserSweepAttack());
+                // CHIÊU MỚI MỞ KHÓA Ở PHASE 2: GỌI MƯA SÉT
+                // Không cần audioEnemy.PlayAttack() vì mỗi tia sét đã có tiếng Zap riêng rồi
+                yield return StartCoroutine(ExecuteLightningRain());
                 break;
         }
 
@@ -243,31 +242,6 @@ public class SpawnBoss : EnemyBase
             {
                 bulletScript.SetDirection(direction);
             }
-        }
-    }
-
-    //Lazer
-    IEnumerator PerformLaserSweepAttack()
-    {
-        if (laserAnimationObject != null)
-        {
-            laserAnimationObject.SetActive(true);
-
-            float elapsed = 0f;
-            float currentAngle = 0f;
-
-            while (elapsed < laserDuration)
-            {
-                currentAngle -= (360f / laserDuration) * Time.deltaTime;
-
-                laserAnimationObject.transform.localRotation = Quaternion.Euler(0, 0, currentAngle);
-
-                elapsed += Time.deltaTime;
-                yield return null;
-            }
-
-            laserAnimationObject.SetActive(false);
-            laserAnimationObject.transform.localRotation = Quaternion.Euler(0, 0, 0f);
         }
     }
 

@@ -53,6 +53,11 @@ public class SpawnBossRoomController : MonoBehaviour
 
     private IEnumerator BossIntroCutscene()
     {
+        Player player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
+        if (player != null )
+        {
+            player.canMove = false;
+        }
         // 1. SẬP CỬA & PHÁT TIẾNG ĐỘNG
         if (leftDoorAnim != null) leftDoorAnim.SetTrigger("Slam");
         if (rightDoorAnim != null) rightDoorAnim.SetTrigger("Slam");
@@ -71,11 +76,15 @@ public class SpawnBossRoomController : MonoBehaviour
         // 3. ZOOM SÁT MẶT BOSS
         if (zoomBossCam != null)
         {
-            zoomBossCam.Priority = 11; // Lớn hơn 10 (của Player Cam), máy sẽ tự động lia mượt mà tới Boss
+            zoomBossCam.Priority = 11;
         }
 
-        // Chờ diễn viên Boss "tạo dáng"
-        yield return new WaitForSeconds(zoomDuration);
+        float elapsedZoom = 0f;
+        while (elapsedZoom < zoomDuration)
+        {
+            elapsedZoom += Time.deltaTime; // Cập nhật theo từng frame
+            yield return null; // Trả quyền cho Unity vẽ hình, không làm game bị khựng
+        }
 
         // 4. LÙI MÁY RA TOÀN CẢNH PHÒNG
         if (arenaCam != null)
@@ -83,14 +92,22 @@ public class SpawnBossRoomController : MonoBehaviour
             arenaCam.Priority = 12; // Lớn hơn 11, máy sẽ lia từ mặt Boss ra giữa phòng
         }
 
-        // Chờ máy lùi xong
-        yield return new WaitForSeconds(panDuration);
+        float elapsedPan = 0f;
+        while (elapsedPan < panDuration)
+        {
+            elapsedPan += Time.deltaTime;
+            yield return null;
+        }
 
         // 5. KẾT THÚC CUTSCENE, GỌI BOSS DẬY
         Debug.Log("FIGHT!");
         if (boss != null)
         {
             boss.ActivateBoss();
+        }
+        if (player != null)
+        {
+            player.canMove = true;
         }
     }
 

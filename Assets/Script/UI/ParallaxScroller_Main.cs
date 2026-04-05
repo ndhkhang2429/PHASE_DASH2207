@@ -22,8 +22,6 @@ public class ParallaxScroller_Main : MonoBehaviour
     [SerializeField] private Transform cameraTransform;
 
     private Vector3 _lastCameraPosition;
-
-    // Nâng cấp 1: Biến chặn lỗi giật hình ở frame đầu tiên
     private bool _isFirstFrame = true;
 
     private void Start()
@@ -64,7 +62,7 @@ public class ParallaxScroller_Main : MonoBehaviour
             if (item.transform == null) continue;
 
             float moveX = positionDelta.x * item.speedFactor;
-            float moveY = positionDelta.y * item.speedFactor;
+            float moveY = positionDelta.y;
             item.transform.position += new Vector3(moveX, moveY, 0f);
 
             // --- Nâng cấp 2: Dịch chuyển ảnh xoay vòng khi Camera đi quá xa ---
@@ -78,7 +76,15 @@ public class ParallaxScroller_Main : MonoBehaviour
                 // Nếu khoảng cách lớn hơn chiều dài bức ảnh -> Dịch ảnh tới phía trước Camera
                 if (Mathf.Abs(distFromCameraX) >= item.width)
                 {
-                    float offset = (distFromCameraX > 0) ? item.width : -item.width;
+                    float offset;
+                    if (distFromCameraX > 0)
+                    {
+                        offset = item.width;
+                    }
+                    else
+                    {
+                        offset = -item.width;
+                    }
                     item.transform.position += new Vector3(offset, 0f, 0f);
                 }
             }
@@ -90,7 +96,15 @@ public class ParallaxScroller_Main : MonoBehaviour
 
                 if (Mathf.Abs(distFromCameraY) >= item.height)
                 {
-                    float offset = (distFromCameraY > 0) ? item.height : -item.height;
+                    float offset;
+                    if (distFromCameraY > 0)
+                    {
+                        offset = item.height;
+                    }
+                    else
+                    {
+                        offset = -item.height;
+                    }
                     item.transform.position += new Vector3(0f, offset, 0f);
                 }
             }
