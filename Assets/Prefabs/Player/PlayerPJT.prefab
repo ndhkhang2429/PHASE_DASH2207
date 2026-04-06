@@ -122,7 +122,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 15
-  dame: 2
+  dame: 8
   knockbackForce: 5
   lifeTime: 3
 --- !u!50 &3599952001648129803

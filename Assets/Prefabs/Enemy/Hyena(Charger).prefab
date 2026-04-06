@@ -111,7 +111,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 2034851861
-  m_SortingLayer: 8
+  m_SortingLayer: 10
   m_SortingOrder: 0
   m_Sprite: {fileID: 1870033150, guid: 304552f8327455a40959909a90e35fed, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -214,6 +214,7 @@ MonoBehaviour:
   stunTimePlayer: 3
   damage: 15
   knockbackForce: 4
+  touchDamage: 5
 --- !u!114 &1164106343741207220
 MonoBehaviour:
   m_ObjectHideFlags: 0

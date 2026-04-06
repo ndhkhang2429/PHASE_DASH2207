@@ -128,7 +128,7 @@ public class Player : MonoBehaviour
         {
             HandleOneWayPlatform();
 
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (Input.GetKeyDown(KeyCode.Space) && !isUsingUlti)
             {
                 jumpBufferTimer = jumpBufferTime;
             }

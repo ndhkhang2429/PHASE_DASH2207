@@ -24,7 +24,7 @@ TagManager:
   - WallBackGround
   - DamageText
   - Lightning
-  - 
+  - FrontBG
   - 
   - 
   - 
@@ -78,6 +78,9 @@ TagManager:
     locked: 0
   - name: Player
     uniqueID: 2523473209
+    locked: 0
+  - name: FrontBG
+    uniqueID: 4247849837
     locked: 0
   - name: DamageText
     uniqueID: 2094462347
